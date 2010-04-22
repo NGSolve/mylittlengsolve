@@ -36,4 +36,4 @@ mysource coef_source
 
 numproc bvp np1 -bilinearform=a -linearform=f -gridfunction=u  -maxsteps=1000 -solver=direct
 
-numproc visualization npvis -scalarfunction=u -subdivision=3 -nolineartexture
+# numproc visualization npvis -scalarfunction=u -subdivision=1 -nolineartexture
