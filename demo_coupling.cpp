@@ -35,10 +35,10 @@ class NumProcCouplingDemo : public NumProc
 {
 protected:
   // grid function provides the solution vector of the first PDE
-  S_GridFunction<double> * gfu;
+  GridFunction * gfu;
 
   // linear-form providing the right hand side for the second PDE
-  S_LinearForm<double> * lff;
+  LinearForm * lff;
 
 public:
     
@@ -52,16 +52,13 @@ public:
     // in the input-file, you specify the linear-form and the gridfunction as
     // -linearform=f -gridfunction=u
 
-    // we know that we work with real-valued gridfunctions:
-    lff = dynamic_cast<S_LinearForm<double> *> 
-      (pde.GetLinearForm (flags.GetStringFlag ("linearform", "f")));
-    gfu = dynamic_cast<S_GridFunction<double> *> 
-      (pde.GetGridFunction (flags.GetStringFlag ("gridfunction", "u")));
+    lff = pde.GetLinearForm (flags.GetStringFlag ("linearform", "f"));
+    gfu = pde.GetGridFunction (flags.GetStringFlag ("gridfunction", "u"));
   }
 
   virtual ~NumProcCouplingDemo() 
   { ; }
-
+  
 
   // creates an solver object
   static NumProc * Create (PDE & pde, const Flags & flags)
@@ -74,12 +71,6 @@ public:
   {
     cout << "Compute coupling terms" << endl;
       
-    // reference to the matrices provided by the bi-forms.
-    // will be of type SparseSymmetricMatrix<double> for scalar problems
-
-    BaseVector & vecf = lff->GetVector();
-    BaseVector & vecu = gfu->GetVector();
-
     const FESpace & fesu = gfu -> GetFESpace();
     const FESpace & fesf = lff -> GetFESpace();
 
@@ -102,7 +93,7 @@ public:
         fesf.GetDofNrs (i, dnumsf);
 
         FlatVector<> elu (dnumsu.Size(), lh);
-        FlatVector<> helf (dnumsf.Size(), lh);
+        FlatVector<> shape (dnumsf.Size(), lh);
         FlatVector<> elf (dnumsf.Size(), lh);
 
         gfu -> GetElementVector (dnumsu, elu);
@@ -117,23 +108,20 @@ public:
             SpecificIntegrationPoint<2, 2> sip(ir[j], eltrans, lh);  // computes Jacobi matrix etc
 
             Vec<1> ui;   // value of u in point
-            DiffOpId<2>::Apply (felu, sip, elu, ui, lh);   // compute value in point
+            DiffOpId<2>::Apply (felu, sip, elu, ui, lh);   // compute value in point (= elu * shape)
             
             // could use also other differential operators such as
             // DiffOpGradient<2>, DiffOpCurl<2>, ....
-
+	    
  
-            Vec<1> fi;
-            fi = ir[j].Weight() * fabs (sip.GetJacobiDet())  * ui;   // local math
-
-            DiffOpId<2>::ApplyTrans (felf, sip, fi, helf, lh);   // coefficient times test functions
-            elf += helf;
+            double fac = ir[j].Weight() * fabs (sip.GetJacobiDet());   // integration weights
+	    
+	    felf.CalcShape (ir[j], shape);
+            elf += (fac*ui(0)) * shape; 
           }
 
         lff -> AddElementVector (dnumsf, elf);
       }
-
-    // *testout << "lff = " << endl << lff->GetVector() << endl;
   }
 
 
