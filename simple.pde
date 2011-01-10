@@ -1,7 +1,6 @@
 geometry = square.in2d
 mesh = square.vol
 
-# remove this line no windows:
 shared = libmyngsolve
 
 
@@ -17,8 +16,7 @@ define coefficient coef_source
 
 # create an instance of our new FESpace
 
-define fespace v -type=myfespace
-# -secondorder
+define fespace v -type=myfespace -secondorder
 # define fespace v -type=myhofespace -order=5
 
 
@@ -36,4 +34,8 @@ mysource coef_source
 
 numproc bvp np1 -bilinearform=a -linearform=f -gridfunction=u  -maxsteps=1000 -solver=direct
 
-# numproc visualization npvis -scalarfunction=u -subdivision=1 -nolineartexture
+numproc visualization npvis -scalarfunction=u -subdivision=1 -nolineartexture
+
+numproc drawflux npflux -solution=u -bilinearform=a -label=flux
+
+# numproc shapetester nptest -gridfunction=u

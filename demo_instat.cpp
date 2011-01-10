@@ -63,15 +63,6 @@ public:
     tend = flags.GetNumFlag ("tend", 1);
   }
 
-  virtual ~NumProcParabolic() 
-  { ; }
-
-
-  // creates an solver object
-  static NumProc * Create (PDE & pde, const Flags & flags)
-  {
-    return new NumProcParabolic (pde, flags);
-  }
 
   // solve at one level
   virtual void Do(LocalHeap & lh)
@@ -120,9 +111,6 @@ public:
 
 
 
-
-
-
   virtual string GetClassName () const
   {
     return "Parabolic Solver (Demo)";
@@ -166,25 +154,6 @@ public:
 
 
 
+// register the numproc 'parabolic' 
+static RegisterNumProc<NumProcParabolic> npinit1("parabolic");
 
-// declare the numproc 'parabolic' 
-
-namespace
-#ifdef MACOS
-demo_parabolic_cpp
-#endif
-{
-  class Init
-  { 
-  public: 
-    Init ();
-  };
-    
-  Init::Init()
-  {
-    GetNumProcs().AddNumProc ("parabolic", NumProcParabolic::Create, NumProcParabolic::PrintDoc);
-  }
-    
-  Init init;
-}
-  

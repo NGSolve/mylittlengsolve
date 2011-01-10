@@ -22,32 +22,37 @@ namespace ngfem
   {
     CoefficientFunction * coef_lambda;
   public:
-    MyLaplaceIntegrator (CoefficientFunction * acoef) 
-      : coef_lambda(acoef)
+    MyLaplaceIntegrator (const Array<CoefficientFunction*> & coeffs) 
+      : coef_lambda(coeffs[0])
     { ; }
-
-    static Integrator * Create (Array<CoefficientFunction*> & coeffs)
-    {
-      return new MyLaplaceIntegrator (coeffs[0]);
-    }
-
-    virtual ~MyLaplaceIntegrator ()  { ; }
 
     virtual string Name () const { return "MyLaplace"; }
 
-    // components of flux
-    virtual int DimFlux () const { return 2; }
+    virtual int DimElement () const { return 2; }
+    virtual int DimSpace () const { return 2; }
+
 
     // it is not a boundary integral (but a domain integral)
     virtual bool BoundaryForm () const { return false; }
 
     // Calculates the element matrix
     virtual void
-    AssembleElementMatrix (const FiniteElement & fel,
+    CalcElementMatrix (const FiniteElement & fel,
 			   const ElementTransformation & eltrans, 
 			   FlatMatrix<double> & elmat,
 			   LocalHeap & lh) const;
 
+
+    // flux postprocessing 
+    virtual int DimFlux () const { return 2; }
+
+    virtual void
+    CalcFlux (const FiniteElement & fel,
+	      const BaseSpecificIntegrationPoint & bsip,
+	      const FlatVector<double> & elx, 
+	      FlatVector<double> & flux,
+	      bool applyd,
+	      LocalHeap & lh) const;
   };
 
 
@@ -57,16 +62,9 @@ namespace ngfem
   {
     CoefficientFunction * coef_f;
   public:
-    MySourceIntegrator (CoefficientFunction * acoef) 
-      : coef_f(acoef)
+    MySourceIntegrator (const Array<CoefficientFunction*> & coeffs) 
+      : coef_f(coeffs[0])
     { ; }
-
-    static Integrator * Create (Array<CoefficientFunction*> & coeffs)
-    {
-      return new MySourceIntegrator (coeffs[0]);
-    }
-
-    virtual ~MySourceIntegrator ()  { ; }
 
     virtual string Name () const { return "MySource"; }
 
@@ -74,10 +72,10 @@ namespace ngfem
 
     // Calculates the right hand side element vector
     virtual void
-    AssembleElementVector (const FiniteElement & fel,
-			   const ElementTransformation & eltrans, 
-			   FlatVector<double> & elvec,
-			   LocalHeap & lh) const;
+    CalcElementVector (const FiniteElement & fel,
+		       const ElementTransformation & eltrans, 
+		       FlatVector<double> & elvec,
+		       LocalHeap & lh) const;
   };
 
 

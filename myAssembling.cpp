@@ -74,7 +74,7 @@ namespace myAssembling
 	    el2dof[i][cnt[i]++] = dnums[j];
 	}
       
-      MatrixGraph * graph = new MatrixGraph (ndof, el2dof, true);
+      MatrixGraph * graph = new MatrixGraph (el2dof, true);
       SparseMatrixSymmetric<double> & mat = *new SparseMatrixSymmetric<double> (*graph, true);
 
 
@@ -101,11 +101,11 @@ namespace myAssembling
 	  const FiniteElement & fel =  fes.GetFE (i, lh);
 	  
 	  FlatMatrix<> elmat (dnums.Size(), lh);
-	  laplace.AssembleElementMatrix (fel, eltrans, elmat, lh);
+	  laplace.CalcElementMatrix (fel, eltrans, elmat, lh);
 	  mat.AddElementMatrix (dnums, elmat);
 
 	  FlatVector<> elvec (dnums.Size(), lh);
-	  source.AssembleElementVector (fel, eltrans, elvec, lh);
+	  source.CalcElementVector (fel, eltrans, elvec, lh);
 	  vecf.AddIndirect (dnums, elvec);
 	} 
 

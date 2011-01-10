@@ -33,10 +33,10 @@ public:
   virtual bool BoundaryForm () const { return 0; }
   
   virtual void
-  AssembleElementMatrix (const FiniteElement & fel,
-			 const ElementTransformation & eltrans, 
-			 FlatMatrix<double> & elmat,
-			 LocalHeap & lh) const
+  CalcElementMatrix (const FiniteElement & fel,
+		     const ElementTransformation & eltrans, 
+		     FlatMatrix<double> & elmat,
+		     LocalHeap & lh) const
   {
     FlatVector<> elveclin(fel.GetNDof(), lh);
     elveclin = 0;

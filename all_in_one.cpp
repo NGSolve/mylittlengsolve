@@ -66,17 +66,10 @@ namespace all_in_one
       lff -> AddIntegrator (lfi);
     }
 
-  
-    static NumProc * Create (PDE & pde, const Flags & flags)
-    {
-      return new NumProcAllInOne (pde, flags);
-    }
-  
     virtual string GetClassName () const
     {
       return "AllInOne";
     }
-
 
     virtual void Do (LocalHeap & lh)
     {
@@ -100,6 +93,7 @@ namespace all_in_one
 
 
 
+static RegisterNumProc<NumProcAllInOne> npinit1("allinone");
     
   class Init
   { 

@@ -13,6 +13,8 @@ div u = 0
 using namespace ngsolve;
 
 
+
+
 /*
   Build one finite element space for the three fields  u_x, u_y, p.
   Taylor-Hood element: P2 for the velocities u, and P1 for the pressure
@@ -21,39 +23,25 @@ using namespace ngsolve;
 class FESpaceStokes : public CompoundFESpace
 {
 public:
-  FESpaceStokes (const MeshAccess & ama, 		   
-		 const Array<const FESpace*> & aspaces, 
-		 const Flags & flags)
-    : CompoundFESpace (ama, aspaces, flags)
-  { ; }
-  
-  virtual ~FESpaceStokes () { ; }
-  
-  static FESpace * Create (const MeshAccess & ma, const Flags & flags)
+
+  FESpaceStokes (const MeshAccess & ama, const Flags & flags)
+    : CompoundFESpace (ama, flags)
   {
-    cout << "Create Taylor-Hood FE Space" << endl;
-
-    // space has 3 components
-    Array<const FESpace*> spaces(3);
-
     int order = int (flags.GetNumFlag ("order", 2));
     // if (order < 2)
     // throw Exception ("Taylor-Hood elements need order 2 or higher");
 
-    Flags uflags;
+    Flags uflags, pflags;
     uflags.SetFlag ("order", order);
     uflags.SetFlag ("orderinner", order+1);
-    spaces[0] = new H1HighOrderFESpace (ma, uflags);
-    spaces[1] = new H1HighOrderFESpace (ma, uflags);
+    AddSpace (new H1HighOrderFESpace (ma, uflags));
+    AddSpace (new H1HighOrderFESpace (ma, uflags));
     
-    // uflags.SetFlag ("order", order);
-    // spaces[2] = new H1HighOrderFESpace (ma, uflags);
+    // pflags.SetFlag ("order", order);
+    // AddSpace (new H1HighOrderFESpace (ma, pflags));
 
-    uflags.SetFlag ("order", order-1);
-    spaces[2] = new L2HighOrderFESpace (ma, uflags);
-    
-    FESpaceStokes * fes = new FESpaceStokes (ma, spaces, flags);
-    return fes;
+    pflags.SetFlag ("order", order-1);
+    AddSpace (new L2HighOrderFESpace (ma, pflags));
   }
   
   virtual string GetClassName () const { return "Demo-StokesFESpace"; }
@@ -113,27 +101,21 @@ public:
     int nd_p = fel_p.GetNDof();
 
     // transformation of derivatives from reference element to general element:
-    FlatMatrix<> gradu(2, nd_u, lh);
-    gradu = Trans (sip.GetJacobianInverse ()) * 
-      Trans (fel_u.GetDShape(sip.IP(), lh));
-    
+    FlatMatrixFixWidth<2> gradu(nd_u, lh);
+    fel_u.CalcMappedDShape (sip, gradu);
+
     // the shape functions of the pressure
     FlatVector<> vecp(nd_p, lh);
-    vecp = fel_p.GetShape (sip.IP(), lh);
+    fel_p.CalcShape (sip.IP(), vecp);
+
+    mat = 0;
 
     // the first nd_u shape functions belong to u_x, the next nd_u belong to u_y:
-    mat = 0;
-    for (int j = 0; j < nd_u; j++)
-      {
-	mat(0,j) = gradu(0,j);
-	mat(1,j) = gradu(1,j);
-	mat(2,nd_u+j) = gradu(0,j);
-	mat(3,nd_u+j) = gradu(1,j);
-      }
+    mat.Rows(0,2).Cols(0, nd_u) = Trans (gradu);
+    mat.Rows(2,4).Cols(nd_u, 2*nd_u) = Trans (gradu);
 
     // ... and finally nd_p shape functions for the pressure:
-    for (int j = 0; j < nd_p; j++)
-      mat(4, 2*nd_u+j) = vecp(j);
+    mat.Row(4).Range(2*nd_u, 2*nd_u+nd_p) = vecp;
   }
 };
 
@@ -184,16 +166,12 @@ class StokesIntegrator
   : public T_BDBIntegrator<DiffOpStokes, StokesDMat, FiniteElement>
 {
 public:
-  StokesIntegrator (CoefficientFunction * coeff)
+
+  StokesIntegrator (Array<CoefficientFunction*> & coeffs)
     :  T_BDBIntegrator<DiffOpStokes, StokesDMat, FiniteElement>
-  (StokesDMat (coeff))
+  (StokesDMat (coeffs[0]))
   { ; }
-  
-  static Integrator * Create (Array<CoefficientFunction*> & coeffs)
-  {
-    return new StokesIntegrator (coeffs[0]);
-  }
-  
+
   virtual string Name () const { return "Stokes"; }
 };
 
@@ -229,14 +207,11 @@ public:
     int nd_u = fel_u.GetNDof();
 
     FlatVector<> vecu(nd_u, lh);
-    vecu = fel_u.GetShape (sip.IP(), lh);
+    fel_u.CalcShape (sip.IP(), vecu);
 
     mat = 0;
-    for (int j = 0; j < nd_u; j++)
-      {
-	mat(0,j) = vecu(j);
-	mat(1,nd_u+j) = vecu(j);
-      }
+    mat.Row(0).Range(0,nd_u) = vecu;
+    mat.Row(1).Range(nd_u, 2*nd_u) = vecu;
   }
 };
 
@@ -246,40 +221,17 @@ class StokesUIntegrator
 {
 public:
   ///
-  StokesUIntegrator ()
+  StokesUIntegrator (Array<CoefficientFunction*> & /* coeffs */)
     :  T_BDBIntegrator<DiffOpIdU, DiagDMat<2>, FiniteElement>
   (DiagDMat<2> (new ConstantCoefficientFunction(1)))
   { ; }
-  
-  static Integrator * Create (Array<CoefficientFunction*> & coeffs)
-  {
-    return new StokesUIntegrator ();
-  }
-  
+
   ///
   virtual string Name () const { return "Stokes IdU"; }
 };
 
 
 
-
-namespace demo_stokes_cpp
-{
-  class Init
-  { 
-  public: 
-    Init ();
-  };
-  
-  Init::Init()
-  {
-    GetFESpaceClasses().AddFESpace ("stokes", FESpaceStokes::Create);
-
-    GetIntegrators().AddBFIntegrator ("stokes", 2, 1,
-				      StokesIntegrator::Create);
-    GetIntegrators().AddBFIntegrator ("stokesu", 2, 0,
-				      StokesUIntegrator::Create);
-  }
-
-  static Init init;
-}
+static RegisterFESpace<FESpaceStokes> initfes ("stokes");
+static RegisterBilinearFormIntegrator<StokesIntegrator> initstokes ("stokes", 2, 1);
+static RegisterBilinearFormIntegrator<StokesUIntegrator> initstokesu ("stokesu", 2, 0);

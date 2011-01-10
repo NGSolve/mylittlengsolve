@@ -31,7 +31,7 @@ namespace ngfem
     Efficient memorymanagement is provided my locheap
   */
   void MyLaplaceIntegrator ::
-  AssembleElementMatrix (const FiniteElement & base_fel,
+  CalcElementMatrix (const FiniteElement & base_fel,
                          const ElementTransformation & eltrans, 
                          FlatMatrix<double> & elmat,
                          LocalHeap & lh) const
@@ -88,7 +88,26 @@ namespace ngfem
 
 
 
+  void MyLaplaceIntegrator ::
+  CalcFlux (const FiniteElement & base_fel,
+	    const BaseSpecificIntegrationPoint & base_sip,
+	    const FlatVector<double> & elx, 
+	    FlatVector<double> & flux,
+	    bool applyd,
+	    LocalHeap & lh) const
+  {
+    const ScalarFiniteElement<2> & fel =
+      dynamic_cast<const ScalarFiniteElement<2> &> (base_fel);
 
+    const SpecificIntegrationPoint<2,2> & sip =
+      static_cast<const SpecificIntegrationPoint<2,2> &> (base_sip);
+    
+    Vec<2> flux_ref = fel.EvaluateGrad (sip.IP(), elx);
+    flux = Trans(sip.GetJacobianInverse()) * flux_ref;
+
+    if (applyd)
+      flux *= coef_lambda -> Evaluate (sip);
+  }
 
 
 
@@ -106,7 +125,7 @@ namespace ngfem
     Efficient memorymanagement is provided my locheap
   */
   void MySourceIntegrator ::
-  AssembleElementVector (const FiniteElement & base_fel,
+  CalcElementVector (const FiniteElement & base_fel,
                          const ElementTransformation & eltrans, 
                          FlatVector<double> & elvec,
                          LocalHeap & lh) const
@@ -147,7 +166,12 @@ namespace ngfem
 
 
 
+
+  static RegisterBilinearFormIntegrator<MyLaplaceIntegrator> initlap ("mylaplace", 2, 1);
+  static RegisterLinearFormIntegrator<MySourceIntegrator> initsource ("mysource", 2, 1);
+
   
+  /*
   namespace init_mylaplace
   {
     class Init
@@ -169,5 +193,6 @@ namespace ngfem
 
     Init init;
   }
+  */
 }
 
