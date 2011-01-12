@@ -90,21 +90,8 @@ namespace all_in_one
     }
   };
 
-
-
-
-static RegisterNumProc<NumProcAllInOne> npinit1("allinone");
-    
-  class Init
-  { 
-  public: 
-    Init ();
-  };
   
-  Init::Init()
-  {
-    GetNumProcs().AddNumProc ("allinone", NumProcAllInOne::Create);
-  }
-  
-  Init init;
+
+
+  static RegisterNumProc<NumProcAllInOne> npinit1("allinone");
 }
