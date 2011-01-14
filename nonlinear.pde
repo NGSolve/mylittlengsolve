@@ -27,4 +27,5 @@ source csource
 
 numproc nonlinearsolve np1 -bilinearform=a -linearform=f -gridfunction=u -maxit=50
 
+numproc visualization npvis -scalarfunction=u -subdivision=2 -nolineartexture
 

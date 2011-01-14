@@ -40,7 +40,7 @@ public:
   {
     FlatVector<> elveclin(fel.GetNDof(), lh);
     elveclin = 0;
-    AssembleLinearizedElementMatrix (fel, eltrans, elveclin, elmat, lh);
+    CalcLinearizedElementMatrix (fel, eltrans, elveclin, elmat, lh);
   }
 
 
@@ -114,11 +114,11 @@ public:
 
   // compute the Hesse Matrix at point elveclin
   virtual void
-  AssembleLinearizedElementMatrix (const FiniteElement & bfel,
-				   const ElementTransformation & eltrans,
-				   FlatVector<double> & elveclin,
-				   FlatMatrix<double> & elmat,
-				   LocalHeap & lh) const
+  CalcLinearizedElementMatrix (const FiniteElement & bfel,
+			       const ElementTransformation & eltrans,
+			       FlatVector<double> & elveclin,
+			       FlatMatrix<double> & elmat,
+			       LocalHeap & lh) const
   {
     const ScalarFiniteElement<2> & fel = static_cast<const ScalarFiniteElement<2>&> (bfel);
     int ndof = fel.GetNDof();
@@ -246,6 +246,8 @@ public:
 
 
 
+static RegisterNumProc<NumProcNonlinearSolve> npinit("nonlinearsolve");
+
 
 namespace nonlinearsolve
 {
@@ -257,7 +259,7 @@ namespace nonlinearsolve
   
   Init::Init()
   {
-    GetNumProcs().AddNumProc ("nonlinearsolve", NumProcNonlinearSolve::Create);
+    // GetNumProcs().AddNumProc ("nonlinearsolve", NumProcNonlinearSolve::Create);
 
     GetIntegrators().AddBFIntegrator ("mynonlinear", 2, 0,
 				      MyNonlinearIntegrator::Create);
