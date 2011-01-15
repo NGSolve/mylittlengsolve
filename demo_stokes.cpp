@@ -82,8 +82,8 @@ public:
     mat  is a matrix. Can be a general dense matrix, or a matrix of fixed height 5 (thus generic)
   */
 
-  template <typename FEL, typename SIP, typename MAT>
-  static void GenerateMatrix (const FEL & bfel, const SIP & sip,
+  template <typename FEL, typename MIP, typename MAT>
+  static void GenerateMatrix (const FEL & bfel, const MIP & mip,
 			      MAT & mat, LocalHeap & lh)
   {
     // must get the right elements, otherwise an exception is thrown.
@@ -99,23 +99,23 @@ public:
     
     int nd_u = fel_u.GetNDof();
     int nd_p = fel_p.GetNDof();
-
+    
     // transformation of derivatives from reference element to general element:
     FlatMatrixFixWidth<2> gradu(nd_u, lh);
-    fel_u.CalcMappedDShape (sip, gradu);
+    fel_u.CalcMappedDShape (mip, gradu);
 
     // the shape functions of the pressure
     FlatVector<> vecp(nd_p, lh);
-    fel_p.CalcShape (sip.IP(), vecp);
+    fel_p.CalcShape (mip.IP(), vecp);
 
     mat = 0;
 
     // the first nd_u shape functions belong to u_x, the next nd_u belong to u_y:
-    mat.Rows(0,2).Cols(0, nd_u) = Trans (gradu);
-    mat.Rows(2,4).Cols(nd_u, 2*nd_u) = Trans (gradu);
+    mat.Rows(0,2).Cols(cfel.GetRange(0)) = Trans (gradu);
+    mat.Rows(2,4).Cols(cfel.GetRange(1)) = Trans (gradu);
 
     // ... and finally nd_p shape functions for the pressure:
-    mat.Row(4).Range(2*nd_u, 2*nd_u+nd_p) = vecp;
+    mat.Row(4).Range(cfel.GetRange(2)) = vecp;
   }
 };
 
@@ -141,14 +141,14 @@ public:
 
   StokesDMat (CoefficientFunction * anu) : nu(anu) { ; }
   
-  template <typename FEL, typename SIP, typename MAT>
-  void GenerateMatrix (const FEL & fel, const SIP & sip,
+  template <typename FEL, typename MIP, typename MAT>
+  void GenerateMatrix (const FEL & fel, const MIP & mip,
 		       MAT & mat, LocalHeap & lh) const
   {
     mat = 0;
 
     // (nu  grud u, grad v)
-    double val = nu -> Evaluate (sip);
+    double val = nu -> Evaluate (mip);
     for (int i = 0; i < 4; i++)
       mat(i, i) = val;
 
@@ -195,8 +195,8 @@ public:
   enum { DIM_DMAT = 2 };
   enum { DIFFORDER = 0 };
   
-  template <typename FEL, typename SIP, typename MAT>
-  static void GenerateMatrix (const FEL & bfel, const SIP & sip,
+  template <typename FEL, typename MIP, typename MAT>
+  static void GenerateMatrix (const FEL & bfel, const MIP & mip,
 			      MAT & mat, LocalHeap & lh)
   {
     const CompoundFiniteElement & cfel = 
@@ -207,11 +207,11 @@ public:
     int nd_u = fel_u.GetNDof();
 
     FlatVector<> vecu(nd_u, lh);
-    fel_u.CalcShape (sip.IP(), vecu);
+    fel_u.CalcShape (mip.IP(), vecu);
 
     mat = 0;
-    mat.Row(0).Range(0,nd_u) = vecu;
-    mat.Row(1).Range(nd_u, 2*nd_u) = vecu;
+    mat.Row(0).Range(cfel.GetRange(0)) = vecu;
+    mat.Row(1).Range(cfel.GetRange(1)) = vecu;
   }
 };
 

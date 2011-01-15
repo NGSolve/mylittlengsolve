@@ -49,7 +49,8 @@ namespace ngcomp
 
     
     // needed to draw solution function
-    evaluator = new MassIntegrator<2> (new ConstantCoefficientFunction (1));
+    static ConstantCoefficientFunction one(1);
+    evaluator = GetIntegrators().CreateBFI("mass", ma.GetDimension(), &one);
   }
     
   

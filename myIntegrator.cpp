@@ -32,9 +32,9 @@ namespace ngfem
   */
   void MyLaplaceIntegrator ::
   CalcElementMatrix (const FiniteElement & base_fel,
-                         const ElementTransformation & eltrans, 
-                         FlatMatrix<double> & elmat,
-                         LocalHeap & lh) const
+		     const ElementTransformation & eltrans, 
+		     FlatMatrix<double> & elmat,
+		     LocalHeap & lh) const
   {
     /*
       tell the compiler that we are expecting to get an scalar fe in 2D.
@@ -63,10 +63,10 @@ namespace ngfem
       {
         
         // calculate Jacobi matrix in the integration point
-        SpecificIntegrationPoint<2,2> sip(ir[i], eltrans, lh);
+        MappedIntegrationPoint<2,2> mip(ir[i], eltrans, lh);
 
         // lambda(x)
-        double lam = coef_lambda -> Evaluate (sip);
+        double lam = coef_lambda -> Evaluate (mip);
 
         /*
           gradient on reference element
@@ -75,10 +75,10 @@ namespace ngfem
         fel.CalcDShape (ir[i], dshape_ref);
         
         // transform it for the mapped element
-        dshape = dshape_ref * sip.GetJacobianInverse();
+        dshape = dshape_ref * mip.GetJacobianInverse();
         
         // integration weight and Jacobi determinant
-        double fac = sip.IP().Weight() * fabs (sip.GetJacobiDet());
+        double fac = mip.IP().Weight() * mip.GetMeasure();
 
         // elmat_{i,j} += (fac*lam) * InnerProduct (grad shape_i, grad shape_j)
         elmat += (fac*lam) * dshape * Trans(dshape);
@@ -90,7 +90,7 @@ namespace ngfem
 
   void MyLaplaceIntegrator ::
   CalcFlux (const FiniteElement & base_fel,
-	    const BaseSpecificIntegrationPoint & base_sip,
+	    const BaseMappedIntegrationPoint & base_mip,
 	    const FlatVector<double> & elx, 
 	    FlatVector<double> & flux,
 	    bool applyd,
@@ -99,14 +99,14 @@ namespace ngfem
     const ScalarFiniteElement<2> & fel =
       dynamic_cast<const ScalarFiniteElement<2> &> (base_fel);
 
-    const SpecificIntegrationPoint<2,2> & sip =
-      static_cast<const SpecificIntegrationPoint<2,2> &> (base_sip);
+    const MappedIntegrationPoint<2,2> & mip =
+      static_cast<const MappedIntegrationPoint<2,2> &> (base_mip);
     
-    Vec<2> flux_ref = fel.EvaluateGrad (sip.IP(), elx);
-    flux = Trans(sip.GetJacobianInverse()) * flux_ref;
+    Vec<2> flux_ref = fel.EvaluateGrad (mip.IP(), elx);
+    flux = Trans(mip.GetJacobianInverse()) * flux_ref;
 
     if (applyd)
-      flux *= coef_lambda -> Evaluate (sip);
+      flux *= coef_lambda -> Evaluate (mip);
   }
 
 
@@ -126,9 +126,9 @@ namespace ngfem
   */
   void MySourceIntegrator ::
   CalcElementVector (const FiniteElement & base_fel,
-                         const ElementTransformation & eltrans, 
-                         FlatVector<double> & elvec,
-                         LocalHeap & lh) const
+		     const ElementTransformation & eltrans, 
+		     FlatVector<double> & elvec,
+		     LocalHeap & lh) const
   {
     const ScalarFiniteElement<2> & fel =
       dynamic_cast<const ScalarFiniteElement<2> &> (base_fel);
@@ -144,15 +144,15 @@ namespace ngfem
 
     for (int i = 0 ; i < ir.GetNIP(); i++)
       {
-        SpecificIntegrationPoint<2,2> sip(ir[i], eltrans, lh);
+        MappedIntegrationPoint<2,2> mip(ir[i], eltrans, lh);
 
-        double f = coef_f -> Evaluate (sip);
+        double f = coef_f -> Evaluate (mip);
 
         // calculate shape functions 
         fel.CalcShape (ir[i], shape);
         
         // integration weight and Jacobi determinant
-        double fac = sip.IP().Weight() * fabs (sip.GetJacobiDet());
+        double fac = mip.IP().Weight() * mip.GetMeasure();
 
         // elvec_{i} += (fac*f) shape_i
         elvec += (fac*f) * shape;
@@ -172,27 +172,27 @@ namespace ngfem
 
   
   /*
-  namespace init_mylaplace
-  {
+    namespace init_mylaplace
+    {
     class Init
     { 
     public:  
-      Init ();
+    Init ();
     };        
     
     Init::Init()
     {
-      // register the integrator mylaplace for 2D space, requiring one coefficient function
-      GetIntegrators().AddBFIntegrator ("mylaplace", 2, 1,
-                                        MyLaplaceIntegrator::Create);
+    // register the integrator mylaplace for 2D space, requiring one coefficient function
+    GetIntegrators().AddBFIntegrator ("mylaplace", 2, 1,
+    MyLaplaceIntegrator::Create);
 
-      GetIntegrators().AddLFIntegrator ("mysource", 2, 1,
-                                        MySourceIntegrator::Create);
+    GetIntegrators().AddLFIntegrator ("mysource", 2, 1,
+    MySourceIntegrator::Create);
 
     }
 
     Init init;
-  }
+    }
   */
 }
 

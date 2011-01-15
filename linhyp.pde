@@ -22,7 +22,7 @@ define gridfunction u -fespace=v
 numproc setvalues np1 -gridfunction=u -coefficient=u0
 
 
-numproc linhyp np2 -gridfunction=u -flow=flow -dt=0.005 -tend=20
+numproc linhyp np2 -gridfunction=u -flow=flow -dt=0.002 -tend=20
 
 numproc visualization npv1 -scalarfunction=u -subdivision=3 -nolineartexture -minval=0 -maxval=1
 
