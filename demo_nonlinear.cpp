@@ -22,11 +22,9 @@ using namespace ngsolve;
 class MyNonlinearIntegrator : public BilinearFormIntegrator
 {
 public:
-
-  static Integrator * Create (Array<CoefficientFunction*> & coeffs)
-  {
-    return new MyNonlinearIntegrator ();
-  }
+  
+  MyNonlinearIntegrator (Array<CoefficientFunction*> & coeffs)
+  { ; }
   
   virtual string Name () const { return "MyNonlinear"; }
 
@@ -63,13 +61,13 @@ public:
       {
         HeapReset hr(lh);
         
-        SpecificIntegrationPoint<2,2> sip(ir[i], eltrans, lh); 
+        MappedIntegrationPoint<2,2> mip(ir[i], eltrans, lh); 
 
         fel.CalcShape (ir[i], shape);
 
         double ui = InnerProduct (shape, elx);
         double phi = pow(ui,4);
-        double fac = fabs (sip.GetJacobiDet()) * sip.IP().Weight();
+        double fac = fabs (mip.GetJacobiDet()) * mip.IP().Weight();
         
         energy += fac * phi;
       }
@@ -99,14 +97,14 @@ public:
       {
         HeapReset hr(lh);
         
-        SpecificIntegrationPoint<2,2> sip(ir[i], eltrans, lh); 
+        MappedIntegrationPoint<2,2> mip(ir[i], eltrans, lh); 
 
         fel.CalcShape (ir[i], shape);
 
         double ui = InnerProduct (shape, elx);
         double phiprime = 4 * pow(ui,3);
 
-        double fac = fabs (sip.GetJacobiDet()) * sip.IP().Weight();
+        double fac = fabs (mip.GetJacobiDet()) * mip.IP().Weight();
         
         ely += fac * phiprime * shape;
       }
@@ -131,18 +129,17 @@ public:
     const IntegrationRule & ir = 
       SelectIntegrationRule (fel.ElementType(), 2*fel.Order());
 
-
     for (int i = 0 ; i < ir.GetNIP(); i++)
       {
         HeapReset hr(lh);
-        SpecificIntegrationPoint<2,2> sip(ir[i], eltrans, lh); 
+        MappedIntegrationPoint<2,2> mip(ir[i], eltrans, lh); 
 
         fel.CalcShape (ir[i], shape);
 
         double uilin = InnerProduct(shape, elveclin);
         double phiprimeprime = 12 * pow(uilin,2);
 
-        double fac = fabs (sip.GetJacobiDet()) * sip.IP().Weight();
+        double fac = fabs (mip.GetJacobiDet()) * mip.IP().Weight();
 
         elmat += (fac * phiprimeprime) * shape * Trans(shape);
       }
@@ -176,10 +173,6 @@ public:
   virtual ~NumProcNonlinearSolve()
   { ; }
 
-  static NumProc * Create (PDE & pde, const Flags & flags)
-  {
-    return new NumProcNonlinearSolve (pde, flags);
-  }
 
   virtual void Do(LocalHeap & lh)
   {
@@ -247,23 +240,5 @@ public:
 
 
 static RegisterNumProc<NumProcNonlinearSolve> npinit("nonlinearsolve");
+static RegisterBilinearFormIntegrator<MyNonlinearIntegrator> initnl ("mynonlinear", 2, 0);
 
-
-namespace nonlinearsolve
-{
-  class Init
-  { 
-  public: 
-    Init ();
-  };
-  
-  Init::Init()
-  {
-    // GetNumProcs().AddNumProc ("nonlinearsolve", NumProcNonlinearSolve::Create);
-
-    GetIntegrators().AddBFIntegrator ("mynonlinear", 2, 0,
-				      MyNonlinearIntegrator::Create);
-  }
-  
-  Init init;
-}

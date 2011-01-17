@@ -4,7 +4,6 @@
 /* Date:   26. Apr. 2009                                             */
 /*********************************************************************/
 
-
 /*
 
 My own FESpace for high order finite elements
@@ -145,31 +144,5 @@ namespace ngcomp
 
 
 
-
-
-
-
-
-
-
-
-
-  
-
-  namespace myhofespace_cpp
-  {
-    class Init
-    { 
-    public: 
-      Init ();
-    };
-  
-    Init::Init()
-    {
-      GetFESpaceClasses().AddFESpace ("myhofespace", MyHighOrderFESpace::Create);
-    }
-  
-    Init init;
-  }
-
+  static RegisterFESpace<MyHighOrderFESpace> initifes ("myhofespace");
 }

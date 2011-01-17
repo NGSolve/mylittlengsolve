@@ -148,31 +148,11 @@ namespace ngcomp
 
 
 
-  namespace myfespace_cpp
-  {
-    class Init
-    { 
-    public: 
-      Init ();
-    };
-  
-    Init::Init()
-    {
-      /*
-        register fe-spaces
-        when reading "define fespace v -type=myfespace", the 
-        PDE - parser will call the corresponding Create - Function, which
-        will generate a MyFESpace object.
-      */
-      GetFESpaceClasses().AddFESpace ("myfespace", MyFESpace::Create);
-    }
-  
-  
-    /*
-      global variable will be initialized at program start, its constructor
-      will register the new fe-space
-    */
-    Init init;
-  }
+  /*
+    register fe-spaces
+    Object of type MyFESpace can be defined in the pde-file via
+    "define fespace v -type=myfespace"
+  */
 
+  static RegisterFESpace<MyFESpace> initifes ("myfespace");
 }

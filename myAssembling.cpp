@@ -32,11 +32,6 @@ namespace myAssembling
       gfu = pde.GetGridFunction (flags.GetStringFlag ("gridfunction", "u"));
     }
   
-    static NumProc * Create (PDE & pde, const Flags & flags)
-    {
-      return new NumProcMyAssembling (pde, flags);
-    }
-  
     virtual string GetClassName () const
     {
       return "MyAssembling";
@@ -55,13 +50,11 @@ namespace myAssembling
 
       Array<int> dnums;
       Array<int> cnt(ne);
-      cnt = 0;
     
       for (int i = 0; i < ne; i++)
 	{
 	  fes.GetDofNrs (i, dnums);
-	  for (int j = 0; j < dnums.Size(); j++)
-            cnt[i]++;
+	  cnt[i] = dnums.Size();
 	}	  
       
       Table<int> el2dof(cnt);
@@ -73,20 +66,14 @@ namespace myAssembling
 	  for (int j = 0; j < dnums.Size(); j++)
 	    el2dof[i][cnt[i]++] = dnums[j];
 	}
-      
-      MatrixGraph * graph = new MatrixGraph (el2dof, true);
-      SparseMatrixSymmetric<double> & mat = *new SparseMatrixSymmetric<double> (*graph, true);
 
+      MatrixGraph * graph = new MatrixGraph (ndof, el2dof, el2dof, true);
+      SparseMatrixSymmetric<double> & mat = *new SparseMatrixSymmetric<double> (*graph, true);
 
       VVector<double> vecf (fes.GetNDof());
 
-
-
-
       LaplaceIntegrator<2> laplace (new ConstantCoefficientFunction (1));
       SourceIntegrator<2> source (new ConstantCoefficientFunction (1));
-
-      ElementTransformation eltrans;
 
       mat = 0.0;
       vecf = 0.0;
@@ -95,7 +82,7 @@ namespace myAssembling
 	{  
 	  HeapReset hr(lh); 
 
-	  ma.GetElementTransformation (i, eltrans, lh);
+	  ElementTransformation eltrans = ma.GetTrafo (i, 0);
 	  
 	  fes.GetDofNrs (i, dnums);
 	  const FiniteElement & fel =  fes.GetFE (i, lh);
@@ -109,10 +96,8 @@ namespace myAssembling
 	  vecf.AddIndirect (dnums, elvec);
 	} 
 
-
       *testout << "mat = " << mat << endl;
       *testout << "vecf = " << vecf << endl;
-
 
       BaseMatrix * inv = mat.InverseMatrix (fes.GetFreeDofs());
 
@@ -120,20 +105,5 @@ namespace myAssembling
     }
   };
 
-
-
-
-    
-  class Init
-  { 
-  public: 
-    Init ();
-  };
-  
-  Init::Init()
-  {
-    GetNumProcs().AddNumProc ("myassembling", NumProcMyAssembling::Create);
-  }
-  
-  Init init;
+  static RegisterNumProc<NumProcMyAssembling> npinit1("myassembling");
 }

@@ -169,30 +169,5 @@ namespace ngfem
 
   static RegisterBilinearFormIntegrator<MyLaplaceIntegrator> initlap ("mylaplace", 2, 1);
   static RegisterLinearFormIntegrator<MySourceIntegrator> initsource ("mysource", 2, 1);
-
-  
-  /*
-    namespace init_mylaplace
-    {
-    class Init
-    { 
-    public:  
-    Init ();
-    };        
-    
-    Init::Init()
-    {
-    // register the integrator mylaplace for 2D space, requiring one coefficient function
-    GetIntegrators().AddBFIntegrator ("mylaplace", 2, 1,
-    MyLaplaceIntegrator::Create);
-
-    GetIntegrators().AddLFIntegrator ("mysource", 2, 1,
-    MySourceIntegrator::Create);
-
-    }
-
-    Init init;
-    }
-  */
 }
 

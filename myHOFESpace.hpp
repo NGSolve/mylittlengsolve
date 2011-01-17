@@ -36,13 +36,6 @@ namespace ngcomp
     // destructor
     virtual ~MyHighOrderFESpace ();
 
-
-    // function which can create fe-space (needed by pde-parser)
-    static FESpace * Create (const MeshAccess & ma, const Flags & flags)
-    {
-      return new MyHighOrderFESpace (ma, flags); 
-    }
-
     // a name for our new fe-space
     virtual string GetClassName () const
     {

@@ -60,12 +60,6 @@ public:
   { ; }
   
 
-  // creates an solver object
-  static NumProc * Create (PDE & pde, const Flags & flags)
-  {
-    return new NumProcCouplingDemo (pde, flags);
-  }
-
   // solve at one level
   virtual void Do(LocalHeap & lh)
   {
@@ -160,20 +154,6 @@ public:
 
 
 
+// register the numproc 'democoupling' 
+static RegisterNumProc<NumProcCouplingDemo> npinit1("democoupling");
 
-namespace demo_coupling_cpp
-{
-  class Init
-  { 
-  public: 
-    Init ();
-  };
-    
-  Init::Init()
-  {
-    GetNumProcs().AddNumProc ("democoupling", NumProcCouplingDemo::Create, NumProcCouplingDemo::PrintDoc);
-  }
-    
-  Init init;
-}
-  
