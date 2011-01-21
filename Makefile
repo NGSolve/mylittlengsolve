@@ -4,7 +4,7 @@ myFESpace.o myHOFESpace.o myPreconditioner.o myAssembling.o linhypDG.o
 
 
 %.o : %.cpp
-	gcc -O2 -fopenmp -fpic -DNETGEN_ELTRANS -DUSE_TIMEOFDAY -I. -I$(NETGENDIR)/../include -c $? -o $@
+	gcc -O2 -fopenmp -fpic -DNETGEN_ELTRANS -DUSE_TIMEOFDAY -DLAPACK -I. -I$(NETGENDIR)/../include -c $? -o $@
 
 libmyngsolve.so : $(objects)
 	gcc -shared -fopenmp -fpic $(objects) -o $@
