@@ -74,8 +74,6 @@ namespace ngcomp
       ndof = nvert;  // number of vertices
     else
       ndof = nvert + ma.GetNEdges();  // num vertics + num edges
-
-    FinalizeUpdate (lh);
   }
 
   

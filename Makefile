@@ -1,6 +1,6 @@
 objects = all_in_one.o demo_instat.o demo_stokes.o myElement.o \
 myHOElement.o myIntegrator.o demo_coupling.o demo_nonlinear.o  \
-myFESpace.o myHOFESpace.o myAssembling.o linhypDG.o
+myFESpace.o myHOFESpace.o myPreconditioner.o myAssembling.o linhypDG.o 
 
 
 %.o : %.cpp
