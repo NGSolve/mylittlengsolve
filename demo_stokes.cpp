@@ -63,8 +63,8 @@ class DiffOpStokes : public DiffOp<DiffOpStokes>
   // du1/dx, du1/dy, du2/dx, du2/dy, p
 
 public:
-  enum { DIM = 1 };          // just one copy of the spaces
-  enum { DIM_SPACE = 2 };    // 2D space
+  enum { DIM = 1 };          // just one copy of the finite element spaces
+  enum { DIM_SPACE = 2 };    // 2D domain 
   enum { DIM_ELEMENT = 2 };  // 2D elements (in contrast to 1D boundary elements)
   enum { DIM_DMAT = 5 };     // D-matrix is 5x5
   enum { DIFFORDER = 0 };    // minimal differential order (to determine integration order)
@@ -78,7 +78,7 @@ public:
  
     The arguments are generic.
     bfel  must be a proper finite element, i.e., a compound element consiting of 3 scalar parts.
-    sip  is the specific integration point, containing the Jacobi matrix of the mapping
+    mip  is the mapped integration point, containing the Jacobi matrix of the mapping
     mat  is a matrix. Can be a general dense matrix, or a matrix of fixed height 5 (thus generic)
   */
 

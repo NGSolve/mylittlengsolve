@@ -21,7 +21,6 @@ Please include this file to the src files given in netgen/ngsolve/Makefile
 
 
 #include <solve.hpp>
-
 using namespace ngsolve;
 
 
@@ -68,9 +67,6 @@ public:
     const FESpace & fesu = gfu -> GetFESpace();
     const FESpace & fesf = lff -> GetFESpace();
 
-    Array<int> dnumsu, dnumsf;  // the dof-numbes for u and f
-    ElementTransformation eltrans;
-
     lff -> GetVector() = 0.0;
 
     int ne = ma.GetNE();
@@ -78,17 +74,20 @@ public:
       {  
         HeapReset hr(lh);    // reset the local heap memory at the end of the loop
 		
-        ma.GetElementTransformation (i, eltrans, lh);
+        ElementTransformation eltrans = ma.GetTrafo (i, 0);
 
         const ScalarFiniteElement<2> & felu = dynamic_cast<const ScalarFiniteElement<2>&> (fesu.GetFE (i, lh));
         const ScalarFiniteElement<2> & felf = dynamic_cast<const ScalarFiniteElement<2>&> (fesf.GetFE (i, lh));
+
+	int nd_u = felu.GetNDof();
+	int nd_f = felf.GetNDof();
+
+	Array<int> dnumsu(nd_u, lh), dnumsf(nd_f, lh);  // the dof-numbes for u and f
 		      
         fesu.GetDofNrs (i, dnumsu);
         fesf.GetDofNrs (i, dnumsf);
 
-        FlatVector<> elu (dnumsu.Size(), lh);
-        FlatVector<> shape (dnumsf.Size(), lh);
-        FlatVector<> elf (dnumsf.Size(), lh);
+        FlatVector<> elu (nd_u, lh), shape (nd_f, lh), elf (nd_f, lh);
 
         gfu -> GetElementVector (dnumsu, elu);
 
@@ -99,16 +98,16 @@ public:
         elf = 0.0;
         for (int j = 0; j < ir.GetNIP(); j++)   // integration points
           {
-            SpecificIntegrationPoint<2, 2> sip(ir[j], eltrans, lh);  // computes Jacobi matrix etc
+            MappedIntegrationPoint<2, 2> mip(ir[j], eltrans, lh);  // computes Jacobi matrix etc
 
             Vec<1> ui;   // value of u in point
-            DiffOpId<2>::Apply (felu, sip, elu, ui, lh);   // compute value in point (= elu * shape)
+            DiffOpId<2>::Apply (felu, mip, elu, ui, lh);   // compute value in point (= elu * shape)
             
             // could use also other differential operators such as
             // DiffOpGradient<2>, DiffOpCurl<2>, ....
 	    
  
-            double fac = ir[j].Weight() * fabs (sip.GetJacobiDet());   // integration weights
+            double fac = ir[j].Weight() * mip.GetMeasure();   // integration weights
 	    
 	    felf.CalcShape (ir[j], shape);
             elf += (fac*ui(0)) * shape; 
@@ -117,9 +116,6 @@ public:
         lff -> AddElementVector (dnumsf, elf);
       }
   }
-
-
-
 
 
 

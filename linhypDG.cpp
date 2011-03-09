@@ -161,9 +161,9 @@ public:
 	
 	int nip = ir.Size();
 	
-	IntegrationRule irt(nip);
+	IntegrationRule irt;
 	for (int j = 0; j < nip; j++)
-	  irt.Append (transform(fai.facetnr[0], ir[j]));
+	  irt.Append (transform(fai.facetnr[0], ir[j]));  // transform facet coordinates to element coordinates
 	
 	MappedIntegrationRule<D,D> mir(irt, ma.GetTrafo(elnums[0], 0), lh);
 	
@@ -398,12 +398,6 @@ static RegisterNumProc<NumProcLinearHyperbolic<2> > npinit1("linhyp", 2);
 static RegisterNumProc<NumProcLinearHyperbolic<3> > npinit2("linhyp", 3);
 
   
-
-
-
-
-
-
 
 
 

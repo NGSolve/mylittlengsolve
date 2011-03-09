@@ -6,13 +6,10 @@ shared = libmyngsolve
 
 define coefficient flow
 ( (y-0.5), (0.5-x) ),
-(1, 0),
 
 define coefficient u0
-(exp(-40*((x-0.7)*(x-0.7)+(y-0.7)*(y-0.7)))),
+(exp(-90*((x-0.7)*(x-0.7)+(y-0.7)*(y-0.7)))),
 (x)
-
-
 
 define fespace v -order=5 -type=l2ho -all_dofs_together
 
