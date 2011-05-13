@@ -42,7 +42,7 @@ protected:
   class ElementData
   {
   public:
-    MatrixFixWidth<2> flowip;
+    MatrixFixWidth<D> flowip;
     Matrix<> invmass;
 
     ElementData (int ndof, int nip)
@@ -168,7 +168,7 @@ public:
 	MappedIntegrationRule<D,D> mir(irt, ma.GetTrafo(elnums[0], 0), lh);
 	
 	FlatVector<> flown = fai.flown;
-	FlatMatrix<> flowir(nip, 2, lh);
+	FlatMatrix<> flowir(nip, D, lh);
 	
 	cfflow -> Evaluate (mir, flowir);
 	
@@ -193,6 +193,7 @@ public:
     Vector<> w(vecu.Size());
     Vector<> hu(vecu.Size());
     
+
     for (double t = 0; t < tend; t += dt)
       {
 	cout << "t = " << setw(6) << t << flush;
