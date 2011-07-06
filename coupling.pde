@@ -31,7 +31,7 @@ define coefficient penalty
 define coefficient coef_source
 1,
 
-define fespace v1 -order=3
+define fespace v1 -type=h1ho -order=3
 define gridfunction u1 -fespace=v1
 
 define bilinearform a1 -fespace=v1 -symmetric
@@ -45,7 +45,7 @@ define preconditioner c1 -type=direct -bilinearform=a1
 
 
 
-define fespace v2 -order=6
+define fespace v2 -type=h1ho -order=6
 define gridfunction u2 -fespace=v2
 
 define bilinearform a2 -fespace=v2 -symmetric

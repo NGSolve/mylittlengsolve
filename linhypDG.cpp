@@ -244,7 +244,6 @@ public:
 
 
 
-
   void CalcConvection (FlatVector<double> vecu, FlatVector<double> conv,
 		       LocalHeap & lh)
   {
