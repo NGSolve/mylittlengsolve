@@ -52,6 +52,8 @@ protected:
   Array<FacetData*> facetdata;
   Array<ElementData*> elementdata;
 
+  int ndf;  // num dofs per facet
+  ParallelDofs * pardofs;
     
 public:
     
@@ -185,6 +187,14 @@ public:
 
 
 
+    ndf = fes.GetFacetFE (0, lh).GetNDof();
+
+    Array<Node> dofnodes(ndf*nf);
+    for (int i = 0; i < nf; i++)
+      for (int j = 0; j < ndf; j++)
+	dofnodes[i*ndf+j] = Node( NODE_TYPE(ma.GetDimension()-1), i);
+    
+    pardofs = new ParallelDofs (ma, dofnodes);
 
 
 
@@ -194,10 +204,12 @@ public:
     Vector<> w(vecu.Size());
     Vector<> hu(vecu.Size());
     
+    cout << "heapsize = " << lh.Available() << endl;
+
 
     for (double t = 0; t < tend; t += dt)
       {
-	cout << "t = " << setw(6) << t << flush;
+	cout << IM(1) << "t = " << setw(6) << t << flush;
 
 	CalcConvection (vecu, conv, lh);
 	SolveM (conv, w, lh);
@@ -215,6 +227,7 @@ public:
 	     << 1e6 * timer_mass.GetTime()/timer_mass.GetCounts()/vecu.Size() 
 	     << "\r";
 
+	MyMPI_Barrier();
 	Ng_Redraw();
       }
   }
@@ -291,17 +304,9 @@ public:
 
     timer_element.Stop();
 
-
-    int ndf = fes.GetFacetFE (0, lh).GetNDof();
-
-    Array<Node> dofnodes(ndf*nf);
-    for (int i = 0; i < nf; i++)
-      for (int j = 0; j < ndf; j++)
-	dofnodes[i*ndf+j] = Node( NODE_TYPE(ma.GetDimension()-1), i);
     
-    ParallelDofs pardofs (ma, dofnodes);
 
-    ParallelVVector<> traces (ndf * nf, &pardofs);
+    ParallelVVector<> traces (pardofs->GetNDof(), pardofs);
     traces.SetStatus (DISTRIBUTED);
 
     timer_facet.Start();

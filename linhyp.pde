@@ -1,6 +1,7 @@
 geometry = square.in2d
 mesh = squaref.vol
 
+define constant heapsize = 100000
 shared = libmyngsolve
 
 

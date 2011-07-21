@@ -1,13 +1,13 @@
 objects = all_in_one.o demo_instat.o demo_stokes.o myElement.o \
 myHOElement.o myIntegrator.o demo_coupling.o demo_nonlinear.o  \
-myFESpace.o myHOFESpace.o myPreconditioner.o myAssembling.o linhypDG.o 
+myFESpace.o myHOFESpace.o myPreconditioner.o myAssembling.o linhypDG_par.o 
 
 
 %.o : %.cpp
-	gcc -O2 -fopenmp -fpic -DNETGEN_ELTRANS -DUSE_TIMEOFDAY -DLAPACK -I. -I$(NETGENDIR)/../include -c $? -o $@
+	mpic++  -O2 -fopenmp -fpic -DNETGEN_ELTRANS -DUSE_TIMEOFDAY -DLAPACK -I. -I$(NETGENDIR)/../include -c $? -o $@
 
 libmyngsolve.so : $(objects)
-	gcc -shared -fopenmp -fpic $(objects) -o $@
+	mpic++ -shared -fopenmp -fpic $(objects) -o $@
 
 clean:
 	rm *.o libmyngsolve.so
