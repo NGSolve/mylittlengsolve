@@ -103,7 +103,7 @@ public:
 	const_cast<L2HighOrderFiniteElement<D>&> (fel).PrecomputeTrace ();
 
 
-	MappedIntegrationRule<D,D> mir(ir, ma.GetTrafo (i, 0), lh);
+	MappedIntegrationRule<D,D> mir(ir, ma.GetTrafo (i, 0, lh), lh);
 	
 	elementdata[i] = new ElementData (fel.GetNDof(), ir.Size());
 	ElementData & edi = *elementdata[i];
@@ -119,7 +119,7 @@ public:
 
 
 	FlatMatrix<> mass(fel.GetNDof(), lh);
-	bfi.CalcElementMatrix (fel, ma.GetTrafo(i, 0), mass, lh);
+	bfi.CalcElementMatrix (fel, ma.GetTrafo(i, 0, lh), mass, lh);
 	CalcInverse (mass, edi.invmass);
       }
 
@@ -165,7 +165,7 @@ public:
 	for (int j = 0; j < nip; j++)
 	  irt.Append (transform(fai.facetnr[0], ir[j]));  // transform facet coordinates to element coordinates
 	
-	MappedIntegrationRule<D,D> mir(irt, ma.GetTrafo(elnums[0], 0), lh);
+	MappedIntegrationRule<D,D> mir(irt, ma.GetTrafo(elnums[0], 0, lh), lh);
 	
 	FlatVector<> flown = fai.flown;
 	FlatMatrix<> flowir(nip, D, lh);

@@ -17,7 +17,7 @@ define coefficient penalty
 define coefficient coef_source
 1,
 
-define fespace v -order=5
+define fespace v -type=h1ho -order=5
 
 define gridfunction u -fespace=v 
 

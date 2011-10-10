@@ -74,7 +74,7 @@ public:
       {  
         HeapReset hr(lh);    // reset the local heap memory at the end of the loop
 		
-        ElementTransformation eltrans = ma.GetTrafo (i, 0);
+        ElementTransformation eltrans = ma.GetTrafo (i, 0, lh);
 
         const ScalarFiniteElement<2> & felu = dynamic_cast<const ScalarFiniteElement<2>&> (fesu.GetFE (i, lh));
         const ScalarFiniteElement<2> & felf = dynamic_cast<const ScalarFiniteElement<2>&> (fesf.GetFE (i, lh));
