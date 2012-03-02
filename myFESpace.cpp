@@ -7,9 +7,10 @@
 
 /*
 
-My own FESpace for linear and quadratic triangular elements An
-fe-space is the connection between the local reference element, and
-the global mesh.
+My own FESpace for linear and quadratic triangular elements.  
+
+A fe-space provides the connection between the local reference
+element, and the global mesh.
 
 */
 

@@ -47,7 +47,7 @@ namespace ngcomp
   {
     cout << "Constructor of MyPreconditioner" << endl;
 
-    bfa = pde.GetBilinearForm (flags.GetStringFlag ("bilinearform", NULL));
+    bfa = pde.GetBilinearForm (flags.GetStringFlag ("bilinearform", ""));
   }
     
   

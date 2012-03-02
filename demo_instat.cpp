@@ -90,9 +90,8 @@ public:
 
     summat.AsVector() = (1.0/dt) * matm.AsVector() + mata.AsVector();
 
-    // A sparse matrix can compute a sparse factorization. One has to cast to a sparse matrix:
-    BaseMatrix & invmat = * dynamic_cast<BaseSparseMatrix&> (summat) . InverseMatrix();
-
+    // A sparse matrix can compute a sparse factorization. 
+    BaseMatrix & invmat = * summat.InverseMatrix();
 
     // implicite Euler method
     vecu = 0;
@@ -103,12 +102,10 @@ public:
 	w = invmat * d;
 	vecu += w;
 
-
 	// update visualization
 	Ng_Redraw ();	  
       }
   }
-
 
 
   virtual string GetClassName () const
@@ -150,7 +147,6 @@ public:
 	<< endl;
   }
 };
-
 
 
 

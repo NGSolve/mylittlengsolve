@@ -32,16 +32,16 @@ public:
     // throw Exception ("Taylor-Hood elements need order 2 or higher");
 
     Flags uflags, pflags;
-    uflags.SetFlag ("order", order);
+    uflags.SetFlag ("order", order+1);
     uflags.SetFlag ("orderinner", order+1);
     AddSpace (new H1HighOrderFESpace (ma, uflags));
     AddSpace (new H1HighOrderFESpace (ma, uflags));
     
-    // pflags.SetFlag ("order", order);
-    // AddSpace (new H1HighOrderFESpace (ma, pflags));
+    pflags.SetFlag ("order", order);
+    AddSpace (new H1HighOrderFESpace (ma, pflags));
 
-    pflags.SetFlag ("order", order-1);
-    AddSpace (new L2HighOrderFESpace (ma, pflags));
+    // pflags.SetFlag ("order", order-1);
+    // AddSpace (new L2HighOrderFESpace (ma, pflags));
   }
   
   virtual string GetClassName () const { return "Demo-StokesFESpace"; }

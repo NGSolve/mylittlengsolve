@@ -82,7 +82,7 @@ namespace myAssembling
 	{  
 	  HeapReset hr(lh); 
 
-	  ElementTransformation eltrans = ma.GetTrafo (i, 0, lh);
+	  const ElementTransformation & eltrans = ma.GetTrafo (i, 0, lh);
 	  
 	  fes.GetDofNrs (i, dnums);
 	  const FiniteElement & fel =  fes.GetFE (i, lh);

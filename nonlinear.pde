@@ -14,10 +14,10 @@ define coefficient penalty
 1e6, 1e6, 1e6, 1e6, 
 
 
-define fespace v -order=3
+define fespace v -order=3 -type=h1ho
 define gridfunction u -fespace=v -nested
 
-define bilinearform a -fespace=v
+define bilinearform a -fespace=v -symmetric
 laplace lam
 mynonlinear
 robin penalty

@@ -55,15 +55,13 @@ namespace ngfem
       get integration rule for element geometry, 
       integration order is 2 times element order
     */
-    const IntegrationRule & ir = 
-      SelectIntegrationRule (fel.ElementType(), 2*fel.Order());
+    IntegrationRule ir(fel.ElementType(), 2*fel.Order());
 
     // loop over integration points
     for (int i = 0 ; i < ir.GetNIP(); i++)
       {
-        
         // calculate Jacobi matrix in the integration point
-        MappedIntegrationPoint<2,2> mip(ir[i], eltrans, lh);
+        MappedIntegrationPoint<2,2> mip(ir[i], eltrans);
 
         // lambda(x)
         double lam = coef_lambda -> Evaluate (mip);
@@ -139,12 +137,11 @@ namespace ngfem
 
     Vector<> shape(ndof); 
 
-    const IntegrationRule & ir = 
-      SelectIntegrationRule (fel.ElementType(), 2*fel.Order());
+    IntegrationRule ir(fel.ElementType(), 2*fel.Order());
 
     for (int i = 0 ; i < ir.GetNIP(); i++)
       {
-        MappedIntegrationPoint<2,2> mip(ir[i], eltrans, lh);
+        MappedIntegrationPoint<2,2> mip(ir[i], eltrans);
 
         double f = coef_f -> Evaluate (mip);
 
@@ -158,11 +155,6 @@ namespace ngfem
         elvec += (fac*f) * shape;
       }     
   }
-
-
-
-
-
 
 
 

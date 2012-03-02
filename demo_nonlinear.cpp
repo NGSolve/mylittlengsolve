@@ -52,8 +52,7 @@ public:
     int ndof = fel.GetNDof();
 
     FlatVector<> shape(ndof, lh);
-    const IntegrationRule & ir = 
-      SelectIntegrationRule (fel.ElementType(), 2*fel.Order());
+    IntegrationRule ir(fel.ElementType(), 2*fel.Order());
 
     double energy = 0;
 
@@ -61,7 +60,7 @@ public:
       {
         HeapReset hr(lh);
         
-        MappedIntegrationPoint<2,2> mip(ir[i], eltrans, lh); 
+        MappedIntegrationPoint<2,2> mip(ir[i], eltrans); 
 
         fel.CalcShape (ir[i], shape);
 
@@ -88,8 +87,7 @@ public:
     int ndof = fel.GetNDof();
 
     FlatVector<> shape(ndof, lh);
-    const IntegrationRule & ir = 
-      SelectIntegrationRule (fel.ElementType(), 2*fel.Order());
+    IntegrationRule ir(fel.ElementType(), 2*fel.Order());
 
     ely = 0;
 
@@ -97,7 +95,7 @@ public:
       {
         HeapReset hr(lh);
         
-        MappedIntegrationPoint<2,2> mip(ir[i], eltrans, lh); 
+        MappedIntegrationPoint<2,2> mip(ir[i], eltrans); 
 
         fel.CalcShape (ir[i], shape);
 
@@ -126,13 +124,12 @@ public:
     
 
     FlatVector<> shape(ndof, lh);
-    const IntegrationRule & ir = 
-      SelectIntegrationRule (fel.ElementType(), 2*fel.Order());
+    IntegrationRule ir(fel.ElementType(), 2*fel.Order());
 
     for (int i = 0 ; i < ir.GetNIP(); i++)
       {
         HeapReset hr(lh);
-        MappedIntegrationPoint<2,2> mip(ir[i], eltrans, lh); 
+        MappedIntegrationPoint<2,2> mip(ir[i], eltrans); 
 
         fel.CalcShape (ir[i], shape);
 
@@ -198,9 +195,9 @@ public:
 	cout << "newton it " << i << endl;
 	
 	bfa -> AssembleLinearization (vecu, lh);
-	BaseMatrix & inva = 
-	  *dynamic_cast<BaseSparseMatrix&> (bfa -> GetMatrix()).InverseMatrix();
 
+	// bfa->GetMatrix().SetInverseType (SPARSECHOLESKY);
+	BaseMatrix & inva = *bfa -> GetMatrix().InverseMatrix();
 
 	d = vecf - applya * vecu;
 	err = L2Norm(d);
@@ -229,9 +226,7 @@ public:
 	  }
 	while (energy > energyold && lin_its++ < 30 && err > 1e-7*err0);
 
-
 	delete &inva;
-
 	if (err < 1e-7*err0) break;
       }
   }
@@ -241,4 +236,3 @@ public:
 
 static RegisterNumProc<NumProcNonlinearSolve> npinit("nonlinearsolve");
 static RegisterBilinearFormIntegrator<MyNonlinearIntegrator> initnl ("mynonlinear", 2, 0);
-

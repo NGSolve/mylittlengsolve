@@ -76,8 +76,10 @@ public:
 		
         const ElementTransformation & eltrans = ma.GetTrafo (i, 0, lh);
 
-        const ScalarFiniteElement<2> & felu = dynamic_cast<const ScalarFiniteElement<2>&> (fesu.GetFE (i, lh));
-        const ScalarFiniteElement<2> & felf = dynamic_cast<const ScalarFiniteElement<2>&> (fesf.GetFE (i, lh));
+        const ScalarFiniteElement<2> & felu = 
+	  dynamic_cast<const ScalarFiniteElement<2>&> (fesu.GetFE (i, lh));
+        const ScalarFiniteElement<2> & felf = 
+	  dynamic_cast<const ScalarFiniteElement<2>&> (fesf.GetFE (i, lh));
 
 	int nd_u = felu.GetNDof();
 	int nd_f = felf.GetNDof();
@@ -91,14 +93,13 @@ public:
 
         gfu -> GetElementVector (dnumsu, elu);
 
-        const IntegrationRule & ir = 
-          SelectIntegrationRule (eltrans.GetElementType(), felu.Order()+felf.Order() );
+        IntegrationRule ir(eltrans.GetElementType(), felu.Order()+felf.Order() );
 
         
         elf = 0.0;
         for (int j = 0; j < ir.GetNIP(); j++)   // integration points
           {
-            MappedIntegrationPoint<2, 2> mip(ir[j], eltrans, lh);  // computes Jacobi matrix etc
+            MappedIntegrationPoint<2, 2> mip(ir[j], eltrans);  // computes Jacobi matrix etc
 
             Vec<1> ui;   // value of u in point
             DiffOpId<2>::Apply (felu, mip, elu, ui, lh);   // compute value in point (= elu * shape)
