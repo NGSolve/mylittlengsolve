@@ -48,7 +48,7 @@ namespace ngfem
 
     virtual void
     CalcFlux (const FiniteElement & fel,
-	      const BaseSpecificIntegrationPoint & bsip,
+	      const BaseMappedIntegrationPoint & bsip,
 	      const FlatVector<double> & elx, 
 	      FlatVector<double> & flux,
 	      bool applyd,
