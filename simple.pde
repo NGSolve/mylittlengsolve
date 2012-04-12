@@ -23,7 +23,7 @@ define fespace v -type=myfespace -secondorder
 define gridfunction u -fespace=v -nested
 
 # use our new laplace integrator (and standard robin integrator)
-define bilinearform a -fespace=v -symmetric -printelmat
+define bilinearform a -fespace=v -symmetric -printelmat -fespace=v
 mylaplace lam
 robin penalty
 

@@ -28,6 +28,7 @@ namespace ngcomp
     : FESpace (ama, flags)
   {
     cout << "Constructor of MyFESpace" << endl;
+    cout << "Flags = " << flags << endl;
 
     secondorder = flags.GetDefineFlag ("secondorder");
 

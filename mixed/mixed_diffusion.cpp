@@ -7,12 +7,8 @@ div sigma = -f
 
 */
 
-
 #include <solve.hpp>
-
 using namespace ngsolve;
-
-
 
 
 /*
@@ -37,9 +33,6 @@ public:
   
   virtual string GetClassName () const { return "Demo-MixedFESpace"; }
 };
-
-
-
 
 
 
@@ -81,7 +74,6 @@ public:
     IntRange rng_sigma = cfel.GetRange(0);
     IntRange rng_u     = cfel.GetRange(1);
 
-
     FlatMatrix<> mat_a (nd_sigma, nd_sigma, lh);
     FlatMatrix<> mat_b (nd_u    , nd_sigma, lh);
 
@@ -118,4 +110,3 @@ public:
 
 static RegisterFESpace<MixedFESpace> initfes ("mixed");
 static RegisterBilinearFormIntegrator<MixedDiffusionIntegrator> initmd ("mixeddiffusion", 2, 1);
- 
