@@ -14,19 +14,19 @@ define coefficient one
 1,
 
 
-define fespace v -type=hybridmixed -order=2 -dirichlet=[1,2]
+define fespace v -type=hybridmixed -order=3 -dirichlet=[1,2]
 
 define gridfunction u -fespace=v -nested
 
-define linearform f -fespace=v -print
+define linearform f -fespace=v
 source coef_source -comp=2
 
-define bilinearform a -fespace=v -symmetric -eliminate_internal  -linearform=f
+define bilinearform a -fespace=v -symmetric -eliminate_internal -keep_internal  -linearform=f
 hybridmixeddiffusion coefa
 
 define preconditioner c -type=direct -bilinearform=a -inverse=pardiso
 
-numproc bvp np1 -bilinearform=a -linearform=f -gridfunction=u  -preconditioner=c
+numproc bvp np1 -bilinearform=a -linearform=f -gridfunction=u  -preconditioner=c -print
 
 
 define bilinearform avisu -fespace=v -nonassemble

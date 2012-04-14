@@ -142,9 +142,9 @@ public:
 	for (int i = 0; i < ir_facet.GetNIP(); i++)
 	  {
 	    IntegrationPoint ip = transform(k, ir_facet[i]);
-	    MappedIntegrationPoint<2,2> mip (ip, eltrans /* , lh */);
+	    MappedIntegrationPoint<2,2> mip (ip, eltrans)
 
-	    fel_lam.CalcFacetShape(k, ir_facet[i], shape_lam);
+	    fel_lam.Facet(k).CalcShape(ip, shape_lam);
 	    fel_sigma.CalcShape(ip, shape_sigma);
 	    shape_sigman = shape_sigma * normal_ref;
 	    
