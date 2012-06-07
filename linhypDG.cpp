@@ -57,9 +57,9 @@ public:
     
   NumProcLinearHyperbolic (PDE & apde, const Flags & flags)
     : NumProc (apde), 
-      timer_element("conservation - time element"), 
-      timer_facet("conservation - time facet"),
-      timer_mass("conservation - time mass")
+      timer_element("convection - time element"), 
+      timer_facet("convection - time facet"),
+      timer_mass("convection - time mass")
   {
     gfu = pde.GetGridFunction (flags.GetStringFlag ("gridfunction", "u"));
     cfflow = pde.GetCoefficientFunction (flags.GetStringFlag ("flow", "flow"));
@@ -97,7 +97,7 @@ public:
 	HeapReset hr(lh);
 	
 	const L2HighOrderFiniteElement<D> & fel = dynamic_cast<const L2HighOrderFiniteElement<D>&> (fes.GetFE (i, lh));
-	const IntegrationRule & ir = SelectIntegrationRule (fel.ElementType(), 2*fel.Order());
+	const IntegrationRule ir(fel.ElementType(), 2*fel.Order());
 
 	const_cast<L2HighOrderFiniteElement<D>&> (fel).PrecomputeShapes (ir);
 	const_cast<L2HighOrderFiniteElement<D>&> (fel).PrecomputeTrace ();
@@ -150,25 +150,21 @@ public:
 	    for (int k = 0; k < fnums.Size(); k++)
 	      if (fnums[k] == i) fai.facetnr[j] = k;
 	  }
+
 	
-	const L2HighOrderFiniteElement<D> & fel = 
-	  dynamic_cast<const L2HighOrderFiniteElement<D>&> (fes.GetFE (elnums[0], lh));
-	
+	ELEMENT_TYPE eltype = ma.GetElType(elnums[0]);
+
 	ma.GetElVertices (elnums[0], vnums);
-	Facet2ElementTrafo transform(fel.ElementType(), vnums); 
-	FlatVec<D> normal_ref = ElementTopology::GetNormals(fel.ElementType()) [fai.facetnr[0]];
-	
+	Facet2ElementTrafo transform(eltype, vnums); 
+	FlatVec<D> normal_ref = ElementTopology::GetNormals(eltype) [fai.facetnr[0]];
 	
 	int nip = ir.Size();
 	
-	IntegrationRule irt;
-	for (int j = 0; j < nip; j++)
-	  irt.Append (transform(fai.facetnr[0], ir[j]));  // transform facet coordinates to element coordinates
-	
+	// transform facet coordinates to element coordinates
+	IntegrationRule & irt = transform(fai.facetnr[0], ir, lh);  
 	MappedIntegrationRule<D,D> mir(irt, ma.GetTrafo(elnums[0], 0, lh), lh);
 	
-	FlatVector<> flown = fai.flown;
-	FlatMatrix<> flowir(nip, D, lh);
+	FlatMatrixFixWidth<D> flowir(nip, lh);
 	
 	cfflow -> Evaluate (mir, flowir);
 	
@@ -176,8 +172,8 @@ public:
 	  {
 	    Vec<D> normal = Trans (mir[j].GetJacobianInverse()) * normal_ref;       
 	    
-	    flown(j) = InnerProduct (normal, flowir.Row(j));
-	    flown(j) *= ir[j].Weight() * mir[j].GetJacobiDet();
+	    fai.flown(j) = InnerProduct (normal, flowir.Row(j));
+	    fai.flown(j) *= ir[j].Weight() * mir[j].GetJacobiDet();
 	  }
       }
     
@@ -267,8 +263,23 @@ public:
 	  HeapReset hr(lh);
 	  
 	  const ScalarFiniteElement<D> & fel = dynamic_cast<const ScalarFiniteElement<D>&> (fes.GetFE (i, lh));
-	  const IntegrationRule & ir = SelectIntegrationRule (fel.ElementType(), 2*fel.Order());
-	  
+	  const IntegrationRule ir(fel.ElementType(), 2*fel.Order());
+
+	  FlatMatrixFixWidth<D> flowip = elementdata[i]->flowip;
+
+	  /*
+	  // use this for time-dependent flow
+	  MappedIntegrationRule<D,D> mir(ir, ma.GetTrafo (i, 0, lh), lh);
+	  FlatMatrixFixWidth<D> flowip(mir.Size(), lh);
+	  cfflow -> Evaluate (mir, flowip);
+	  for (int j = 0; j < ir.Size(); j++)
+	    {
+	      Vec<D> flow = mir[j].GetJacobianInverse() * flowip.Row(j);
+	      flow *= mir[j].GetWeight();		
+	      flowip.Row(j) = flow;
+	    }
+	  */
+
 	  IntRange dn = fes.GetElementDofs (i);
 	  
 	  int nipt = ir.Size();
@@ -277,7 +288,7 @@ public:
 	  
 	  fel.Evaluate (ir, vecu.Range (dn), elui);
 	  
-	  flowui = elementdata[i]->flowip;
+	  flowui = flowip;
 	  for (int k = 0; k < nipt; k++)
 	    flowui.Row(k) *= elui(k);
 	  
@@ -321,7 +332,7 @@ public:
 	      fel1.GetTrace (fai.facetnr[0], vecu.Range (dn1), trace1);
 	      fel2.GetTrace (fai.facetnr[1], vecu.Range (dn2), trace2);
 
-	      const IntegrationRule & ir = SelectIntegrationRule (felfacet.ElementType(), 2*felfacet.Order());
+	      IntegrationRule ir(felfacet.ElementType(), 2*felfacet.Order());
 	      int nip = ir.Size();
 
 	      FlatVector<> flown = fai.flown;
@@ -362,7 +373,7 @@ public:
 
 	      fel1.GetTrace (fai.facetnr[0], vecu.Range (dn1), trace1);
 
-	      const IntegrationRule & ir = SelectIntegrationRule (felfacet.ElementType(), 2*felfacet.Order());
+	      IntegrationRule ir(felfacet.ElementType(), 2*felfacet.Order());
 	      int nip = ir.Size();
 
 	      FlatVector<> flown = fai.flown; 
