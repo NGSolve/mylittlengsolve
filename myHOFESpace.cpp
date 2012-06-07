@@ -28,8 +28,10 @@ namespace ngcomp
     order = int(flags.GetNumFlag ("order", 2));
 
     // needed to draw solution function
+    evaluator = new T_DifferentialOperator<DiffOpId<2> >;
+
     static ConstantCoefficientFunction one(1);
-    evaluator = GetIntegrators().CreateBFI("mass", ma.GetDimension(), &one);
+    integrator = GetIntegrators().CreateBFI("mass", ma.GetDimension(), &one);
   }
     
   
