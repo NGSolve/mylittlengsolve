@@ -4,10 +4,16 @@ myFESpace.o myHOFESpace.o myPreconditioner.o myAssembling.o linhypDG.o
 
 
 %.o : %.cpp
-	gcc  -O2 -fopenmp -fpic -DNETGEN_ELTRANS -DUSE_TIMEOFDAY -DLAPACK -I. -I$(NETGENDIR)/../include -c $? -o $@
+	ngscxx -I. -c $? -o $@
+
+#	old version:
+#	g++  -O2 -fopenmp -fpic -DNETGEN_ELTRANS -DUSE_TIMEOFDAY -DLAPACK -I. -I$(NETGENDIR)/../include -c $? -o $@
 
 libmyngsolve.so : $(objects)
-	gcc -shared -fopenmp -fpic $(objects) -L/opt/netgen/lib -lngsolve -o $@
+	ngscxx -shared $(objects) -lngsolve -o $@
+
+#	old version:
+#	g++ -shared -fopenmp -fpic $(objects) -L/opt/netgen/lib -lngsolve -o $@
 
 clean:
 	rm *.o libmyngsolve.so
