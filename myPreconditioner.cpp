@@ -24,7 +24,7 @@ namespace ngcomp
     BaseJacobiPrecond * jacobi;
 
   public:
-    MyPreconditioner (const PDE & pde, const Flags & flags);
+    MyPreconditioner (const PDE & pde, const Flags & flags, const string & aname);
     ~MyPreconditioner ();
     virtual void Update();
     
@@ -42,8 +42,8 @@ namespace ngcomp
   };
 
 
-  MyPreconditioner :: MyPreconditioner (const PDE & pde, const Flags & flags)
-    : Preconditioner (&pde, flags), jacobi(NULL)
+  MyPreconditioner :: MyPreconditioner (const PDE & pde, const Flags & flags, const string & aname)
+    : Preconditioner (&pde, flags, aname), jacobi(NULL)
   {
     cout << "Constructor of MyPreconditioner" << endl;
 

@@ -8,12 +8,9 @@ by an explicit time-stepping method
 
 */
 
-#define PARALLEL
 
 #include <solve.hpp>
 using namespace ngsolve;
-
-
 
 
 template <int D>
@@ -82,7 +79,6 @@ public:
 
     const L2HighOrderFESpace & fes = 
       dynamic_cast<const L2HighOrderFESpace&> (gfu->GetFESpace());
-    int order = fes.GetOrder();
 
 
     int ne = ma.GetNE();
@@ -106,7 +102,7 @@ public:
 
 	Array<int> facets;
 	ma.GetElFacets (i, facets);
-	MappedIntegrationRule<D,D> mir(ir, ma.GetTrafo (i, 0), lh);
+	MappedIntegrationRule<D,D> mir(ir, ma.GetTrafo (i, 0, lh), lh);
 	
 	elementdata[i] = new ElementData (fel.GetNDof(), ir.Size(), nf);
 	ElementData & edi = *elementdata[i];
@@ -122,7 +118,7 @@ public:
 
 
 	FlatMatrix<> mass(fel.GetNDof(), lh);
-	bfi.CalcElementMatrix (fel, ma.GetTrafo(i, 0), mass, lh);
+	bfi.CalcElementMatrix (fel, ma.GetTrafo(i, 0, lh), mass, lh);
 	CalcInverse (mass, edi.invmass);
       }
 
@@ -168,7 +164,7 @@ public:
 	for (int j = 0; j < nip; j++)
 	  irt.Append (transform(fai.facetnr[0], ir[j]));  // transform facet coordinates to element coordinates
 	
-	MappedIntegrationRule<D,D> mir(irt, ma.GetTrafo(elnums[0], 0), lh);
+	MappedIntegrationRule<D,D> mir(irt, ma.GetTrafo(elnums[0], 0, lh), lh);
 	
 	FlatVector<> flown = fai.flown;
 	FlatMatrix<> flowir(nip, D, lh);
@@ -198,14 +194,11 @@ public:
 
 
 
-
     FlatVector<> vecu = gfu->GetVector().FVDouble();
     Vector<> conv(vecu.Size());
     Vector<> w(vecu.Size());
     Vector<> hu(vecu.Size());
     
-    cout << "heapsize = " << lh.Available() << endl;
-
 
     for (double t = 0; t < tend; t += dt)
       {
@@ -261,13 +254,11 @@ public:
   void CalcConvection (FlatVector<double> vecu, FlatVector<double> conv,
 		       LocalHeap & lh)
   {
-    if (ntasks > 1 && id == 0) return;
+    // if (ntasks > 1 && id == 0) return;
 
 
     const L2HighOrderFESpace & fes = 
       dynamic_cast<const L2HighOrderFESpace&> (gfu->GetFESpace());
-    int order = fes.GetOrder();
-
 
     int ne = ma.GetNE();
     int nf = ma.GetNFacets();

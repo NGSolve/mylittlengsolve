@@ -184,7 +184,7 @@ public:
 
     BilinearFormApplication applya(bfa);
 
-    double err, errold, err0;
+    double err, err0;
     double energy, energyold;
 
     d = vecf - applya * vecu;
@@ -206,7 +206,6 @@ public:
 	cout << " err = " << err/err0;
 	cout << " energy = " << energy << endl;
 
-	errold = err;
 	energyold = energy;
 
 	w = inva * d;

@@ -2,18 +2,15 @@ objects = all_in_one.o demo_instat.o demo_stokes.o myElement.o \
 myHOElement.o myIntegrator.o demo_coupling.o demo_coupling_adv.o demo_nonlinear.o  \
 myFESpace.o myHOFESpace.o myPreconditioner.o myAssembling.o linhypDG.o 
 
+# linhypDG_par.o 
+
 
 %.o : %.cpp
 	ngscxx -I. -c $? -o $@
 
-#	old version:
-#	g++  -O2 -fopenmp -fpic -DNETGEN_ELTRANS -DUSE_TIMEOFDAY -DLAPACK -I. -I$(NETGENDIR)/../include -c $? -o $@
 
 libmyngsolve.so : $(objects)
 	ngscxx -shared $(objects) -lngsolve -o $@
-
-#	old version:
-#	g++ -shared -fopenmp -fpic $(objects) -L/opt/netgen/lib -lngsolve -o $@
 
 clean:
 	rm *.o libmyngsolve.so

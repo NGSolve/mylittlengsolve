@@ -80,7 +80,6 @@ public:
 
     const L2HighOrderFESpace & fes = 
       dynamic_cast<const L2HighOrderFESpace&> (gfu->GetFESpace());
-    int order = fes.GetOrder();
 
 
     int ne = ma.GetNE();
@@ -133,7 +132,7 @@ public:
 	
 	const L2HighOrderFiniteElement<D-1> & felfacet = 
 	  dynamic_cast<const L2HighOrderFiniteElement<D-1>&> (fes.GetFacetFE (i, lh));
-	const IntegrationRule & ir = SelectIntegrationRule (felfacet.ElementType(), 2*felfacet.Order());
+	IntegrationRule ir (felfacet.ElementType(), 2*felfacet.Order());
 	const_cast<L2HighOrderFiniteElement<D-1>&> (felfacet).PrecomputeShapes (ir);
 	
 
@@ -245,12 +244,9 @@ public:
   {
     const L2HighOrderFESpace & fes = 
       dynamic_cast<const L2HighOrderFESpace&> (gfu->GetFESpace());
-    int order = fes.GetOrder();
-
 
     int ne = ma.GetNE();
     int nf = ma.GetNFacets();
-    
 
     timer_element.Start();
     
