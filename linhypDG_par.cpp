@@ -190,7 +190,7 @@ public:
       for (int j = 0; j < ndf; j++)
 	dofnodes[i*ndf+j] = Node( NODE_TYPE(ma.GetDimension()-1), i);
     
-    pardofs = new ParallelDofs (ma, dofnodes);
+    pardofs = new ParallelMeshDofs (ma, dofnodes);
 
 
 
