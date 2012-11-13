@@ -95,7 +95,7 @@ public:
 	HeapReset hr(lh);
 	
 	const L2HighOrderFiniteElement<D> & fel = dynamic_cast<const L2HighOrderFiniteElement<D>&> (fes.GetFE (i, lh));
-	const IntegrationRule & ir = SelectIntegrationRule (fel.ElementType(), 2*fel.Order());
+	const IntegrationRuleTP<D> ir(ma.GetTrafo(i,0,lh), 2*fel.Order(), false, lh);
 
 	const_cast<L2HighOrderFiniteElement<D>&> (fel).PrecomputeShapes (ir);
 	const_cast<L2HighOrderFiniteElement<D>&> (fel).PrecomputeTrace ();
@@ -112,10 +112,8 @@ public:
 	for (int j = 0; j < ir.Size(); j++)
 	  {
 	    Vec<D> flow = mir[j].GetJacobianInverse() * edi.flowip.Row(j);
-	    flow *= ir[j].Weight() * mir[j].GetMeasure();		
-	    edi.flowip.Row(j) = flow;
+	    edi.flowip.Row(j) = mir[j].GetWeight() * flow;
 	  }
-
 
 	FlatMatrix<> mass(fel.GetNDof(), lh);
 	bfi.CalcElementMatrix (fel, ma.GetTrafo(i, 0, lh), mass, lh);
@@ -132,7 +130,7 @@ public:
 	
 	const L2HighOrderFiniteElement<D-1> & felfacet = 
 	  dynamic_cast<const L2HighOrderFiniteElement<D-1>&> (fes.GetFacetFE (i, lh));
-	const IntegrationRule & ir = SelectIntegrationRule (felfacet.ElementType(), 2*felfacet.Order());
+	IntegrationRule ir(felfacet.ElementType(), 2*felfacet.Order());
 	const_cast<L2HighOrderFiniteElement<D-1>&> (felfacet).PrecomputeShapes (ir);
 	
 
@@ -155,15 +153,13 @@ public:
 	
 	ma.GetElVertices (elnums[0], vnums);
 	Facet2ElementTrafo transform(fel.ElementType(), vnums); 
-	FlatVec<D> normal_ref = ElementTopology::GetNormals(fel.ElementType()) [fai.facetnr[0]];
-	
+	FlatVec<D> normal_ref = 
+	  ElementTopology::GetNormals(fel.ElementType())[fai.facetnr[0]];
 	
 	int nip = ir.Size();
-	
-	IntegrationRule irt;
-	for (int j = 0; j < nip; j++)
-	  irt.Append (transform(fai.facetnr[0], ir[j]));  // transform facet coordinates to element coordinates
-	
+
+	// transform facet coordinates to element coordinates
+	IntegrationRule & irt = transform(fai.facetnr[0], ir, lh);
 	MappedIntegrationRule<D,D> mir(irt, ma.GetTrafo(elnums[0], 0, lh), lh);
 	
 	FlatVector<> flown = fai.flown;
@@ -176,7 +172,7 @@ public:
 	    Vec<D> normal = Trans (mir[j].GetJacobianInverse()) * normal_ref;       
 	    
 	    flown(j) = InnerProduct (normal, flowir.Row(j));
-	    flown(j) *= ir[j].Weight() * mir[j].GetJacobiDet();
+	    flown(j) *= ir[j].Weight() * mir[j].GetMeasure(); 
 	  }
       }
     
@@ -188,7 +184,7 @@ public:
     Array<Node> dofnodes(ndf*nf);
     for (int i = 0; i < nf; i++)
       for (int j = 0; j < ndf; j++)
-	dofnodes[i*ndf+j] = Node( NODE_TYPE(ma.GetDimension()-1), i);
+	dofnodes[i*ndf+j] = Node(NODE_TYPE(D-1), i);
     
     pardofs = new ParallelMeshDofs (ma, dofnodes);
 
@@ -254,9 +250,6 @@ public:
   void CalcConvection (FlatVector<double> vecu, FlatVector<double> conv,
 		       LocalHeap & lh)
   {
-    // if (ntasks > 1 && id == 0) return;
-
-
     const L2HighOrderFESpace & fes = 
       dynamic_cast<const L2HighOrderFESpace&> (gfu->GetFESpace());
 
@@ -275,14 +268,14 @@ public:
 	  HeapReset hr(lh);
 	  
 	  const ScalarFiniteElement<D> & fel = dynamic_cast<const ScalarFiniteElement<D>&> (fes.GetFE (i, lh));
-	  const IntegrationRule & ir = SelectIntegrationRule (fel.ElementType(), 2*fel.Order());
+	  const IntegrationRuleTP<D> ir( ma.GetTrafo(i,0,lh), 2*fel.Order(), false, lh);
 	  
 	  IntRange dn = fes.GetElementDofs (i);
 	  
 	  int nipt = ir.Size();
 	  FlatVector<> elui(nipt, lh);
 	  FlatMatrixFixWidth<D> flowui (nipt, lh);
-	  
+
 	  fel.Evaluate (ir, vecu.Range (dn), elui);
 	  
 	  flowui = elementdata[i]->flowip;
@@ -398,8 +391,7 @@ public:
 	      otrace = 2 * traces.FV().Range (fnr*ndf, (fnr+1)*ndf) - trace;
 	      
 
-	      const IntegrationRule & ir = 
-		SelectIntegrationRule (felfacet.ElementType(), 2*felfacet.Order());
+	      IntegrationRule ir(felfacet.ElementType(), 2*felfacet.Order());
 	      int nip = ir.Size();
 
 	      FlatVector<> flown = fai.flown;
