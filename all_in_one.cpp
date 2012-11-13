@@ -74,6 +74,8 @@ namespace all_in_one
     virtual void Do (LocalHeap & lh)
     {
       fes -> Update(lh);
+      fes -> FinalizeUpdate(lh);
+
       gfu -> Update();
       bfa -> Assemble(lh);
       lff -> Assemble(lh);
