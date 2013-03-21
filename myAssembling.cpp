@@ -46,29 +46,30 @@ namespace myAssembling
       int ne = GetMeshAccess().GetNE();
     
 
-      // generate sparse matrix
+      // setup element->dof table:
 
+
+      // first we get the number of dofs per element ...
       Array<int> dnums;
       Array<int> cnt(ne);
-    
       for (int i = 0; i < ne; i++)
 	{
 	  fes.GetDofNrs (i, dnums);
 	  cnt[i] = dnums.Size();
 	}	  
       
+      // allocate the table in compressed form ...
       Table<int> el2dof(cnt);
 
-      cnt = 0;
+      // and fill it
       for (int i = 0; i < ne; i++)
 	{
 	  fes.GetDofNrs (i, dnums);
-	  for (int j = 0; j < dnums.Size(); j++)
-	    el2dof[i][cnt[i]++] = dnums[j];
+          el2dof[i] = dnums;
 	}
 
-      MatrixGraph * graph = new MatrixGraph (ndof, el2dof, el2dof, true);
-      SparseMatrixSymmetric<double> & mat = *new SparseMatrixSymmetric<double> (*graph, true);
+      // generate sparse matrix from element-to-dof table
+      SparseMatrixSymmetric<double> & mat = *new SparseMatrixSymmetric<double> (ndof, el2dof);
 
       VVector<double> vecf (fes.GetNDof());
 

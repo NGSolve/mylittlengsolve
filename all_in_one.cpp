@@ -84,7 +84,7 @@ namespace all_in_one
       const BaseVector & vecf = lff -> GetVector();
       BaseVector & vecu = gfu -> GetVector();
 
-      BaseMatrix * inverse = dynamic_cast<const BaseSparseMatrix&> (mata).InverseMatrix();
+      BaseMatrix * inverse = mata.InverseMatrix(fes->GetFreeDofs());
       
       vecu = (*inverse) * vecf;
 
