@@ -11,6 +11,7 @@ by an explicit time-stepping method
 
 
 #include <solve.hpp>
+#include "../ngsolve/include/compatibility.hpp"
 using namespace ngsolve;
 
 
@@ -95,11 +96,11 @@ public:
       {
 	HeapReset hr(lh);
 	
-	const L2HighOrderFiniteElement<D> & fel = dynamic_cast<const L2HighOrderFiniteElement<D>&> (fes.GetFE (i, lh));
+	const DGFiniteElement<D> & fel = dynamic_cast<const DGFiniteElement<D>&> (fes.GetFE (i, lh));
 	const IntegrationRule ir(fel.ElementType(), 2*fel.Order());
 
-	const_cast<L2HighOrderFiniteElement<D>&> (fel).PrecomputeShapes (ir);
-	const_cast<L2HighOrderFiniteElement<D>&> (fel).PrecomputeTrace ();
+	const_cast<DGFiniteElement<D>&> (fel).PrecomputeShapes (ir);
+	const_cast<DGFiniteElement<D>&> (fel).PrecomputeTrace ();
 
 
 	MappedIntegrationRule<D,D> mir(ir, ma.GetTrafo (i, 0, lh), lh);
@@ -130,10 +131,10 @@ public:
       {
 	HeapReset hr(lh);
 	
-	const L2HighOrderFiniteElement<D-1> & felfacet = 
-	  dynamic_cast<const L2HighOrderFiniteElement<D-1>&> (fes.GetFacetFE (i, lh));
+	const DGFiniteElement<D-1> & felfacet = 
+	  dynamic_cast<const DGFiniteElement<D-1>&> (fes.GetFacetFE (i, lh));
 	IntegrationRule ir (felfacet.ElementType(), 2*felfacet.Order());
-	const_cast<L2HighOrderFiniteElement<D-1>&> (felfacet).PrecomputeShapes (ir);
+	const_cast<DGFiniteElement<D-1>&> (felfacet).PrecomputeShapes (ir);
 	
 
 	facetdata[i] = new FacetData (ir.Size());
@@ -308,12 +309,12 @@ public:
 	  const FacetData & fai = *facetdata[i];
 	  if (fai.elnr[1] != -1)
 	    {
-	      const L2HighOrderFiniteElement<D> & fel1 = 
-		dynamic_cast<const L2HighOrderFiniteElement<D>&> (fes.GetFE (fai.elnr[0], lh));
-	      const L2HighOrderFiniteElement<D> & fel2 = 
-		dynamic_cast<const L2HighOrderFiniteElement<D>&> (fes.GetFE (fai.elnr[1], lh));
-	      const L2HighOrderFiniteElement<D-1> & felfacet = 
-		dynamic_cast<const L2HighOrderFiniteElement<D-1>&> (fes.GetFacetFE (i, lh));
+	      const DGFiniteElement<D> & fel1 = 
+		dynamic_cast<const DGFiniteElement<D>&> (fes.GetFE (fai.elnr[0], lh));
+	      const DGFiniteElement<D> & fel2 = 
+		dynamic_cast<const DGFiniteElement<D>&> (fes.GetFE (fai.elnr[1], lh));
+	      const DGFiniteElement<D-1> & felfacet = 
+		dynamic_cast<const DGFiniteElement<D-1>&> (fes.GetFacetFE (i, lh));
 
 	      IntRange dn1 = fes.GetElementDofs (fai.elnr[0]);
 	      IntRange dn2 = fes.GetElementDofs (fai.elnr[1]);
@@ -354,10 +355,10 @@ public:
 	    }
 	  else
 	    {
-	      const L2HighOrderFiniteElement<D> & fel1 = 
-		dynamic_cast<const L2HighOrderFiniteElement<D>&> (fes.GetFE (fai.elnr[0], lh));
-	      const L2HighOrderFiniteElement<D-1> & felfacet = 
-		dynamic_cast<const L2HighOrderFiniteElement<D-1>&> (fes.GetFacetFE (i, lh));
+	      const DGFiniteElement<D> & fel1 = 
+		dynamic_cast<const DGFiniteElement<D>&> (fes.GetFE (fai.elnr[0], lh));
+	      const DGFiniteElement<D-1> & felfacet = 
+		dynamic_cast<const DGFiniteElement<D-1>&> (fes.GetFacetFE (i, lh));
 
 	      IntRange dn1 = fes.GetElementDofs (fai.elnr[0]);
 

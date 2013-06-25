@@ -20,9 +20,9 @@ define coefficient penalty
 define coefficient ubound
 0, (1e8*y*(1-y)), 
 
-define fespace v -stokes  -order=2
+define fespace v -type=stokes  -order=5
 
-define gridfunction up -fespace=v
+define gridfunction up -fespace=v -addcoef
 
 define bilinearform a -fespace=v  -symmetric
 stokes nu 
@@ -42,19 +42,18 @@ numproc bvp np1 -bilinearform=a -linearform=f -gridfunction=up -preconditioner=c
 
 
 
-# for visualization:
-define bilinearform evalu -fespace=v -symmetric -nonassemble 
-stokesu 
-
 define bilinearform evalp -fespace=v -symmetric -nonassemble 
 mass one -comp=3 
 
-numproc drawflux np2 -bilinearform=evalu -solution=up -label=velocity
+# numproc drawflux np2 -bilinearform=evalu -solution=up -label=velocity
 numproc drawflux np2b -bilinearform=evalp -solution=up -label=pressure
 
 
 # select "vector function = velocity", and
 # switch on "Draw Surface Solution"
+
+define coefficient velocity ( (up.1, up.2) )
+numproc draw npd1 -coefficient=velocity -label=velocity
 
 
 numproc visualization npv1 -vectorfunction=velocity -minval=0 -maxval=0.25

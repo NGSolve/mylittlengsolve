@@ -94,11 +94,11 @@ public:
       {
 	HeapReset hr(lh);
 	
-	const L2HighOrderFiniteElement<D> & fel = dynamic_cast<const L2HighOrderFiniteElement<D>&> (fes.GetFE (i, lh));
+	const DGFiniteElement<D> & fel = dynamic_cast<const DGFiniteElement<D>&> (fes.GetFE (i, lh));
 	const IntegrationRuleTP<D> ir(ma.GetTrafo(i,0,lh), 2*fel.Order(), false, lh);
 
-	const_cast<L2HighOrderFiniteElement<D>&> (fel).PrecomputeShapes (ir);
-	const_cast<L2HighOrderFiniteElement<D>&> (fel).PrecomputeTrace ();
+	const_cast<DGFiniteElement<D>&> (fel).PrecomputeShapes (ir);
+	const_cast<DGFiniteElement<D>&> (fel).PrecomputeTrace ();
 
 	Array<int> facets;
 	ma.GetElFacets (i, facets);
@@ -128,10 +128,10 @@ public:
       {
 	HeapReset hr(lh);
 	
-	const L2HighOrderFiniteElement<D-1> & felfacet = 
-	  dynamic_cast<const L2HighOrderFiniteElement<D-1>&> (fes.GetFacetFE (i, lh));
+	const DGFiniteElement<D-1> & felfacet = 
+	  dynamic_cast<const DGFiniteElement<D-1>&> (fes.GetFacetFE (i, lh));
 	IntegrationRule ir(felfacet.ElementType(), 2*felfacet.Order());
-	const_cast<L2HighOrderFiniteElement<D-1>&> (felfacet).PrecomputeShapes (ir);
+	const_cast<DGFiniteElement<D-1>&> (felfacet).PrecomputeShapes (ir);
 	
 
 	facetdata[i] = new FacetData (ir.Size());
@@ -148,8 +148,8 @@ public:
 	      if (fnums[k] == i) fai.facetnr[j] = k;
 	  }
 	
-	const L2HighOrderFiniteElement<D> & fel = 
-	  dynamic_cast<const L2HighOrderFiniteElement<D>&> (fes.GetFE (elnums[0], lh));
+	const DGFiniteElement<D> & fel = 
+	  dynamic_cast<const DGFiniteElement<D>&> (fes.GetFE (elnums[0], lh));
 	
 	ma.GetElVertices (elnums[0], vnums);
 	Facet2ElementTrafo transform(fel.ElementType(), vnums); 
@@ -307,12 +307,12 @@ public:
 	  const FacetData & fai = *facetdata[i];
 	  if (fai.elnr[1] != -1)
 	    {
-	      const L2HighOrderFiniteElement<D> & fel1 = 
-		dynamic_cast<const L2HighOrderFiniteElement<D>&> (fes.GetFE (fai.elnr[0], lh));
-	      const L2HighOrderFiniteElement<D> & fel2 = 
-		dynamic_cast<const L2HighOrderFiniteElement<D>&> (fes.GetFE (fai.elnr[1], lh));
-	      const L2HighOrderFiniteElement<D-1> & felfacet = 
-		dynamic_cast<const L2HighOrderFiniteElement<D-1>&> (fes.GetFacetFE (i, lh));
+	      const DGFiniteElement<D> & fel1 = 
+		dynamic_cast<const DGFiniteElement<D>&> (fes.GetFE (fai.elnr[0], lh));
+	      const DGFiniteElement<D> & fel2 = 
+		dynamic_cast<const DGFiniteElement<D>&> (fes.GetFE (fai.elnr[1], lh));
+	      const DGFiniteElement<D-1> & felfacet = 
+		dynamic_cast<const DGFiniteElement<D-1>&> (fes.GetFacetFE (i, lh));
 
 	      IntRange dn1 = fes.GetElementDofs (fai.elnr[0]);
 	      IntRange dn2 = fes.GetElementDofs (fai.elnr[1]);
@@ -331,10 +331,10 @@ public:
 	    }
 	  else
 	    {
-	      const L2HighOrderFiniteElement<D> & fel1 = 
-		dynamic_cast<const L2HighOrderFiniteElement<D>&> (fes.GetFE (fai.elnr[0], lh));
-	      const L2HighOrderFiniteElement<D-1> & felfacet = 
-		dynamic_cast<const L2HighOrderFiniteElement<D-1>&> (fes.GetFacetFE (i, lh));
+	      const DGFiniteElement<D> & fel1 = 
+		dynamic_cast<const DGFiniteElement<D>&> (fes.GetFE (fai.elnr[0], lh));
+	      const DGFiniteElement<D-1> & felfacet = 
+		dynamic_cast<const DGFiniteElement<D-1>&> (fes.GetFacetFE (i, lh));
 
 	      IntRange dn1 = fes.GetElementDofs (fai.elnr[0]);
 
@@ -365,8 +365,8 @@ public:
 	  
 	  const ElementData & edi = *elementdata[i];
 
-	  const L2HighOrderFiniteElement<D> & fel = 
-	    dynamic_cast<const L2HighOrderFiniteElement<D>&> (fes.GetFE (i, lh));
+	  const DGFiniteElement<D> & fel = 
+	    dynamic_cast<const DGFiniteElement<D>&> (fes.GetFE (i, lh));
 	  
 	  
 	  IntRange dn = fes.GetElementDofs (i);
@@ -380,8 +380,8 @@ public:
 	      int fnr = edi.facets[j];
 	      const FacetData & fai = *facetdata[fnr];	      
 	      
-	      const L2HighOrderFiniteElement<D-1> & felfacet = 
-		dynamic_cast<const L2HighOrderFiniteElement<D-1>&> (fes.GetFacetFE (fnr, lh));
+	      const DGFiniteElement<D-1> & felfacet = 
+		dynamic_cast<const DGFiniteElement<D-1>&> (fes.GetFacetFE (fnr, lh));
 	      int ndoffacet = felfacet.GetNDof();
 	      
 	      FlatVector<> trace(ndoffacet, lh);

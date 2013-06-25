@@ -9,10 +9,10 @@ define coefficient flow
 ( (y-0.5), (0.5-x) ),
 
 define coefficient u0
-(exp(-90*((x-0.7)*(x-0.7)+(y-0.7)*(y-0.7)))),
+(exp(-10*((x-0.7)*(x-0.7)+(y-0.7)*(y-0.7)))),
 (x)
 
-define fespace v -order=8 -type=l2ho -all_dofs_together
+define fespace v -order=6 -type=l2ho -all_dofs_together
 
 define gridfunction u -fespace=v 
 
@@ -20,7 +20,7 @@ define gridfunction u -fespace=v
 numproc setvalues np1 -gridfunction=u -coefficient=u0
 
 
-numproc linhyp np2 -gridfunction=u -flow=flow -dt=0.001 -tend=100
+numproc linhyp np2 -gridfunction=u -flow=flow -dt=0.0001 -tend=100
 
 numproc visualization npv1 -scalarfunction=u -subdivision=3 -nolineartexture -minval=0 -maxval=1
 

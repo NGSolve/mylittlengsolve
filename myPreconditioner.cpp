@@ -39,6 +39,11 @@ namespace ngcomp
       */
     }
 
+    virtual const BaseMatrix & GetAMatrix() const
+    {
+      return bfa -> GetMatrix();
+    }
+
   };
 
 
@@ -65,6 +70,8 @@ namespace ngcomp
     const BitArray * freedofs = bfa->GetFESpace().GetFreeDofs();
 
     jacobi = mat.CreateJacobiPrecond (freedofs);
+
+    if (test) Test();
   }
 
   
