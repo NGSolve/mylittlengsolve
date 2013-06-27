@@ -21,9 +21,7 @@ int NGS_TclDemo (ClientData clientData,
   cout << "argv[0] = " << argv[0] << endl;
   cout << "argv[1] = " << argv[1] << endl;
 
-  cout << "parse function ... " << flush;
   EvalFunction eval(argv[1]);
-  cout << "success" << endl;
   Array<EvalFunction*> ae(1); 
   ae[0] = &eval;
 
@@ -58,15 +56,5 @@ public:
   }  
 
 };
-
-
-
-
-
-void TclCallBack ()
-{
-  ;
-}
-
 
 static RegisterNumProc<NumProcTclDemo> npinit1("tcldemo");

@@ -18,7 +18,7 @@ tixLabelEntry $w.function -label "Enter function: "  \
     } 
 
 button $w.tcldemobutton -text "Draw" -command {
-    puts "funciton is $evalfunction";
+    puts "Tcl: function is $evalfunction";
     NGS_TclDemo $evalfunction
     Ng_Vis_Set parameters; redraw;
 }
