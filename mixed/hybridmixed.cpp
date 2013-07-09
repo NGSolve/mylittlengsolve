@@ -10,7 +10,7 @@ div sigma = -f
 
 #include <solve.hpp>
 using namespace ngsolve;
-
+using ngfem::ELEMENT_TYPE;
 
 /*
   H(div) x L2 x L2(Facet)
