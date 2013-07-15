@@ -10,7 +10,7 @@ myAssembling.o linhypDG.o
 
 
 libmyngsolve.so : $(objects)
-	ngscxx -shared $(objects) -lngsolve -o $@
+	ngscxx -shared $(objects) -lngfem -lngcomp -lngsolve -o $@
 
 clean:
 	rm *.o libmyngsolve.so
