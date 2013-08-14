@@ -16,6 +16,7 @@ element, and the global mesh.
 
 
 #include <comp.hpp>    // provides FESpace, ...
+#include <diffop_impl.hpp>
 
 #include "myElement.hpp"
 #include "myFESpace.hpp"
