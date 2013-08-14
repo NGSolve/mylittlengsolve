@@ -199,7 +199,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(NETGENDIR)\..\include&quot;;&quot;$(NETGENDIR)\..\include\include&quot;;&quot;$(SolutionDir)..\..\ext_libs\tcl\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(NETGENDIR)\..\include&quot;;&quot;$(NETGENDIR)\..\include\include&quot;;&quot;$(NETGENDIR)\..\include\fem&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MY_LITTLE_NGSOLVE_EXPORTS;NETGEN_ELTRANS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -279,7 +279,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(NETGENDIR)\..\include&quot;;&quot;$(NETGENDIR)\..\include\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(NETGENDIR)\..\include&quot;;&quot;$(NETGENDIR)\..\include\include&quot;;&quot;$(NETGENDIR)\..\include\fem&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MY_LITTLE_NGSOLVE_EXPORTS;NETGEN_ELTRANS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -358,7 +358,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(NETGENDIR)\..\include&quot;;&quot;$(NETGENDIR)\..\include\include&quot;;&quot;$(SolutionDir)..\..\ext_libs\tcl\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(NETGENDIR)\..\include&quot;;&quot;$(NETGENDIR)\..\include\include&quot;;&quot;$(NETGENDIR)\..\include\fem&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MY_LITTLE_NGSOLVE_EXPORTS;LAPACK"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -438,7 +438,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(NETGENDIR)\..\include&quot;;&quot;$(NETGENDIR)\..\include\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(NETGENDIR)\..\include&quot;;&quot;$(NETGENDIR)\..\include\include&quot;;&quot;$(NETGENDIR)\..\include\fem&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MY_LITTLE_NGSOLVE_EXPORTS;LAPACK"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -517,7 +517,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(NETGENDIR)\..\include&quot;;&quot;$(NETGENDIR)\..\include\include&quot;;&quot;$(MKL_ROOT)\compiler\include&quot;;&quot;$(MKL_ROOT)\mkl\lib\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(NETGENDIR)\..\include&quot;;&quot;$(NETGENDIR)\..\include\include&quot;;&quot;$(NETGENDIR)\..\include\fem&quot;;&quot;$(MKL_ROOT)\compiler\include&quot;;&quot;$(MKL_ROOT)\mkl\lib\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MY_LITTLE_NGSOLVE_EXPORTS;LAPACK"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -597,7 +597,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(NETGENDIR)\..\include&quot;;&quot;$(NETGENDIR)\..\include\include&quot;;&quot;$(MKL_ROOT)\compiler\include&quot;;&quot;$(MKL_ROOT)\mkl\lib\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(NETGENDIR)\..\include&quot;;&quot;$(NETGENDIR)\..\include\include&quot;;&quot;$(NETGENDIR)\..\include\fem&quot;;&quot;$(MKL_ROOT)\compiler\include&quot;;&quot;$(MKL_ROOT)\mkl\lib\include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;MY_LITTLE_NGSOLVE_EXPORTS;LAPACK;MKLpardiso;USE_PARDISO;USE_MKL"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -733,5 +733,9 @@
 		</Filter>
 	</Files>
 	<Globals>
+		<Global
+			Name="HPC_Debug"
+			Value="&#65279;&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;&lt;Properties xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;&lt;ProjectNameDisplay&gt;libmyngsolve&lt;/ProjectNameDisplay&gt;&lt;CollapseAdvanced&gt;true&lt;/CollapseAdvanced&gt;&lt;ApplicationPlatform&gt;x86&lt;/ApplicationPlatform&gt;&lt;/Properties&gt;"
+		/>
 	</Globals>
 </VisualStudioProject>
