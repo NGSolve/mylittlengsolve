@@ -28,6 +28,8 @@ namespace ngfem
     // constructor
     MyLinearTrig ();
 
+    virtual ELEMENT_TYPE ElementType() const { return ET_TRIG; }
+    
     /*
       Calculate the vector of shape functions in the point ip.
       ip is given in the reference element.
@@ -51,7 +53,7 @@ namespace ngfem
   {
   public:
     MyQuadraticTrig ();
-
+    virtual ELEMENT_TYPE ElementType() const { return ET_TRIG; }
     virtual void CalcShape (const IntegrationPoint & ip, 
                             FlatVector<> shape) const;
   

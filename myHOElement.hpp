@@ -27,6 +27,7 @@ namespace ngfem
     int vnums[2];
   public:
     MyHighOrderSegm (int order);
+    virtual ELEMENT_TYPE ElementType() const { return ET_SEGM; }
     void SetVertexNumber (int i, int v) { vnums[i] = v; }
 
     virtual void CalcShape (const IntegrationPoint & ip, 
@@ -50,6 +51,7 @@ namespace ngfem
     int vnums[3];
   public:
     MyHighOrderTrig (int order);
+    virtual ELEMENT_TYPE ElementType() const { return ET_TRIG; }
     void SetVertexNumber (int i, int v) { vnums[i] = v; }
 
     virtual void CalcShape (const IntegrationPoint & ip, 

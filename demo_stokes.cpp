@@ -132,7 +132,7 @@ public:
 
 */
 
-class StokesDMat : public DMatOp<StokesDMat>
+class StokesDMat : public DMatOp<StokesDMat,5>
 {
   CoefficientFunction * nu;
 public:
