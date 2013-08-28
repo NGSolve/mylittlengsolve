@@ -24,7 +24,7 @@ namespace ngfem
 
 
   void MyHighOrderSegm :: CalcShape (const IntegrationPoint & ip, 
-                                     FlatVector<> shape) const
+                                     SliceVector<> shape) const
   {
     double x = ip(0);
     FlatArray<double> shapearray (ndof, &shape(0));
@@ -33,7 +33,7 @@ namespace ngfem
 
 
   void MyHighOrderSegm :: CalcDShape (const IntegrationPoint & ip, 
-                                      FlatMatrixFixWidth<1> dshape) const
+                                      SliceMatrix<> dshape) const
   {
     AutoDiff<1> adx (ip(0), 0);
     Array<AutoDiff<1> > shapearray(ndof);
@@ -86,7 +86,7 @@ namespace ngfem
 
 
   void MyHighOrderTrig :: CalcShape (const IntegrationPoint & ip, 
-                                     FlatVector<> shape) const
+                                     SliceVector<> shape) const
   {
     double x = ip(0);
     double y = ip(1);
@@ -96,7 +96,7 @@ namespace ngfem
 
 
   void MyHighOrderTrig :: CalcDShape (const IntegrationPoint & ip, 
-                                      FlatMatrixFixWidth<2> dshape) const
+                                      SliceMatrix<> dshape) const
   {
     AutoDiff<2> adx (ip(0), 0);
     AutoDiff<2> ady (ip(1), 1);

@@ -28,7 +28,7 @@ namespace ngfem
 
 
   void MyLinearTrig :: CalcShape (const IntegrationPoint & ip, 
-                                  FlatVector<> shape) const
+                                  SliceVector<> shape) const
   {
     // coordinates in reference elements
     double x = ip(0);
@@ -46,7 +46,7 @@ namespace ngfem
   }
   
   void MyLinearTrig :: CalcDShape (const IntegrationPoint & ip, 
-                                   FlatMatrixFixWidth<2> dshape) const
+                                   SliceMatrix<> dshape) const
     
   {
     // matrix of derivatives:
@@ -77,7 +77,7 @@ namespace ngfem
 
 
   void MyQuadraticTrig :: CalcShape (const IntegrationPoint & ip, 
-                                     FlatVector<> shape) const
+                                     SliceVector<> shape) const
   {
     // now, use barycentric coordinates x, y, 1-x-y:
     double lam[3] = { ip(0), ip(1), 1-ip(0)-ip(1) };
@@ -100,7 +100,7 @@ namespace ngfem
 
   
   void MyQuadraticTrig :: CalcDShape (const IntegrationPoint & ip, 
-                                      FlatMatrixFixWidth<2> dshape) const
+                                      SliceMatrix<> dshape) const
     
   {
     // Use automatic (exact !) differentiation with overloaded data-types
