@@ -19,7 +19,7 @@ namespace ngfem
 {
 
   MyHighOrderSegm :: MyHighOrderSegm (int order)
-    : ScalarFiniteElement<1> (ET_SEGM, order+1, order)
+    : ScalarFiniteElement<1> (order+1, order)
   { ; }
 
 
@@ -81,7 +81,7 @@ namespace ngfem
 
 
   MyHighOrderTrig :: MyHighOrderTrig (int order)
-    : ScalarFiniteElement<2> (ET_TRIG, (order+1)*(order+2)/2, order)
+    : ScalarFiniteElement<2> ((order+1)*(order+2)/2, order)
   { ; }
 
 

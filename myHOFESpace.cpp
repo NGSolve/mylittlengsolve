@@ -73,7 +73,7 @@ namespace ngcomp
 
     dnums.SetSize(0);
 
-    Ng_Element ngel = ma.GetElement (elnr);
+    Ngs_Element ngel = ma.GetElement (elnr);
 
     // vertex dofs
     for (int i = 0; i < 3; i++)
@@ -103,7 +103,7 @@ namespace ngcomp
 
     dnums.SetSize(0);
 
-    Ng_Element ngel = ma.GetSElement (elnr);
+    Ngs_Element ngel = ma.GetSElement (elnr);
 
     // vertex dofs
     for (int i = 0; i < 2; i++)
@@ -122,7 +122,7 @@ namespace ngcomp
   {
     MyHighOrderTrig * trig = new (lh) MyHighOrderTrig(order);
 
-    Ng_Element ngel = ma.GetElement (elnr);
+    Ngs_Element ngel = ma.GetElement (elnr);
 
     for (int i = 0; i < 3; i++)
       trig->SetVertexNumber (i, ngel.vertices[i]);
@@ -136,7 +136,7 @@ namespace ngcomp
   {
     MyHighOrderSegm * segm = new (lh) MyHighOrderSegm(order);
 
-    Ng_Element ngel = ma.GetSElement (elnr);
+    Ngs_Element ngel = ma.GetSElement (elnr);
 
     for (int i = 0; i < 2; i++)
       segm->SetVertexNumber (i, ngel.vertices[i]);

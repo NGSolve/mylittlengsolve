@@ -23,7 +23,7 @@ namespace ngfem
     Call constructor for base class: 
     geometry is ET_TRIG, number of dofs is 3, maximal order is 1
    */
-    : ScalarFiniteElement<2> (ET_TRIG, 3, 1)
+    : ScalarFiniteElement<2> (3, 1)
   { ; }
 
 
@@ -72,7 +72,7 @@ namespace ngfem
 
 
   MyQuadraticTrig :: MyQuadraticTrig ()
-    : ScalarFiniteElement<2> (ET_TRIG, 6, 2)
+    : ScalarFiniteElement<2> (6, 2)
   { ; }
 
 
