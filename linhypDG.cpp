@@ -1,3 +1,4 @@
+
 /*
   
 Solver for the linear hyperbolic equation
@@ -13,7 +14,7 @@ by an explicit time-stepping method
 #include <solve.hpp>
 #include "../ngsolve/include/compatibility.hpp"
 using namespace ngsolve;
-
+using ngfem::ELEMENT_TYPE;
 
 
 
@@ -192,7 +193,7 @@ public:
 
     for (double t = 0; t < tend; t += dt)
       {
-	cout << "t = " << setw(6) << t << flush;
+	//cout << "t = " << setw(6) << t << flush;
 
 	CalcConvection (vecu, conv, lh);
 	SolveM (conv, w, lh);
@@ -203,13 +204,13 @@ public:
 
 	vecu += dt * w;
 
-
+      /*
 	cout << " time T/F/M [us] = "
 	     << 1e6 * timer_element.GetTime()/timer_element.GetCounts()/vecu.Size() << " / "
 	     << 1e6 * timer_facet.GetTime()/timer_facet.GetCounts()/vecu.Size() << " / "
 	     << 1e6 * timer_mass.GetTime()/timer_mass.GetCounts()/vecu.Size() 
 	     << "\r";
-
+           */
 	Ng_Redraw();
       }
   }
