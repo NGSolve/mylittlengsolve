@@ -12,7 +12,7 @@ by an explicit time-stepping method
 
 
 #include <solve.hpp>
-#include "../ngsolve/include/compatibility.hpp"
+#include <compatibility.hpp>
 using namespace ngsolve;
 using ngfem::ELEMENT_TYPE;
 
@@ -100,7 +100,7 @@ public:
 	const DGFiniteElement<D> & fel = dynamic_cast<const DGFiniteElement<D>&> (fes.GetFE (i, lh));
 	const IntegrationRule ir(fel.ElementType(), 2*fel.Order());
 
-	const_cast<DGFiniteElement<D>&> (fel).PrecomputeShapes (ir);
+        const_cast<DGFiniteElement<D>&> (fel).PrecomputeShapes (ir);
 	const_cast<DGFiniteElement<D>&> (fel).PrecomputeTrace ();
 
 
