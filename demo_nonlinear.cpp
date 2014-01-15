@@ -48,28 +48,18 @@ public:
 			 const FlatVector<double> & elx, 
 			 LocalHeap & lh) const
   {
+    HeapReset hr(lh);
     const ScalarFiniteElement<2> & fel = static_cast<const ScalarFiniteElement<2>&> (bfel);
-    int ndof = fel.GetNDof();
 
-    FlatVector<> shape(ndof, lh);
     IntegrationRule ir(fel.ElementType(), 2*fel.Order());
+    MappedIntegrationRule<2,2> mir(ir, eltrans, lh);
+
+    FlatVector<> vals(ir.GetNIP(), lh);
+    fel.Evaluate (ir, elx, vals);
 
     double energy = 0;
-
     for (int i = 0 ; i < ir.GetNIP(); i++)
-      {
-        HeapReset hr(lh);
-        
-        MappedIntegrationPoint<2,2> mip(ir[i], eltrans); 
-
-        fel.CalcShape (ir[i], shape);
-
-        double ui = InnerProduct (shape, elx);
-        double phi = pow(ui,4);
-        double fac = fabs (mip.GetJacobiDet()) * mip.IP().Weight();
-        
-        energy += fac * phi;
-      }
+      energy += mir[i].GetWeight() * pow(vals(i),4);
     return energy;
   }
 
@@ -84,28 +74,20 @@ public:
 		      LocalHeap & lh) const
   {
     const ScalarFiniteElement<2> & fel = static_cast<const ScalarFiniteElement<2>&> (bfel);
-    int ndof = fel.GetNDof();
 
-    FlatVector<> shape(ndof, lh);
     IntegrationRule ir(fel.ElementType(), 2*fel.Order());
+    MappedIntegrationRule<2,2> mir(ir, eltrans, lh);
 
-    ely = 0;
+    FlatVector<> vals(ir.GetNIP(), lh);
+    fel.Evaluate (ir, elx, vals);
 
     for (int i = 0 ; i < ir.GetNIP(); i++)
       {
-        HeapReset hr(lh);
-        
-        MappedIntegrationPoint<2,2> mip(ir[i], eltrans); 
-
-        fel.CalcShape (ir[i], shape);
-
-        double ui = InnerProduct (shape, elx);
-        double phiprime = 4 * pow(ui,3);
-
-        double fac = fabs (mip.GetJacobiDet()) * mip.IP().Weight();
-        
-        ely += fac * phiprime * shape;
+        double phiprime = 4 * pow(vals(i),3);
+        vals(i) = mir[i].GetWeight() * phiprime;
       }
+
+    fel.EvaluateTrans (ir, vals, ely);
   }
 
   // compute the Hesse Matrix at point elveclin
@@ -119,16 +101,13 @@ public:
     const ScalarFiniteElement<2> & fel = static_cast<const ScalarFiniteElement<2>&> (bfel);
     int ndof = fel.GetNDof();
 
-    elmat.AssignMemory (ndof, ndof, lh);
     elmat = 0;
     
-
     FlatVector<> shape(ndof, lh);
     IntegrationRule ir(fel.ElementType(), 2*fel.Order());
 
     for (int i = 0 ; i < ir.GetNIP(); i++)
       {
-        HeapReset hr(lh);
         MappedIntegrationPoint<2,2> mip(ir[i], eltrans); 
 
         fel.CalcShape (ir[i], shape);
@@ -136,8 +115,7 @@ public:
         double uilin = InnerProduct(shape, elveclin);
         double phiprimeprime = 12 * pow(uilin,2);
 
-        double fac = fabs (mip.GetJacobiDet()) * mip.IP().Weight();
-
+        double fac = mip.GetWeight();
         elmat += (fac * phiprimeprime) * shape * Trans(shape);
       }
   }
