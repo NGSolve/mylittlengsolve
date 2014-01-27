@@ -100,8 +100,8 @@ public:
 	const DGFiniteElement<D> & fel = dynamic_cast<const DGFiniteElement<D>&> (fes.GetFE (i, lh));
 	const IntegrationRule ir(fel.ElementType(), 2*fel.Order());
 
-        const_cast<DGFiniteElement<D>&> (fel).PrecomputeShapes (ir);
-	const_cast<DGFiniteElement<D>&> (fel).PrecomputeTrace ();
+        // const_cast<DGFiniteElement<D>&> (fel).PrecomputeShapes (ir);
+	// const_cast<DGFiniteElement<D>&> (fel).PrecomputeTrace ();
 
 
 	MappedIntegrationRule<D,D> mir(ir, ma.GetTrafo (i, 0, lh), lh);
@@ -135,7 +135,7 @@ public:
 	const DGFiniteElement<D-1> & felfacet = 
 	  dynamic_cast<const DGFiniteElement<D-1>&> (fes.GetFacetFE (i, lh));
 	IntegrationRule ir (felfacet.ElementType(), 2*felfacet.Order());
-	const_cast<DGFiniteElement<D-1>&> (felfacet).PrecomputeShapes (ir);
+	// const_cast<DGFiniteElement<D-1>&> (felfacet).PrecomputeShapes (ir);
 	
 
 	facetdata[i] = new FacetData (ir.Size());
