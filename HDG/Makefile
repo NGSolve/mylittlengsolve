@@ -1,4 +1,4 @@
-objects = HDGLaplace.o
+objects = HDGLaplace.o HDGElasticity.o
 
 %.o : %.cpp
 	ngscxx -c $? -o $@
