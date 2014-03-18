@@ -33,7 +33,6 @@ public:
     const HDivNormalFiniteElement<D-1> & fel_facet = 
       dynamic_cast<const HDivNormalFiniteElement<D-1> &> (cfel[1]);
 
-
     DiffOpIdBoundaryEdge<D>::GenerateMatrix (fel_element, mip, 
                                              mat.Cols(cfel.GetRange(0)), lh);
 
@@ -74,8 +73,11 @@ public:
 
 
 
-
-
+/*
+  The gradient of H(curl) shape function on the physical element is NOT an 
+  algebraic transformation of the gradient on the reference element. Thus we 
+  do numerical differentiation
+*/
 template<int D>
 void CalcDShapeOfHCurlFE(const HCurlFiniteElement<D>& fel_u, 
                          const MappedIntegrationPoint<D,D>& mip, 
@@ -95,10 +97,10 @@ void CalcDShapeOfHCurlFE(const HCurlFiniteElement<D>& fel_u,
 
   
   double eps = 1e-7;
-  for (int j = 0; j < D; j++)   // d / dxj .... numerische Ableitung mit Mittelpunktsregel
+  for (int j = 0; j < D; j++)   // d/dxj 
     {
       IntegrationPoint ipl(ip);
-      ipl(j) -= eps;
+      ipl(j) -= eps;                 // xref  -= eps e_j
       MappedIntegrationPoint<D,D> mipl(ipl, eltrans);
       
       IntegrationPoint ipr(ip);
@@ -114,6 +116,8 @@ void CalcDShapeOfHCurlFE(const HCurlFiniteElement<D>& fel_u,
         bmatu.Col(j*D+l) = dshape_u_ref.Col(l);
     }
   
+  // we got  dshape / dxref,   need to do jain-rule for dx/dxref ...
+
   for (int j = 0; j < D; j++)
     {
       for (int k = 0; k < nd_u; k++)
@@ -206,8 +210,9 @@ public:
 	    }
         
         for (int j = 0; j < D*D; j += D+1)
-          dmat(j,j) += 1.0 / (1-2*nu);
-
+          for (int k = 0; k < D*D; k += D+1)
+            dmat(j,k) += nu / (1-2*nu);
+        
         dmat *= E * mir_vol[i].GetWeight();
         dmat_dshape = dshape * dmat;
         elmat.Cols(element_dofs).Rows(element_dofs) +=
@@ -226,7 +231,7 @@ public:
         
         Vec<D> normal_ref = normals[k];
         
-        IntegrationRule ir_facet(etfacet, 2*fel_element.Order());
+        IntegrationRule ir_facet(etfacet, 2*max (fel_element.Order(), fel_facet.Order()));
         
         IntegrationRule & ir_facet_vol = transform(k, ir_facet, lh);
         MappedIntegrationRule<D,D> mir(ir_facet_vol, eltrans, lh);
@@ -252,14 +257,47 @@ public:
             // compute normal derivatives on physical element via reference element
 
             CalcDShapeOfHCurlFE<D> (fel_element, mip, dshape, lh);
+
+            dmat = 0.0;
+            for (int j = 0; j < D; j++)
+              for (int k = 0; k < D; k++)
+                {
+                  dmat(j*D+k,j*D+k) += 0.5;
+                  dmat(j*D+k,k*D+j) += 0.5;
+                  dmat(k*D+j,j*D+k) += 0.5;
+                  dmat(k*D+j,k*D+j) += 0.5;
+                }
+            
+
+            for (int j = 0; j < D*D; j += D+1)
+              for (int k = 0; k < D*D; k += D+1)
+                dmat(j,k) += nu / (1-2*nu);
+            
+            dmat_dshape = dshape * dmat;
+
+
             sigman = 0.0;
 	    for (int i = 0; i < nd_element; i++)
               {
                 for (int j = 0; j < D; j++)
                   for (int k2 = 0; k2 < D; k2++)
-                    sigman(i, k2) += (dshape(i,j*D+k2) + dshape(i,k2*D+j)) * normal(j); 
+                    sigman(i, k2) += dmat_dshape(i,j*D+k2)*normal(j);
+
+                /*
                 for (int j = 0; j < D; j++)
-                  sigman(i, j) += 1.0 / (1-2*nu) * dshape(i,j*D+j) * normal(j); 
+                  for (int k2 = 0; k2 < D; k2++)
+                    sigman(i, k2) += (dshape(i,j*D+k2) + dshape(i,k2*D+j)) * normal(j); 
+
+                // old
+                // for (int j = 0; j < D; j++)
+                // sigman(i, j) += 1.0 / (1-2*nu) * dshape(i,j*D+j) * normal(j); 
+
+                double divshape = 0;
+                for (int j = 0; j < D; j++)
+                  divshape += dshape(i,j*D+j);
+                for (int j = 0; j < D; j++)
+                  sigman(i, j) += nu / (1-2*nu) * divshape * normal(j); 
+                */
               }
             
             fel_element.CalcMappedShape (mip, jump.Rows(element_dofs));
