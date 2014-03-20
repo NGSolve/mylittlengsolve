@@ -74,7 +74,7 @@ public:
 
 
 /*
-  The gradient of H(curl) shape function on the physical element is NOT an 
+  The gradient of H(curl) shape functions on the physical element is NOT an 
   algebraic transformation of the gradient on the reference element. Thus we 
   do numerical differentiation
 */
@@ -116,7 +116,7 @@ void CalcDShapeOfHCurlFE(const HCurlFiniteElement<D>& fel_u,
         bmatu.Col(j*D+l) = dshape_u_ref.Col(l);
     }
   
-  // we got  dshape / dxref,   need to do jain-rule for dx/dxref ...
+  // we got  dshape / dxref,  need the chain-rule for dx/dxref ...
 
   for (int j = 0; j < D; j++)
     {
@@ -203,17 +203,17 @@ public:
 	for (int j = 0; j < D; j++)
 	  for (int k = 0; k < D; k++)
 	    {
-	      dmat(j*D+k,j*D+k) += 0.5;
-	      dmat(j*D+k,k*D+j) += 0.5;
-	      dmat(k*D+j,j*D+k) += 0.5;
-	      dmat(k*D+j,k*D+j) += 0.5;
+	      dmat(j*D+k,j*D+k) += 0.25;
+	      dmat(j*D+k,k*D+j) += 0.25;
+	      dmat(k*D+j,j*D+k) += 0.25;
+	      dmat(k*D+j,k*D+j) += 0.25;
 	    }
         
         for (int j = 0; j < D*D; j += D+1)
           for (int k = 0; k < D*D; k += D+1)
             dmat(j,k) += nu / (1-2*nu);
         
-        dmat *= E * mir_vol[i].GetWeight();
+        dmat *= (E/(1+nu)) * mir_vol[i].GetWeight();
         dmat_dshape = dshape * dmat;
         elmat.Cols(element_dofs).Rows(element_dofs) +=
           dshape * Trans(dmat_dshape);
@@ -262,19 +262,16 @@ public:
             for (int j = 0; j < D; j++)
               for (int k = 0; k < D; k++)
                 {
-                  dmat(j*D+k,j*D+k) += 0.5;
-                  dmat(j*D+k,k*D+j) += 0.5;
-                  dmat(k*D+j,j*D+k) += 0.5;
-                  dmat(k*D+j,k*D+j) += 0.5;
+                  dmat(j*D+k,j*D+k) += 0.25;
+                  dmat(j*D+k,k*D+j) += 0.25;
+                  dmat(k*D+j,j*D+k) += 0.25;
+                  dmat(k*D+j,k*D+j) += 0.25;
                 }
-            
-
             for (int j = 0; j < D*D; j += D+1)
               for (int k = 0; k < D*D; k += D+1)
                 dmat(j,k) += nu / (1-2*nu);
             
             dmat_dshape = dshape * dmat;
-
 
             sigman = 0.0;
 	    for (int i = 0; i < nd_element; i++)
@@ -307,7 +304,7 @@ public:
             Mat<D,D> proj = normal * Trans(normal);
             pjump = jump * proj;
 
-            double fac = E * len * ir_facet[l].Weight();
+            double fac = (E/(1+nu)) * len * ir_facet[l].Weight();
             elmat.Rows(element_dofs) -= fac * sigman * Trans (pjump);
             elmat.Cols(element_dofs) -= fac * pjump * Trans (sigman); 
 
