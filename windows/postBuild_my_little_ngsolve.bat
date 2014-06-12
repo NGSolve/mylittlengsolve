@@ -68,10 +68,10 @@ C:\Windows\System32\xcopy "%PROJ_DIR%..\tcl\*.vol" "%INSTALL_FOLDER%\my_little_n
 C:\Windows\System32\xcopy "%PROJ_DIR%..\tcl\*.in2d" "%INSTALL_FOLDER%\my_little_ngsolve\tcl\*.in2d" /i /d /y
 C:\Windows\System32\xcopy "%PROJ_DIR%..\tcl\*.vol.*" "%INSTALL_FOLDER%\my_little_ngsolve\tcl\*.vol.*" /i /d /y
 
-C:\Windows\System32\xcopy "%PROJ_DIR%..\HDG\*.pde" "%INSTALL_FOLDER%\my_little_ngsolve\tcl\*.pde" /i /d /y
-C:\Windows\System32\xcopy "%PROJ_DIR%..\HDG\*.vol" "%INSTALL_FOLDER%\my_little_ngsolve\tcl\*.vol" /i /d /y
-C:\Windows\System32\xcopy "%PROJ_DIR%..\HDG\*.in2d" "%INSTALL_FOLDER%\my_little_ngsolve\tcl\*.in2d" /i /d /y
-C:\Windows\System32\xcopy "%PROJ_DIR%..\HDG\*.vol.*" "%INSTALL_FOLDER%\my_little_ngsolve\tcl\*.vol.*" /i /d /y
+C:\Windows\System32\xcopy "%PROJ_DIR%..\HDG\*.pde" "%INSTALL_FOLDER%\my_little_ngsolve\HDG\*.pde" /i /d /y
+C:\Windows\System32\xcopy "%PROJ_DIR%..\HDG\*.vol" "%INSTALL_FOLDER%\my_little_ngsolve\HDG\*.vol" /i /d /y
+C:\Windows\System32\xcopy "%PROJ_DIR%..\HDG\*.in2d" "%INSTALL_FOLDER%\my_little_ngsolve\HDG\*.in2d" /i /d /y
+C:\Windows\System32\xcopy "%PROJ_DIR%..\HDG\*.vol.*" "%INSTALL_FOLDER%\my_little_ngsolve\HDG\*.vol.*" /i /d /y
 
 echo %PROJ_NAME%
 if /i "%PROJ_NAME%" == "libtcldemo" (
