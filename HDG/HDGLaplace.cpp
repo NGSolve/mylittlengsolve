@@ -72,7 +72,7 @@ public:
       dynamic_cast<const FacetVolumeFiniteElement<D> &> (cfel[1]);
     // use fel_facet.Facet(k) to obtain the fe of one particular facet
   
-    ELEMENT_TYPE eltype = cfel.ElementType();
+    ngfem::ELEMENT_TYPE eltype = cfel.ElementType();
       
     IntRange l2_dofs = cfel.GetRange (0);
     IntRange facet_dofs = cfel.GetRange (1);
@@ -113,7 +113,7 @@ public:
     for (int k = 0; k < nfacet; k++)
       {
         HeapReset hr(lh);
-        ELEMENT_TYPE etfacet = ElementTopology::GetFacetType (eltype, k);
+        ngfem::ELEMENT_TYPE etfacet = ElementTopology::GetFacetType (eltype, k);
         
         Vec<D> normal_ref = normals[k];
         

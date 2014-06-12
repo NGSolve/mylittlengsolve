@@ -169,7 +169,7 @@ public:
     const HDivFiniteElement<D> & fel_facet = 
       dynamic_cast<const HDivFiniteElement<D> &> (cfel[1]);
   
-    ELEMENT_TYPE eltype = cfel.ElementType();
+    ngfem::ELEMENT_TYPE eltype = cfel.ElementType();
       
     IntRange element_dofs = cfel.GetRange (0);
     IntRange facet_dofs = cfel.GetRange (1);
@@ -227,7 +227,7 @@ public:
     for (int k = 0; k < nfacet; k++)
       {
         HeapReset hr(lh);
-        ELEMENT_TYPE etfacet = ElementTopology::GetFacetType (eltype, k);
+        ngfem::ELEMENT_TYPE etfacet = ElementTopology::GetFacetType (eltype, k);
         
         Vec<D> normal_ref = normals[k];
         
