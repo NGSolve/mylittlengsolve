@@ -21,6 +21,11 @@ element, and the global mesh.
 #include "myElement.hpp"
 #include "myFESpace.hpp"
 
+#include <diffop_impl.hpp>
+#ifdef WIN32
+      template ngcomp::T_DifferentialOperator<ngcomp::DiffOpId<2> >;
+#endif
+
 
 namespace ngcomp
 {
