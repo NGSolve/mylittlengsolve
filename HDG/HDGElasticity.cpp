@@ -54,7 +54,7 @@ public:
     Flags hdivflags(flags), hcurlflags(flags);
     hdivflags.SetFlag ("order", flags.GetNumFlag ("order",1)+1);
     hdivflags.SetFlag ("orderinner", 0.0);
-
+    // hdivflags.SetFlag ("highest_order_dc");
     AddSpace (new HCurlHighOrderFESpace (ma, hcurlflags));
     AddSpace (new HDivHighOrderFESpace (ma, hdivflags));        
 
@@ -92,11 +92,13 @@ void CalcDShapeOfHCurlFE(const HCurlFiniteElement<D>& fel_u,
   const ElementTransformation & eltrans = mip.GetTransformation();
   FlatMatrixFixWidth<D> shape_ul(nd_u, lh);
   FlatMatrixFixWidth<D> shape_ur(nd_u, lh);
+  FlatMatrixFixWidth<D> shape_ull(nd_u, lh);
+  FlatMatrixFixWidth<D> shape_urr(nd_u, lh);
   FlatMatrixFixWidth<D> dshape_u_ref(nd_u, lh);
   FlatMatrixFixWidth<D> dshape_u(nd_u, lh);  
 
   
-  double eps = 1e-7;
+  double eps = 1e-4;
   for (int j = 0; j < D; j++)   // d/dxj 
     {
       IntegrationPoint ipl(ip);
@@ -109,8 +111,23 @@ void CalcDShapeOfHCurlFE(const HCurlFiniteElement<D>& fel_u,
       
       fel_u.CalcMappedShape (mipl, shape_ul);
       fel_u.CalcMappedShape (mipr, shape_ur);
+
+      IntegrationPoint ipll(ip);
+      ipll(j) -= 2*eps;
+      MappedIntegrationPoint<D,D> mipll(ipll, eltrans);
       
-      dshape_u_ref = (1.0/(2*eps)) * (shape_ur-shape_ul);
+      IntegrationPoint iprr(ip);
+      iprr(j) += 2*eps;
+      MappedIntegrationPoint<D,D> miprr(iprr, eltrans);
+      
+      fel_u.CalcMappedShape (mipl, shape_ul);
+      fel_u.CalcMappedShape (mipr, shape_ur);
+      fel_u.CalcMappedShape (mipll, shape_ull);
+      fel_u.CalcMappedShape (miprr, shape_urr);
+      
+      double a = 4.0/3, b = -1.0/3;
+      dshape_u_ref = (a/(2*eps)) * (shape_ur-shape_ul)
+        + (b/(4*eps)) * (shape_urr-shape_ull);
       
       for (int l = 0; l < D; l++)
         bmatu.Col(j*D+l) = dshape_u_ref.Col(l);
@@ -155,6 +172,9 @@ public:
   virtual ~HDG_ElasticityIntegrator () { ; }
 
   virtual bool BoundaryForm () const { return 0; }
+  virtual int DimFlux () const { return D*(D+1)/2; }
+  virtual int DimElement () const { return D; }
+  virtual int DimSpace () const { return D; }
 
   virtual void CalcElementMatrix (const FiniteElement & fel,
                                   const ElementTransformation & eltrans, 
@@ -232,7 +252,6 @@ public:
         Vec<D> normal_ref = normals[k];
         
         IntegrationRule ir_facet(etfacet, 2*max (fel_element.Order(), fel_facet.Order()));
-        
         IntegrationRule & ir_facet_vol = transform(k, ir_facet, lh);
         MappedIntegrationRule<D,D> mir(ir_facet_vol, eltrans, lh);
 
@@ -311,8 +330,51 @@ public:
             fac *= alpha * sqr (fel_element.Order()+1) * (len/det);   // the IP - penalty
             elmat += fac * pjump * Trans (pjump);
           }
+        *testout << endl;
       }
   }
+
+
+  void
+  CalcFlux (const FiniteElement & base_fel,
+	    const BaseMappedIntegrationPoint & base_mip,
+	    const FlatVector<double> & elx, 
+	    FlatVector<double> & flux,
+	    bool applyd,
+	    LocalHeap & lh) const
+  {
+    HeapReset hr(lh);
+    const CompoundFiniteElement & cfel = 
+      dynamic_cast<const CompoundFiniteElement&> (base_fel);
+    
+    const HCurlFiniteElement<D> & fel_element = 
+      dynamic_cast<const HCurlFiniteElement<D>&> (cfel[0]);
+
+    const MappedIntegrationPoint<D,D> & mip =
+      static_cast<const MappedIntegrationPoint<D,D> &> (base_mip);
+    
+    FlatMatrix<> dshape(fel_element.GetNDof(), D*D, lh);
+    CalcDShapeOfHCurlFE<D> (fel_element, mip, dshape, lh);
+    
+    Vec<D*D> grad = Trans(dshape)*elx.Range(0, fel_element.GetNDof());
+    Mat<D,D> eps;
+    for (int i = 0; i < D; i++)
+      for (int j = 0; j < D; j++)
+        eps(i,j) = 0.5 * (grad(D*i+j)+grad(D*j+i));
+
+    int ii = 0;
+    for (int i = 0; i < D; i++)
+      flux(ii++) = eps(i,i);
+    for (int i = 0; i < D; i++)
+      for (int j = 0; j < i; j++)
+        flux(ii++) = eps(i,j);
+
+    /*
+    if (applyd)
+      flux *= coef_lambda -> Evaluate (mip);
+    */
+  }
+  
 };
 
 
