@@ -1,26 +1,37 @@
 #include <solve.hpp>
 using namespace ngsolve;
 
-class NumProcDemo : public NumProc
+
+class NumProcTEMPLATE : public NumProc
 {
+protected:
+  // BilinearForm * bfa;
+  // LinearForm * lff;
+  // GridFunction * gfu;
+  // double dt;
 
 public:
-    
-  NumProcDemo (PDE & apde, const Flags & flags)
+
+  NumProcTEMPLATE (PDE & apde, const Flags & flags)
     : NumProc (apde)
   {
-    ;
+    // bfa = pde.GetBilinearForm (flags.GetStringFlag ("bilinearforma", "a"));
+    // lff = pde.GetLinearForm (flags.GetStringFlag ("linearform", "f"));
+    // gfu = pde.GetGridFunction (flags.GetStringFlag ("gridfunction", "u"));
+    // dt = flags.GetNumFlag ("dt", 0.001);
   }
 
+
+  // solve at one level
   virtual void Do(LocalHeap & lh)
   {
-    ;
+    cout << "solve TEMPLATE" << endl;
   }
 
 
   virtual string GetClassName () const
   {
-    return "NumProcDemo";
+    return "Numproc TEMPLATE";
   }
 
   virtual void PrintReport (ostream & ost)
@@ -32,11 +43,13 @@ public:
   static void PrintDoc (ostream & ost)
   {
     ost << 
-      "\n\nNumproc Parabolic:\n"                
+      "\n\nNumproc TEMPLATE:\n" 
 	<< endl;
   }
 };
 
 
-static RegisterNumProc<NumProcDemo> npinit1("demo");
+
+// register the numproc 'TEMPLATE' 
+static RegisterNumProc<NumProcTEMPLATE> npinit1("TEMPLATE");
 
