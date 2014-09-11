@@ -12,7 +12,7 @@ by an explicit time-stepping method
 
 
 #include <solve.hpp>
-#include <compatibility.hpp>
+// #include <compatibility.hpp>
 using namespace ngsolve;
 using ngfem::ELEMENT_TYPE;
 
@@ -100,8 +100,8 @@ public:
 	const DGFiniteElement<D> & fel = dynamic_cast<const DGFiniteElement<D>&> (fes.GetFE (i, lh));
 	const IntegrationRule ir(fel.ElementType(), 2*fel.Order());
 
-        // const_cast<DGFiniteElement<D>&> (fel).PrecomputeShapes (ir);
-	// const_cast<DGFiniteElement<D>&> (fel).PrecomputeTrace ();
+        const_cast<DGFiniteElement<D>&> (fel).PrecomputeShapes (ir);
+        const_cast<DGFiniteElement<D>&> (fel).PrecomputeTrace ();
 
 
 	MappedIntegrationRule<D,D> mir(ir, ma.GetTrafo (i, 0, lh), lh);
@@ -135,7 +135,7 @@ public:
 	const DGFiniteElement<D-1> & felfacet = 
 	  dynamic_cast<const DGFiniteElement<D-1>&> (fes.GetFacetFE (i, lh));
 	IntegrationRule ir (felfacet.ElementType(), 2*felfacet.Order());
-	// const_cast<DGFiniteElement<D-1>&> (felfacet).PrecomputeShapes (ir);
+        const_cast<DGFiniteElement<D-1>&> (felfacet).PrecomputeShapes (ir);
 	
 
 	facetdata[i] = new FacetData (ir.Size());
@@ -190,29 +190,43 @@ public:
     Vector<> w(vecu.Size());
     Vector<> hu(vecu.Size());
     
+#pragma omp parallel
+    {
+      LocalHeap lh2 = lh.Split();
+      
 
-    for (double t = 0; t < tend; t += dt)
-      {
-	//cout << "t = " << setw(6) << t << flush;
+      for (double t = 0; t < tend; t += dt)
+        {
 
-	CalcConvection (vecu, conv, lh);
-	SolveM (conv, w, lh);
+#pragma omp single
+          cout << "\rt = " << setw(6) << t << flush;
+          
+          CalcConvection (vecu, conv, lh2);
+          SolveM (conv, w, lh2);
+          
+#pragma omp single
+          {
+            hu = vecu + (0.5*dt) * w;
+          }
 
-	hu = vecu + (0.5*dt) * w;
-	CalcConvection (hu, conv, lh);
-	SolveM (conv, w, lh);
-
-	vecu += dt * w;
-
-      /*
-	cout << " time T/F/M [us] = "
-	     << 1e6 * timer_element.GetTime()/timer_element.GetCounts()/vecu.Size() << " / "
-	     << 1e6 * timer_facet.GetTime()/timer_facet.GetCounts()/vecu.Size() << " / "
-	     << 1e6 * timer_mass.GetTime()/timer_mass.GetCounts()/vecu.Size() 
-	     << "\r";
-           */
-	Ng_Redraw();
-      }
+          CalcConvection (hu, conv, lh2);
+          SolveM (conv, w, lh2);
+          
+#pragma omp single
+          {
+            vecu += dt * w;
+            
+            /*
+              cout << " time T/F/M [us] = "
+              << 1e6 * timer_element.GetTime()/timer_element.GetCounts()/vecu.Size() << " / "
+              << 1e6 * timer_facet.GetTime()/timer_facet.GetCounts()/vecu.Size() << " / "
+              << 1e6 * timer_mass.GetTime()/timer_mass.GetCounts()/vecu.Size() 
+              << "\r";
+            */
+            Ng_Redraw();
+          }
+        }
+    }
   }
 
 
@@ -225,14 +239,17 @@ public:
     const L2HighOrderFESpace & fes = 
       dynamic_cast<const L2HighOrderFESpace&> (gfu->GetFESpace());
 
+#pragma omp single
     timer_mass.Start();
 
+#pragma omp for
     for (int i = 0; i < ne; i++)
       {
 	IntRange dn = fes.GetElementDofs (i);
 	vecu.Range (dn) = elementdata[i]->invmass * res.Range (dn);
       }
 
+#pragma omp single
     timer_mass.Stop();
   }
 
@@ -244,23 +261,24 @@ public:
   void CalcConvection (FlatVector<double> vecu, FlatVector<double> conv,
 		       LocalHeap & lh)
   {
+    
     const L2HighOrderFESpace & fes = 
       dynamic_cast<const L2HighOrderFESpace&> (gfu->GetFESpace());
-
-    int ne = ma.GetNE();
-    int nf = ma.GetNFacets();
-
+    
+    
+#pragma omp single
     timer_element.Start();
     
-#pragma omp parallel 
-    {
-      LocalHeap & clh = lh, lh = clh.Split();
+    
+    int ne = ma.GetNE();
+      
 #pragma omp for
       for (int i = 0; i < ne; i++)
 	{
 	  HeapReset hr(lh);
 	  
-	  const ScalarFiniteElement<D> & fel = dynamic_cast<const ScalarFiniteElement<D>&> (fes.GetFE (i, lh));
+	  const ScalarFiniteElement<D> & fel = 
+            static_cast<const ScalarFiniteElement<D>&> (fes.GetFE (i, lh));
 	  const IntegrationRule ir(fel.ElementType(), 2*fel.Order());
 
 	  FlatMatrixFixWidth<D> flowip = elementdata[i]->flowip;
@@ -292,16 +310,17 @@ public:
 	  
 	  fel.EvaluateGradTrans (ir, flowui, conv.Range(dn));
 	}
-    }
-
-    timer_element.Stop();
 
 
-    timer_facet.Start();
+#pragma omp single
+      {
+        timer_element.Stop();
+        timer_facet.Start();
+      }
 
-#pragma omp parallel 
-    {
-      LocalHeap & clh = lh, lh = clh.Split();
+
+      int nf = ma.GetNFacets();
+      
 #pragma omp for
       for (int i = 0; i < nf; i++)
 	{
@@ -311,11 +330,11 @@ public:
 	  if (fai.elnr[1] != -1)
 	    {
 	      const DGFiniteElement<D> & fel1 = 
-		dynamic_cast<const DGFiniteElement<D>&> (fes.GetFE (fai.elnr[0], lh));
+		static_cast<const DGFiniteElement<D>&> (fes.GetFE (fai.elnr[0], lh));
 	      const DGFiniteElement<D> & fel2 = 
-		dynamic_cast<const DGFiniteElement<D>&> (fes.GetFE (fai.elnr[1], lh));
+		static_cast<const DGFiniteElement<D>&> (fes.GetFE (fai.elnr[1], lh));
 	      const DGFiniteElement<D-1> & felfacet = 
-		dynamic_cast<const DGFiniteElement<D-1>&> (fes.GetFacetFE (i, lh));
+		static_cast<const DGFiniteElement<D-1>&> (fes.GetFacetFE (i, lh));
 
 	      IntRange dn1 = fes.GetElementDofs (fai.elnr[0]);
 	      IntRange dn2 = fes.GetElementDofs (fai.elnr[1]);
@@ -391,10 +410,10 @@ public:
 	      }
 	    }
 	}
-    }
-    
-    timer_facet.Stop(); 
 
+#pragma omp single    
+      timer_facet.Stop(); 
+      
 
 
   }

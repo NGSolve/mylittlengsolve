@@ -1,16 +1,18 @@
-objects = all_in_one.o demo_instat.o demo_stokes.o myElement.o	 \
-myHOElement.o myIntegrator.o demo_coupling.o demo_coupling_adv.o \
-demo_nonlinear.o myFESpace.o myHOFESpace.o myPreconditioner.o	 \
-myAssembling.o linhypDG.o
-# linhypDG_par.o 
+NGSCXX = /opt/netgen-5.3/bin/ngscxx
+
+objects = demo_instat.o myElement.o myHOElement.o myIntegrator.o \
+demo_coupling.o myFESpace.o myHOFESpace.o myPreconditioner.o	 \
+myAssembling.o linhypDG.o all_in_one.o demo_stokes.o		 \
+demo_coupling_adv.o demo_nonlinear.o 
+
 
 
 %.o : %.cpp
-	ngscxx -I. -c $? -o $@
+	$(NGSCXX) -I. -c $? -o $@
 
 
 libmyngsolve.so : $(objects)
-	ngscxx -shared $(objects) -lngfem -lngcomp -lngsolve -o $@
+	$(NGSCXX) -shared $(objects) -lngfem -lngcomp -lngsolve -o $@
 
 clean:
 	rm *.o libmyngsolve.so

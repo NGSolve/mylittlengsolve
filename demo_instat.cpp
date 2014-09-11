@@ -8,8 +8,6 @@ M du/dt  +  A u = f
 
 by an implicite Euler method
 
-
-Please include this file to the src files given in netgen/ngsolve/Makefile
 */
 
 
