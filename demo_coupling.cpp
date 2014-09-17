@@ -34,7 +34,7 @@ class NumProcCouplingDemo : public NumProc
 {
 protected:
   // grid function provides the solution vector of the first PDE
-  GridFunction * gfu;
+  shared_ptr<GridFunction> gfu;
 
   // linear-form providing the right hand side for the second PDE
   LinearForm * lff;

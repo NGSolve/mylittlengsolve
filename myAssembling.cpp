@@ -20,7 +20,7 @@ namespace myAssembling
   class NumProcMyAssembling : public NumProc
   {
   protected:
-    GridFunction *gfu;
+    shared_ptr<GridFunction> gfu;
 
   public:
     
@@ -67,6 +67,7 @@ namespace myAssembling
 	  fes.GetDofNrs (i, dnums);
           el2dof[i] = dnums;
 	}
+      cout << "el2dof - table: " << el2dof << endl;
 
       // generate sparse matrix from element-to-dof table
       SparseMatrixSymmetric<double> & mat = *new SparseMatrixSymmetric<double> (ndof, el2dof);

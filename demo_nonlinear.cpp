@@ -23,7 +23,7 @@ class MyNonlinearIntegrator : public BilinearFormIntegrator
 {
 public:
   
-  MyNonlinearIntegrator (Array<CoefficientFunction*> & coeffs)
+  MyNonlinearIntegrator (const Array<shared_ptr<CoefficientFunction>> & coeffs)
   { ; }
   
   virtual string Name () const { return "MyNonlinear"; }
@@ -130,7 +130,7 @@ class NumProcNonlinearSolve : public NumProc
 protected:
   BilinearForm * bfa;
   LinearForm * lff;
-  GridFunction * gfu;
+  shared_ptr<GridFunction> gfu;
 
   int maxit;
 
@@ -156,17 +156,17 @@ public:
     BaseVector & vecu = gfu->GetVector();
     const BaseVector & vecf = lff->GetVector();
 
-    BaseVector & uold = *vecu.CreateVector();
-    BaseVector & d = *vecu.CreateVector();
-    BaseVector & w = *vecu.CreateVector();
+    auto uold = vecu.CreateVector();
+    auto d = vecu.CreateVector();
+    auto w = vecu.CreateVector();
 
     BilinearFormApplication applya(bfa);
 
     double err, err0;
     double energy, energyold;
 
-    d = vecf - applya * vecu;
-    err0 = L2Norm(d);
+    *d = vecf - applya * vecu;
+    err0 = L2Norm(*d);
 
     for (int i = 1; i <= maxit; i++)
       {
@@ -177,8 +177,8 @@ public:
 	// bfa->GetMatrix().SetInverseType (SPARSECHOLESKY);
 	BaseMatrix & inva = *bfa -> GetMatrix().InverseMatrix();
 
-	d = vecf - applya * vecu;
-	err = L2Norm(d);
+	*d = vecf - applya * vecu;
+	err = L2Norm(*d);
 	energy = bfa->Energy(vecu) - InnerProduct (vecf, vecu);
 
 	cout << " err = " << err/err0;
@@ -186,14 +186,14 @@ public:
 
 	energyold = energy;
 
-	w = inva * d;
-	uold = vecu;
+	*w = inva * *d;
+	*uold = vecu;
 	int lin_its = 0;
 	double tau = 1;
 
 	do
 	  {
-	    vecu = uold + tau * w;
+	    vecu = *uold + tau * *w;
 	    energy = bfa->Energy(vecu) - InnerProduct (vecf, vecu);
 
 	    cout << "tau = " << tau

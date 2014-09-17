@@ -34,14 +34,14 @@ public:
     Flags uflags, pflags;
     uflags.SetFlag ("order", order+1);
     uflags.SetFlag ("orderinner", order+1);
-    AddSpace (new H1HighOrderFESpace (ma, uflags));
-    AddSpace (new H1HighOrderFESpace (ma, uflags));
+    AddSpace (make_shared<H1HighOrderFESpace> (ma, uflags));
+    AddSpace (make_shared<H1HighOrderFESpace> (ma, uflags));
     
     pflags.SetFlag ("order", order);
-    AddSpace (new H1HighOrderFESpace (ma, pflags));
+    AddSpace (make_shared<H1HighOrderFESpace> (ma, pflags));
 
     // pflags.SetFlag ("order", order-1);
-    // AddSpace (new L2HighOrderFESpace (ma, pflags));
+    // AddSpace (make_shared<L2HighOrderFESpace> (ma, pflags));
   }
   
   virtual string GetClassName () const { return "Demo-StokesFESpace"; }
@@ -134,12 +134,12 @@ public:
 
 class StokesDMat : public DMatOp<StokesDMat,5>
 {
-  CoefficientFunction * nu;
+  shared_ptr<CoefficientFunction> nu;
 public:
 
   enum { DIM_DMAT = 5 };
 
-  StokesDMat (CoefficientFunction * anu) : nu(anu) { ; }
+  StokesDMat (shared_ptr<CoefficientFunction> anu) : nu(anu) { ; }
   
   template <typename FEL, typename MIP, typename MAT>
   void GenerateMatrix (const FEL & fel, const MIP & mip,
@@ -167,7 +167,7 @@ class StokesIntegrator
 {
 public:
 
-  StokesIntegrator (Array<CoefficientFunction*> & coeffs)
+  StokesIntegrator (const Array<shared_ptr<CoefficientFunction>> & coeffs)
     :  T_BDBIntegrator<DiffOpStokes, StokesDMat, FiniteElement>
   (StokesDMat (coeffs[0]))
   { ; }
@@ -221,9 +221,9 @@ class StokesUIntegrator
 {
 public:
   ///
-  StokesUIntegrator (Array<CoefficientFunction*> & /* coeffs */)
+  StokesUIntegrator (const Array<shared_ptr<CoefficientFunction>> & /* coeffs */)
     :  T_BDBIntegrator<DiffOpIdU, DiagDMat<2>, FiniteElement>
-  (DiagDMat<2> (new ConstantCoefficientFunction(1)))
+  (DiagDMat<2> (make_shared<ConstantCoefficientFunction>(1)))
   { ; }
 
   ///

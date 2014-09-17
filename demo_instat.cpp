@@ -33,7 +33,7 @@ protected:
   // linear-form providing the right hand side
   LinearForm * lff;
   // solution vector
-  GridFunction * gfu;
+  shared_ptr<GridFunction> gfu;
 
   // time step
   double dt;

@@ -57,10 +57,10 @@ namespace ngcomp
 
     
     // needed to draw solution function
-    evaluator = new T_DifferentialOperator<DiffOpId<2> >;
+    evaluator = make_shared<T_DifferentialOperator<DiffOpId<2>>>();
 
-    static ConstantCoefficientFunction one(1);
-    integrator = GetIntegrators().CreateBFI("mass", ma.GetDimension(), &one);
+    integrator = GetIntegrators().CreateBFI("mass", ma.GetDimension(), 
+                                            make_shared<ConstantCoefficientFunction>(1));
   }
     
   

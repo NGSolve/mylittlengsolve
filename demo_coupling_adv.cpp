@@ -55,7 +55,7 @@ public:
 class NumProcCouplingDemoAdv : public NumProc
 {
 protected:
-  GridFunction * gfu;
+  shared_ptr<GridFunction> gfu;
   LinearForm * lff;
 
 public:
@@ -69,9 +69,8 @@ public:
     lff = pde.GetLinearForm (flags.GetStringFlag ("linearform", "f"));
     gfu = pde.GetGridFunction (flags.GetStringFlag ("gridfunction", "u"));
 
-    CoefficientFunction * coefu = 
-      new GridFunctionCoefficientFunction (*gfu, 
-					   new MyDifferentialOperator);
+    auto coefu = 
+      make_shared<GridFunctionCoefficientFunction> (*gfu, make_shared<MyDifferentialOperator>());
 
     // add a source integrator to the linearform
     // the coefficient is  DiffOp (gfu)

@@ -12,7 +12,7 @@ by an explicit time-stepping method
 
 
 #include <solve.hpp>
-#include <compatibility.hpp>
+// #include <compatibility.hpp>
 using namespace ngsolve;
 using ngfem::ELEMENT_TYPE;
 
@@ -23,7 +23,7 @@ class NumProcLinearHyperbolic : public NumProc
 {
 protected:
   CoefficientFunction * cfflow;
-  GridFunction * gfu;
+  shared_ptr<GridFunction> gfu;
 
   double dt;
   double tend;

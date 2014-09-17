@@ -1,16 +1,19 @@
+NGSCXX = /opt/netgen/bin/ngscxx
+
+
 objects = all_in_one.o demo_instat.o demo_stokes.o myElement.o	 \
 myHOElement.o myIntegrator.o demo_coupling.o demo_coupling_adv.o \
 demo_nonlinear.o myFESpace.o myHOFESpace.o myPreconditioner.o	 \
-myAssembling.o 
-# linhypDG_par.o 
+myAssembling.o linhypDG.o
+
 
 
 %.o : %.cpp
-	ngscxx -I. -c $? -o $@
+	$(NGSCXX) -I. -c $? -o $@
 
 
 libmyngsolve.so : $(objects)
-	ngscxx -shared $(objects) -lngfem -lngcomp -lngsolve -o $@
+	$(NGSCXX) -shared $(objects) -lngfem -lngcomp -lngsolve -o $@
 
 clean:
 	rm *.o libmyngsolve.so
@@ -18,4 +21,4 @@ clean:
 
 
 dist:
-	cd ..; tar -czf MyLittleNGSolve-5.3.tar.gz my_little_ngsolve/Makefile my_little_ngsolve/*.cpp my_little_ngsolve/*.hpp my_little_ngsolve/*.pde my_little_ngsolve/*.vol my_little_ngsolve/*.in2d my_little_ngsolve/windows/my_little_ngsolve*
+	cd ..; tar -czf MyLittleNGSolve-6.0.tar.gz my_little_ngsolve/Makefile my_little_ngsolve/*.cpp my_little_ngsolve/*.hpp my_little_ngsolve/*.pde my_little_ngsolve/*.vol my_little_ngsolve/*.in2d my_little_ngsolve/windows/my_little_ngsolve*

@@ -20,9 +20,9 @@ namespace ngfem
   // integrator for \int \lambda(x) \nabla u \nabla v dx
   class MyLaplaceIntegrator : public BilinearFormIntegrator
   {
-    CoefficientFunction * coef_lambda;
+    shared_ptr<CoefficientFunction> coef_lambda;
   public:
-    MyLaplaceIntegrator (const Array<CoefficientFunction*> & coeffs) 
+    MyLaplaceIntegrator (const Array<shared_ptr<CoefficientFunction>> & coeffs) 
       : coef_lambda(coeffs[0])
     { ; }
 
