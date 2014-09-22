@@ -20,7 +20,7 @@ namespace ngcomp
   
   class MyPreconditioner : public Preconditioner
   {
-    const BilinearForm * bfa;
+    shared_ptr<BilinearForm> bfa;
     BaseJacobiPrecond * jacobi;
 
   public:

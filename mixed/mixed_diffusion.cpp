@@ -27,8 +27,8 @@ public:
     Flags sigmaflags, uflags;
     sigmaflags.SetFlag ("order", order);
     uflags.SetFlag ("order", order-1);
-    AddSpace (new HDivHighOrderFESpace (ma, sigmaflags));
-    AddSpace (new L2HighOrderFESpace (ma, uflags));
+    AddSpace (make_shared<HDivHighOrderFESpace> (ma, sigmaflags));
+    AddSpace (make_shared<L2HighOrderFESpace> (ma, uflags));
   }
   
   virtual string GetClassName () const { return "Demo-MixedFESpace"; }

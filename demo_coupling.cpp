@@ -37,7 +37,7 @@ protected:
   shared_ptr<GridFunction> gfu;
 
   // linear-form providing the right hand side for the second PDE
-  LinearForm * lff;
+  shared_ptr<LinearForm> lff;
 
 public:
     
@@ -66,7 +66,7 @@ public:
       
     const FESpace & fesu = gfu -> GetFESpace();
     const FESpace & fesf = lff -> GetFESpace();
-
+    
     lff -> GetVector() = 0.0;
 
     int ne = ma.GetNE();

@@ -29,14 +29,14 @@ public:
 
     sigmaflags.SetFlag ("order", order);
     sigmaflags.SetFlag ("discontinuous");
-    AddSpace (new HDivHighOrderFESpace (ma, sigmaflags));
+    AddSpace (make_shared<HDivHighOrderFESpace> (ma, sigmaflags));
 
     uflags.SetFlag ("order", order-1);
-    AddSpace (new L2HighOrderFESpace (ma, uflags));
+    AddSpace (make_shared<L2HighOrderFESpace> (ma, uflags));
 
     lamflags.SetFlag ("order", order);
     lamflags.SetFlag ("dirichlet", flags.GetNumListFlag ("dirichlet"));
-    AddSpace (new FacetFESpace (ma, lamflags));
+    AddSpace (make_shared<FacetFESpace> (ma, lamflags));
   }
   
   virtual string GetClassName () const { return "Demo-HybridMixedFESpace"; }

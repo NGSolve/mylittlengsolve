@@ -128,8 +128,8 @@ public:
 class NumProcNonlinearSolve : public NumProc
 {
 protected:
-  BilinearForm * bfa;
-  LinearForm * lff;
+  shared_ptr<BilinearForm> bfa;
+  shared_ptr<LinearForm> lff;
   shared_ptr<GridFunction> gfu;
 
   int maxit;
@@ -160,7 +160,7 @@ public:
     auto d = vecu.CreateVector();
     auto w = vecu.CreateVector();
 
-    BilinearFormApplication applya(bfa);
+    BilinearFormApplication applya(bfa.get());
 
     double err, err0;
     double energy, energyold;

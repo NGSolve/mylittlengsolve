@@ -56,7 +56,7 @@ class NumProcCouplingDemoAdv : public NumProc
 {
 protected:
   shared_ptr<GridFunction> gfu;
-  LinearForm * lff;
+  shared_ptr<LinearForm> lff;
 
 public:
   /*
@@ -74,7 +74,7 @@ public:
 
     // add a source integrator to the linearform
     // the coefficient is  DiffOp (gfu)
-    lff -> AddIntegrator (GetIntegrators().CreateLFI("source", 2, coefu));
+    lff -> AddIntegrator (CreateLFI("source", 2, coefu));
   }
   
   virtual void Do (LocalHeap & lh) 

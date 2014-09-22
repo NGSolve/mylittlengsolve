@@ -22,7 +22,7 @@ template <int D>
 class NumProcLinearHyperbolic : public NumProc
 {
 protected:
-  CoefficientFunction * cfflow;
+  shared_ptr<CoefficientFunction> cfflow;
   shared_ptr<GridFunction> gfu;
 
   double dt;
