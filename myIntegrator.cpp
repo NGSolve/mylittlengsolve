@@ -33,7 +33,7 @@ namespace ngfem
   void MyLaplaceIntegrator ::
   CalcElementMatrix (const FiniteElement & base_fel,
 		     const ElementTransformation & eltrans, 
-		     FlatMatrix<double> & elmat,
+		     FlatMatrix<double> elmat,
 		     LocalHeap & lh) const
   {
     /*
@@ -89,8 +89,8 @@ namespace ngfem
   void MyLaplaceIntegrator ::
   CalcFlux (const FiniteElement & base_fel,
 	    const BaseMappedIntegrationPoint & base_mip,
-	    const FlatVector<double> & elx, 
-	    FlatVector<double> & flux,
+            FlatVector<double> elx, 
+	    FlatVector<double> flux,
 	    bool applyd,
 	    LocalHeap & lh) const
   {
@@ -125,7 +125,7 @@ namespace ngfem
   void MySourceIntegrator ::
   CalcElementVector (const FiniteElement & base_fel,
 		     const ElementTransformation & eltrans, 
-		     FlatVector<double> & elvec,
+		     FlatVector<double> elvec,
 		     LocalHeap & lh) const
   {
     const ScalarFiniteElement<2> & fel =

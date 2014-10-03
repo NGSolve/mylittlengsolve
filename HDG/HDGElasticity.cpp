@@ -55,18 +55,18 @@ public:
     hdivflags.SetFlag ("order", flags.GetNumFlag ("order",1)+1);
     hdivflags.SetFlag ("orderinner", 0.0);
     // hdivflags.SetFlag ("highest_order_dc");
-    AddSpace (new HCurlHighOrderFESpace (ma, hcurlflags));
-    AddSpace (new HDivHighOrderFESpace (ma, hdivflags));        
+    AddSpace (make_shared<HCurlHighOrderFESpace> (ma, hcurlflags));
+    AddSpace (make_shared<HDivHighOrderFESpace> (ma, hdivflags));        
 
     if (ma.GetDimension()== 2)
-      boundary_evaluator = new T_DifferentialOperator< DiffOpIdBndHDivHCurl<2> >;
+      boundary_evaluator = make_shared<T_DifferentialOperator<DiffOpIdBndHDivHCurl<2>>>();
     else
       {
         boundary_integrator = 
-          new T_BDBIntegrator< DiffOpIdBndHDivHCurl<3>, DiagDMat<3> >
-          (new ConstantCoefficientFunction (1));
-        boundary_evaluator = new T_DifferentialOperator< DiffOpIdBndHDivHCurl<3> >;
-        evaluator = new T_DifferentialOperator< DiffOpIdHDiv<3> >;
+          make_shared<T_BDBIntegrator<DiffOpIdBndHDivHCurl<3>, DiagDMat<3>>>
+          (make_shared<ConstantCoefficientFunction> (1));
+        boundary_evaluator = make_shared<T_DifferentialOperator<DiffOpIdBndHDivHCurl<3>>>();
+        evaluator = make_shared<T_DifferentialOperator< DiffOpIdHDiv<3>>>();
       }
   }
 };
@@ -159,10 +159,10 @@ class HDG_ElasticityIntegrator : public BilinearFormIntegrator
 {
 protected:
   double alpha;  
-  CoefficientFunction * coef_E;
-  CoefficientFunction * coef_nu;
+  shared_ptr<CoefficientFunction> coef_E;
+  shared_ptr<CoefficientFunction> coef_nu;
 public:
-  HDG_ElasticityIntegrator (Array<CoefficientFunction*> & coeffs) 
+  HDG_ElasticityIntegrator (const Array<shared_ptr<CoefficientFunction>> & coeffs) 
   { 
     coef_E  = coeffs[0];
     coef_nu  = coeffs[1];
@@ -178,7 +178,7 @@ public:
 
   virtual void CalcElementMatrix (const FiniteElement & fel,
                                   const ElementTransformation & eltrans, 
-                                  FlatMatrix<double> & elmat,
+                                  FlatMatrix<double> elmat,
                                   LocalHeap & lh) const
   {
     const CompoundFiniteElement & cfel = 

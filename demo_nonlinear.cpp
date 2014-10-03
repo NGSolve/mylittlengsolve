@@ -33,7 +33,7 @@ public:
   virtual void
   CalcElementMatrix (const FiniteElement & fel,
 		     const ElementTransformation & eltrans, 
-		     FlatMatrix<double> & elmat,
+		     FlatMatrix<double> elmat,
 		     LocalHeap & lh) const
   {
     FlatVector<> elveclin(fel.GetNDof(), lh);
@@ -45,7 +45,7 @@ public:
   // compute the functional
   virtual double Energy (const FiniteElement & bfel, 
 			 const ElementTransformation & eltrans, 
-			 const FlatVector<double> & elx, 
+			 FlatVector<double> elx, 
 			 LocalHeap & lh) const
   {
     HeapReset hr(lh);
@@ -68,8 +68,8 @@ public:
   virtual void 
   ApplyElementMatrix (const FiniteElement & bfel, 
 		      const ElementTransformation & eltrans, 
-		      const FlatVector<double> & elx,    // element vector
-		      FlatVector<double> & ely,          // element gradient
+                      FlatVector<double> elx,      // element vector
+		      FlatVector<double> ely,      // element gradient
 		      void * precomputed,
 		      LocalHeap & lh) const
   {
@@ -94,8 +94,8 @@ public:
   virtual void
   CalcLinearizedElementMatrix (const FiniteElement & bfel,
 			       const ElementTransformation & eltrans,
-			       FlatVector<double> & elveclin,
-			       FlatMatrix<double> & elmat,
+			       FlatVector<double> elveclin,
+			       FlatMatrix<double> elmat,
 			       LocalHeap & lh) const
   {
     const ScalarFiniteElement<2> & fel = static_cast<const ScalarFiniteElement<2>&> (bfel);

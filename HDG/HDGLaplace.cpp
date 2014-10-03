@@ -31,8 +31,8 @@ public:
   { 
     Flags l2flags(flags), facetflags(flags);
 
-    AddSpace (new L2HighOrderFESpace (ma, l2flags));
-    AddSpace (new FacetFESpace (ma, facetflags));        
+    AddSpace (make_shared<L2HighOrderFESpace> (ma, l2flags));
+    AddSpace (make_shared<FacetFESpace> (ma, facetflags));        
   }
   
 };
@@ -44,9 +44,9 @@ class MyHDG_LaplaceIntegrator : public BilinearFormIntegrator
 {
 protected:
   double alpha;   // interior penalty parameter
-  CoefficientFunction * coef_lam;
+  shared_ptr<CoefficientFunction> coef_lam;
 public:
-  MyHDG_LaplaceIntegrator (Array<CoefficientFunction*> & coeffs) 
+  MyHDG_LaplaceIntegrator (const Array<shared_ptr<CoefficientFunction>> & coeffs) 
   { 
     coef_lam  = coeffs[0];
     alpha = 5;  // should be on the safe side
@@ -58,7 +58,7 @@ public:
 
   virtual void CalcElementMatrix (const FiniteElement & fel,
                                   const ElementTransformation & eltrans, 
-                                  FlatMatrix<double> & elmat,
+                                  FlatMatrix<double> elmat,
                                   LocalHeap & lh) const
   {
     const CompoundFiniteElement & cfel = 

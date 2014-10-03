@@ -9,6 +9,7 @@ div u = 0
 
 
 #include <solve.hpp>
+#include <diffop_impl.hpp>
 
 using namespace ngsolve;
 

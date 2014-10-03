@@ -20,14 +20,16 @@ int main (int argc, char **argv)
   
   LocalHeap lh(10000000, "main heap");
 
-  H1HighOrderFESpace fes(ma, { "order=2" });
+  auto fes = make_shared<H1HighOrderFESpace> (ma, Flags({ "order=2" }));
   
   T_GridFunction<double> gfu (fes);
 
   T_BilinearFormSymmetric<double> bfa(fes, "bfa", { "symmetric", "printelmat" });
 
-  bfa.AddIntegrator (new LaplaceIntegrator<3> (new ConstantCoefficientFunction(1)));
-  bfa.AddIntegrator (new RobinIntegrator<3> (new ConstantCoefficientFunction(1)));
+  bfa.AddIntegrator (make_shared<LaplaceIntegrator<3>> 
+                     (make_shared<ConstantCoefficientFunction>(1)));
+  bfa.AddIntegrator (make_shared<RobinIntegrator<3>> 
+                     (make_shared<ConstantCoefficientFunction>(1)));
 
   T_LinearForm<double> lff(fes, "lff", { } );
 
@@ -35,10 +37,11 @@ int main (int argc, char **argv)
   asource[0] = new EvalFunction ("sin(x)*y");
   // asource[0]->Print(cout);
 
-  lff.AddIntegrator (new SourceIntegrator<3> (new DomainVariableCoefficientFunction<3>(asource)));
+  lff.AddIntegrator (make_shared<SourceIntegrator<3>> 
+                     (make_shared<DomainVariableCoefficientFunction>(asource)));
 
-  fes.Update(lh);
-  fes.FinalizeUpdate(lh);
+  fes->Update(lh);
+  fes->FinalizeUpdate(lh);
 
   gfu.Update();
   bfa.Assemble(lh);

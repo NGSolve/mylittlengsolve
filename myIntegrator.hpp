@@ -38,9 +38,9 @@ namespace ngfem
     // Calculates the element matrix
     virtual void
     CalcElementMatrix (const FiniteElement & fel,
-			   const ElementTransformation & eltrans, 
-			   FlatMatrix<double> & elmat,
-			   LocalHeap & lh) const;
+                       const ElementTransformation & eltrans, 
+                       FlatMatrix<double> elmat,
+                       LocalHeap & lh) const;
 
 
     // flux postprocessing 
@@ -49,8 +49,8 @@ namespace ngfem
     virtual void
     CalcFlux (const FiniteElement & fel,
 	      const BaseMappedIntegrationPoint & bsip,
-	      const FlatVector<double> & elx, 
-	      FlatVector<double> & flux,
+              FlatVector<double> elx, 
+	      FlatVector<double> flux,
 	      bool applyd,
 	      LocalHeap & lh) const;
   };
@@ -74,7 +74,7 @@ namespace ngfem
     virtual void
     CalcElementVector (const FiniteElement & fel,
 		       const ElementTransformation & eltrans, 
-		       FlatVector<double> & elvec,
+		       FlatVector<double> elvec,
 		       LocalHeap & lh) const;
   };
 

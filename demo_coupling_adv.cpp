@@ -32,6 +32,7 @@ class MyDifferentialOperator : public DifferentialOperator
 public:
   virtual int Dim() const { return 1; }
   virtual bool Boundary() const { return false; }
+  virtual int DiffOrder() const { return 0; }
 
   virtual void
   CalcMatrix (const FiniteElement & fel,
@@ -49,6 +50,7 @@ public:
       double u = static_cast<const ScalarFiniteElement<2>&> (fel).Evaluate (mip.IP(), x);
       flux(0) = u*u*u;
     }
+
 };
 
 
