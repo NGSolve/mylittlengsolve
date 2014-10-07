@@ -20,7 +20,7 @@ My own FESpace for high order finite elements
 namespace ngcomp
 {
 
-  MyHighOrderFESpace :: MyHighOrderFESpace (const MeshAccess & ama, const Flags & flags)
+  MyHighOrderFESpace :: MyHighOrderFESpace (shared_ptr<MeshAccess> ama, const Flags & flags)
     : FESpace (ama, flags)
   {
     cout << "Constructor of MyHighOrderFESpace" << endl;
@@ -30,7 +30,7 @@ namespace ngcomp
     // needed to draw solution function
     evaluator = make_shared<T_DifferentialOperator<DiffOpId<2>>>();
 
-    integrator = GetIntegrators().CreateBFI("mass", ma.GetDimension(), 
+    integrator = GetIntegrators().CreateBFI("mass", ma->GetDimension(), 
                                             make_shared<ConstantCoefficientFunction>(1));
   }
     
@@ -45,9 +45,9 @@ namespace ngcomp
   {
     // some global update:
 
-    int n_vert = ma.GetNV();  
-    int n_edge = ma.GetNEdges(); 
-    int n_cell = ma.GetNE();  
+    int n_vert = ma->GetNV();  
+    int n_edge = ma->GetNEdges(); 
+    int n_cell = ma->GetNE();  
 
     first_edge_dof.SetSize (n_edge+1);
     int ii = n_vert;
@@ -73,7 +73,7 @@ namespace ngcomp
 
     dnums.SetSize(0);
 
-    Ngs_Element ngel = ma.GetElement (elnr);
+    Ngs_Element ngel = ma->GetElement (elnr);
 
     // vertex dofs
     for (int i = 0; i < 3; i++)
@@ -103,7 +103,7 @@ namespace ngcomp
 
     dnums.SetSize(0);
 
-    Ngs_Element ngel = ma.GetSElement (elnr);
+    Ngs_Element ngel = ma->GetSElement (elnr);
 
     // vertex dofs
     for (int i = 0; i < 2; i++)
@@ -122,7 +122,7 @@ namespace ngcomp
   {
     MyHighOrderTrig * trig = new (lh) MyHighOrderTrig(order);
 
-    Ngs_Element ngel = ma.GetElement (elnr);
+    Ngs_Element ngel = ma->GetElement (elnr);
 
     for (int i = 0; i < 3; i++)
       trig->SetVertexNumber (i, ngel.vertices[i]);
@@ -136,7 +136,7 @@ namespace ngcomp
   {
     MyHighOrderSegm * segm = new (lh) MyHighOrderSegm(order);
 
-    Ngs_Element ngel = ma.GetSElement (elnr);
+    Ngs_Element ngel = ma->GetSElement (elnr);
 
     for (int i = 0; i < 2; i++)
       segm->SetVertexNumber (i, ngel.vertices[i]);

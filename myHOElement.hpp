@@ -38,7 +38,7 @@ namespace ngfem
 
   private:
     template <class T>
-    void T_CalcShape (const T & x, FlatArray<T> & shape) const;
+    void T_CalcShape (T x, SliceVector<T> shape) const;
   };
 
 
@@ -62,7 +62,7 @@ namespace ngfem
 
   private:
     template <class T>
-    void T_CalcShape (const T & x, const T & y, FlatArray<T> & shape) const;
+    void T_CalcShape (const T & x, const T & y, SliceVector<T> shape) const;
   };
 }
 

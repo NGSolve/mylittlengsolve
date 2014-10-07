@@ -30,7 +30,7 @@ element, and the global mesh.
 namespace ngcomp
 {
 
-  MyFESpace :: MyFESpace (const MeshAccess & ama, const Flags & flags)
+  MyFESpace :: MyFESpace (shared_ptr<MeshAccess> ama, const Flags & flags)
     : FESpace (ama, flags)
   {
     cout << "Constructor of MyFESpace" << endl;
@@ -59,7 +59,7 @@ namespace ngcomp
     // needed to draw solution function
     evaluator = make_shared<T_DifferentialOperator<DiffOpId<2>>>();
 
-    integrator = GetIntegrators().CreateBFI("mass", ma.GetDimension(), 
+    integrator = GetIntegrators().CreateBFI("mass", ma->GetDimension(), 
                                             make_shared<ConstantCoefficientFunction>(1));
   }
     
@@ -74,16 +74,16 @@ namespace ngcomp
   {
     // some global update:
 
-    cout << "Update MyFESpace, #vert = " << ma.GetNV() 
-         << ", #edge = " << ma.GetNEdges() << endl;
+    cout << "Update MyFESpace, #vert = " << ma->GetNV() 
+         << ", #edge = " << ma->GetNEdges() << endl;
 
 
-    nvert = ma.GetNV();
+    nvert = ma->GetNV();
     // number of dofs:
     if (!secondorder)
       ndof = nvert;  // number of vertices
     else
-      ndof = nvert + ma.GetNEdges();  // num vertics + num edges
+      ndof = nvert + ma->GetNEdges();  // num vertics + num edges
   }
 
   
@@ -94,7 +94,7 @@ namespace ngcomp
     dnums.SetSize(0);
 
     Array<int> vert_nums;
-    ma.GetElVertices (elnr, vert_nums);  // global vertex numbers
+    ma->GetElVertices (elnr, vert_nums);  // global vertex numbers
     
     // first 3 dofs are vertex numbers:
     for (int i = 0; i < 3; i++)
@@ -105,7 +105,7 @@ namespace ngcomp
         // 3 more dofs on edges:
 
         Array<int> edge_nums;
-        ma.GetElEdges (elnr, edge_nums);    // global edge numbers
+        ma->GetElEdges (elnr, edge_nums);    // global edge numbers
 
         for (int i = 0; i < 3; i++)
           dnums.Append (nvert+edge_nums[i]);
@@ -120,7 +120,7 @@ namespace ngcomp
     dnums.SetSize(0);
 
     Array<int> vert_nums;
-    ma.GetSElVertices (elnr, vert_nums);  
+    ma->GetSElVertices (elnr, vert_nums);  
     
     // first 2 dofs are vertex numbers:
     for (int i = 0; i < 2; i++)
@@ -131,7 +131,7 @@ namespace ngcomp
         // 1 more dof on the edge:
 
         Array<int> edge_nums;
-        ma.GetSElEdges (elnr, edge_nums);    // global edge number
+        ma->GetSElEdges (elnr, edge_nums);    // global edge number
 
         dnums.Append (nvert+edge_nums[0]);
       }
@@ -140,7 +140,7 @@ namespace ngcomp
   /// returns the reference-element 
   const FiniteElement & MyFESpace :: GetFE (int elnr, LocalHeap & lh) const
   {
-    if (ma.GetElType(elnr) == ET_TRIG)
+    if (ma->GetElType(elnr) == ET_TRIG)
       return *reference_element;
 
     // should return different elements for mixed-element type meshes

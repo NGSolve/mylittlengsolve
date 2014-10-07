@@ -25,7 +25,7 @@ class MyHybridDGFESpace : public CompoundFESpace
 {
 
 public:
-  MyHybridDGFESpace (const MeshAccess & ama, const Flags & flags)
+  MyHybridDGFESpace (shared_ptr<MeshAccess> ama, const Flags & flags)
     : CompoundFESpace (ama, flags)
 
   { 

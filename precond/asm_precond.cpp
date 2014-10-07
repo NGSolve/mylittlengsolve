@@ -18,7 +18,7 @@ using namespace ngcomp;
 class MyH1HighOrderFESpace : public H1HighOrderFESpace
 {
 public:
-  MyH1HighOrderFESpace (const MeshAccess & ama, const Flags & flags)
+  MyH1HighOrderFESpace (shared_ptr<MeshAccess> ama, const Flags & flags)
     : H1HighOrderFESpace (ama, flags)
   {
     cout << "H1HighOrderSpace with smoothing-blocks tutorial" << endl;
@@ -63,7 +63,7 @@ public:
             // put all dofs of one element into one block
 
             Array<int> dnums;
-            for (int i = 0; i < ma.GetNE(); i++)
+            for (int i = 0; i < ma->GetNE(); i++)
               {
                 GetDofNrs(i, dnums);
                 for (int j = 0; j < dnums.Size(); j++)
@@ -100,7 +100,7 @@ public:
 
     // all lowest-order dofs (i.e. vertex dofs) are solved directly
     clusters = 0;
-    clusters.Range (0, ma.GetNV()) = 1;
+    clusters.Range (0, ma->GetNV()) = 1;
 
     // but note: take only non-Dirichlet dofs
     const BitArray & freedofs = *GetFreeDofs();

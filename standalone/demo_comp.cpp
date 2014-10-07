@@ -1,6 +1,6 @@
 /*
 
-  NGSolve finite element demo
+NGSolve finite element demo
 
 */
 
@@ -15,8 +15,7 @@ int main (int argc, char **argv)
 
   Ng_LoadGeometry ("cube.geo");
 
-  MeshAccess ma;
-  ma.LoadMesh ("cube.vol");
+  auto ma = make_shared<MeshAccess>("cube.vol");
   
   LocalHeap lh(10000000, "main heap");
 
@@ -24,25 +23,25 @@ int main (int argc, char **argv)
   
   T_GridFunction<double> gfu (fes);
 
-  T_BilinearFormSymmetric<double> bfa(fes, "bfa", { "symmetric", "printelmat" });
-
+  T_BilinearFormSymmetric<double> bfa(fes, "bfa", Flags({ "symmetric", "printelmat" }));
+  
   bfa.AddIntegrator (make_shared<LaplaceIntegrator<3>> 
                      (make_shared<ConstantCoefficientFunction>(1)));
   bfa.AddIntegrator (make_shared<RobinIntegrator<3>> 
                      (make_shared<ConstantCoefficientFunction>(1)));
-
-  T_LinearForm<double> lff(fes, "lff", { } );
-
+  
+  T_LinearForm<double> lff(fes, "lff", Flags());
+  
   Array<EvalFunction*> asource(1);
   asource[0] = new EvalFunction ("sin(x)*y");
   // asource[0]->Print(cout);
 
   lff.AddIntegrator (make_shared<SourceIntegrator<3>> 
                      (make_shared<DomainVariableCoefficientFunction>(asource)));
-
+  
   fes->Update(lh);
   fes->FinalizeUpdate(lh);
-
+  
   gfu.Update();
   bfa.Assemble(lh);
   lff.Assemble(lh);
@@ -53,21 +52,20 @@ int main (int argc, char **argv)
 
   
   BaseMatrix * mat = &mata;
-
+  
 #ifdef PARALLEL
   const ParallelMatrix * pmat = dynamic_cast<const ParallelMatrix*> (mat);
   if (pmat) mat = &pmat->GetMatrix();
 #endif
-
-  BaseMatrix * jacobi = 
+  
+  shared_ptr<BaseMatrix> jacobi = 
     dynamic_cast<const BaseSparseMatrix&> (*mat).CreateJacobiPrecond();
-
-    // BaseMatrix * jacobi = mata.InverseMatrix();
-
+  
+  // BaseMatrix * jacobi = mata.InverseMatrix();
   
   CGSolver<double> inva (mata, *jacobi);
   inva.SetPrintRates();
   inva.SetMaxSteps(1000);
-
+  
   vecu = inva * vecf;
 }

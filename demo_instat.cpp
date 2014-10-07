@@ -76,20 +76,19 @@ public:
     BaseVector & vecu = gfu->GetVector();
 
     // creates a matrix of same type:
-    BaseMatrix & summat = *matm.CreateMatrix();
+    auto summat = matm.CreateMatrix();
 
     // create additional vectors:
-    BaseVector & d = *vecu.CreateVector();
-    BaseVector & w = *vecu.CreateVector();
-
+    auto d = vecu.CreateVector();
+    auto w = vecu.CreateVector();
 
     // matrices matm and mata have the same memory layout. The arrays of values 
     // can be accessed and manipulated as vectors:
 
-    summat.AsVector() = (1.0/dt) * matm.AsVector() + mata.AsVector();
+    summat->AsVector() = (1.0/dt) * matm.AsVector() + mata.AsVector();
 
     // A sparse matrix can compute a sparse factorization. 
-    BaseMatrix & invmat = * summat.InverseMatrix();
+    auto invmat = summat->InverseMatrix();
 
     // implicite Euler method
     vecu = 0;
@@ -97,7 +96,7 @@ public:
       {
 	cout << "t = " << t << endl;
 	d = sin(t) * vecf - mata * vecu;
-	w = invmat * d;
+	w = *invmat * d;
 	vecu += w;
 
 	// update visualization

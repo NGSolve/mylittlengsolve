@@ -33,7 +33,7 @@ namespace ngcomp
       Arguments are the access to the mesh data structure,
       and the flags from the define command in the pde-file
     */
-    MyFESpace (const MeshAccess & ama, const Flags & flags);
+    MyFESpace (shared_ptr<MeshAccess> ama, const Flags & flags);
 
     // destructor
     virtual ~MyFESpace ();

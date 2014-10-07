@@ -64,30 +64,30 @@ public:
   {
     cout << "Compute coupling terms" << endl;
       
-    const FESpace & fesu = gfu -> GetFESpace();
-    const FESpace & fesf = lff -> GetFESpace();
+    shared_ptr<FESpace> fesu = gfu -> GetFESpace();
+    shared_ptr<FESpace> fesf = lff -> GetFESpace();
     
     lff -> GetVector() = 0.0;
 
-    int ne = ma.GetNE();
+    int ne = ma->GetNE();
     for (int i = 0; i < ne; i++)   // loop over elements
       {  
         HeapReset hr(lh);    // reset the local heap memory at the end of the loop
 		
-        const ElementTransformation & eltrans = ma.GetTrafo (i, 0, lh);
+        const ElementTransformation & eltrans = ma->GetTrafo (i, 0, lh);
 
         const ScalarFiniteElement<2> & felu = 
-	  dynamic_cast<const ScalarFiniteElement<2>&> (fesu.GetFE (i, lh));
+	  dynamic_cast<const ScalarFiniteElement<2>&> (fesu->GetFE (i, lh));
         const ScalarFiniteElement<2> & felf = 
-	  dynamic_cast<const ScalarFiniteElement<2>&> (fesf.GetFE (i, lh));
+	  dynamic_cast<const ScalarFiniteElement<2>&> (fesf->GetFE (i, lh));
 
 	int nd_u = felu.GetNDof();
 	int nd_f = felf.GetNDof();
 
 	Array<int> dnumsu(nd_u, lh), dnumsf(nd_f, lh);  // the dof-numbes for u and f
 		      
-        fesu.GetDofNrs (i, dnumsu);
-        fesf.GetDofNrs (i, dnumsf);
+        fesu->GetDofNrs (i, dnumsu);
+        fesf->GetDofNrs (i, dnumsf);
 
         FlatVector<> elu (nd_u, lh), shape (nd_f, lh), elf (nd_f, lh);
 

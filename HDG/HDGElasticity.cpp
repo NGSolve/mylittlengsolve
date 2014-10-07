@@ -47,7 +47,7 @@ class HCurlHDivFESpace : public CompoundFESpace
 {
 
 public:
-  HCurlHDivFESpace (const MeshAccess & ama, const Flags & flags)
+  HCurlHDivFESpace (shared_ptr<MeshAccess> ama, const Flags & flags)
     : CompoundFESpace (ama, flags)
 
   { 
@@ -58,7 +58,7 @@ public:
     AddSpace (make_shared<HCurlHighOrderFESpace> (ma, hcurlflags));
     AddSpace (make_shared<HDivHighOrderFESpace> (ma, hdivflags));        
 
-    if (ma.GetDimension()== 2)
+    if (ma->GetDimension()== 2)
       boundary_evaluator = make_shared<T_DifferentialOperator<DiffOpIdBndHDivHCurl<2>>>();
     else
       {

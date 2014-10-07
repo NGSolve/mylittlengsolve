@@ -21,7 +21,7 @@ namespace ngcomp
   class MyPreconditioner : public Preconditioner
   {
     shared_ptr<BilinearForm> bfa;
-    BaseJacobiPrecond * jacobi;
+    shared_ptr<BaseJacobiPrecond> jacobi;
 
   public:
     MyPreconditioner (const PDE & pde, const Flags & flags, const string & aname);
@@ -58,16 +58,14 @@ namespace ngcomp
   
   MyPreconditioner :: ~MyPreconditioner ()
   {
-    delete jacobi;
+    ;
   }
 
   
   void MyPreconditioner :: Update()
   {
-    delete jacobi;
-
     const BaseSparseMatrix & mat = dynamic_cast<const BaseSparseMatrix&> (bfa->GetMatrix());
-    const BitArray * freedofs = bfa->GetFESpace().GetFreeDofs();
+    const BitArray * freedofs = bfa->GetFESpace()->GetFreeDofs();
 
     jacobi = mat.CreateJacobiPrecond (freedofs);
 

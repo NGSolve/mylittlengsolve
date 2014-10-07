@@ -40,10 +40,10 @@ namespace myAssembling
 
     virtual void Do (LocalHeap & lh)
     {
-      const FESpace & fes = gfu -> GetFESpace();
+      shared_ptr<FESpace> fes = gfu -> GetFESpace();
 
-      int ndof = fes.GetNDof();
-      int ne = GetMeshAccess().GetNE();
+      int ndof = fes->GetNDof();
+      int ne = GetMeshAccess()->GetNE();
     
 
       // setup element->dof table:
@@ -54,7 +54,7 @@ namespace myAssembling
       Array<int> cnt(ne);
       for (int i = 0; i < ne; i++)
 	{
-	  fes.GetDofNrs (i, dnums);
+	  fes->GetDofNrs (i, dnums);
 	  cnt[i] = dnums.Size();
 	}	  
       
@@ -64,7 +64,7 @@ namespace myAssembling
       // and fill it
       for (int i = 0; i < ne; i++)
 	{
-	  fes.GetDofNrs (i, dnums);
+	  fes->GetDofNrs (i, dnums);
           el2dof[i] = dnums;
 	}
       cout << "el2dof - table: " << el2dof << endl;
@@ -72,7 +72,7 @@ namespace myAssembling
       // generate sparse matrix from element-to-dof table
       SparseMatrixSymmetric<double> & mat = *new SparseMatrixSymmetric<double> (ndof, el2dof);
 
-      VVector<double> vecf (fes.GetNDof());
+      VVector<double> vecf (fes->GetNDof());
 
       LaplaceIntegrator<2> laplace (new ConstantCoefficientFunction (1));
       SourceIntegrator<2> source (new ConstantCoefficientFunction (1));
@@ -84,10 +84,10 @@ namespace myAssembling
 	{  
 	  HeapReset hr(lh); 
 
-	  const ElementTransformation & eltrans = ma.GetTrafo (i, 0, lh);
+	  const ElementTransformation & eltrans = ma->GetTrafo (i, 0, lh);
 	  
-	  fes.GetDofNrs (i, dnums);
-	  const FiniteElement & fel =  fes.GetFE (i, lh);
+	  fes->GetDofNrs (i, dnums);
+	  const FiniteElement & fel =  fes->GetFE (i, lh);
 	  
 	  FlatMatrix<> elmat (dnums.Size(), lh);
 	  laplace.CalcElementMatrix (fel, eltrans, elmat, lh);
@@ -101,7 +101,7 @@ namespace myAssembling
       *testout << "mat = " << mat << endl;
       *testout << "vecf = " << vecf << endl;
 
-      BaseMatrix * inv = mat.InverseMatrix (fes.GetFreeDofs());
+      shared_ptr<BaseMatrix> inv = mat.InverseMatrix (fes->GetFreeDofs());
 
       gfu -> GetVector() = (*inv) * vecf;
     }

@@ -27,8 +27,9 @@ namespace ngfem
                                      SliceVector<> shape) const
   {
     double x = ip(0);
-    FlatArray<double> shapearray (ndof, &shape(0));
-    T_CalcShape (x, shapearray);
+    // FlatArray<double> shapearray (ndof, &shape(0));
+    // T_CalcShape (x, shapearray);
+    T_CalcShape (x, shape);
   }
 
 
@@ -36,14 +37,14 @@ namespace ngfem
                                       SliceMatrix<> dshape) const
   {
     AutoDiff<1> adx (ip(0), 0);
-    Array<AutoDiff<1> > shapearray(ndof);
-    T_CalcShape (adx, shapearray);
+    Vector<AutoDiff<1> > shapearray(ndof);
+    T_CalcShape<AutoDiff<1>> (adx, shapearray);
     for (int i = 0; i < ndof; i++)
       dshape(i, 0) = shapearray[i].DValue(0);
   }
 
   template <class T>
-  void MyHighOrderSegm :: T_CalcShape (const T & x, FlatArray<T> & shape) const
+  void MyHighOrderSegm :: T_CalcShape (T x, SliceVector<T> shape) const
   {
     T lami[2] = { x, 1-x };
     
@@ -90,8 +91,8 @@ namespace ngfem
   {
     double x = ip(0);
     double y = ip(1);
-    FlatArray<double> shapearray (ndof, &shape(0));
-    T_CalcShape (x, y, shapearray);
+    // FlatArray<double> shapearray (ndof, &shape(0));
+    T_CalcShape (x, y, shape);
   }
 
 
@@ -100,8 +101,8 @@ namespace ngfem
   {
     AutoDiff<2> adx (ip(0), 0);
     AutoDiff<2> ady (ip(1), 1);
-    Array<AutoDiff<2> > shapearray(ndof);
-    T_CalcShape (adx, ady, shapearray);
+    Vector<AutoDiff<2> > shapearray(ndof);
+    T_CalcShape<AutoDiff<2>> (adx, ady, shapearray);
     for (int i = 0; i < ndof; i++)
       {
         dshape(i, 0) = shapearray[i].DValue(0);
@@ -113,7 +114,7 @@ namespace ngfem
 
 
   template <class T>
-  void MyHighOrderTrig :: T_CalcShape (const T & x, const T & y, FlatArray<T> & shape) const
+  void MyHighOrderTrig :: T_CalcShape (const T & x, const T & y, SliceVector<T> shape) const
   {
     T lami[3] = { x, y, 1-x-y };
     

@@ -25,7 +25,7 @@ class FESpaceStokes : public CompoundFESpace
 {
 public:
 
-  FESpaceStokes (const MeshAccess & ama, const Flags & flags)
+  FESpaceStokes (shared_ptr<MeshAccess> ama, const Flags & flags)
     : CompoundFESpace (ama, flags)
   {
     int order = int (flags.GetNumFlag ("order", 2));

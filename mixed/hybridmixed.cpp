@@ -20,7 +20,7 @@ class HybridMixedFESpace : public CompoundFESpace
 {
 public:
 
-  HybridMixedFESpace (const MeshAccess & ama, const Flags & flags)
+  HybridMixedFESpace (shared_ptr<MeshAccess> ama, const Flags & flags)
     : CompoundFESpace (ama, flags)
   {
     int order = int (flags.GetNumFlag ("order", 1));

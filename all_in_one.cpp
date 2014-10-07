@@ -47,7 +47,7 @@ namespace all_in_one
         make_shared<LaplaceIntegrator<2>> (make_shared<ConstantCoefficientFunction> (1));
       bfa -> AddIntegrator (bfi);
 
-      Array<double> penalty(ma.GetNBoundaries());
+      Array<double> penalty(ma->GetNBoundaries());
       penalty = 0.0;
       penalty[0] = 1e10;
 
@@ -83,11 +83,9 @@ namespace all_in_one
       const BaseVector & vecf = lff -> GetVector();
       BaseVector & vecu = gfu -> GetVector();
 
-      BaseMatrix * inverse = mata.InverseMatrix(fes->GetFreeDofs());
+      auto inverse = mata.InverseMatrix(fes->GetFreeDofs());
       
-      vecu = (*inverse) * vecf;
-
-      delete inverse;
+      vecu = *inverse * vecf;
     }
   };
 
