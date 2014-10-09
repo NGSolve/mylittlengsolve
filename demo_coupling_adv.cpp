@@ -72,7 +72,7 @@ public:
     gfu = pde.GetGridFunction (flags.GetStringFlag ("gridfunction", "u"));
 
     auto coefu = 
-      make_shared<GridFunctionCoefficientFunction> (*gfu, make_shared<MyDifferentialOperator>());
+      make_shared<GridFunctionCoefficientFunction> (gfu, make_shared<MyDifferentialOperator>());
 
     // add a source integrator to the linearform
     // the coefficient is  DiffOp (gfu)
