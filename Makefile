@@ -20,7 +20,7 @@ clean:
 
 
 dist:
-	tar --transform='s,^,my_little_ngsolve-5.3/,' -czf MyLittleNGSolve-5.3.tar.gz Makefile *.cpp *.hpp *.pde *.vol *.in2d windows/my_little_ngsolve* */Makefile */*.cpp  */*.pde  */*.vol*  */*.geo  */*.in2d  */*.tcl
+	tar --transform='s,^,my_little_ngsolve-5.3/,' -czf MyLittleNGSolve-5.3.tar.gz Makefile *.cpp *.hpp *.pde *.vol *.in2d windows/*.vcxproj windows/*.sln windows/*.bat */Makefile */*.cpp  */*.pde  */*.vol*  */*.geo  */*.in2d  */*.tcl
 
 
 #	cd ..; \
