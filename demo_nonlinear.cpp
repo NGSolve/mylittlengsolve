@@ -160,7 +160,7 @@ public:
     auto d = vecu.CreateVector();
     auto w = vecu.CreateVector();
 
-    BilinearFormApplication applya(bfa.get());
+    BilinearFormApplication applya(bfa);
 
     double err, err0;
     double energy, energyold;
