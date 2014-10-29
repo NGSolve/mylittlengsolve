@@ -41,9 +41,9 @@ public:
 // integrator for mixed diffusion
 class MixedDiffusionIntegrator : public BilinearFormIntegrator
 {
-  CoefficientFunction * coef_a;
+  shared_ptr<CoefficientFunction> coef_a;
 public:
-  MixedDiffusionIntegrator (const Array<CoefficientFunction*> & coeffs) 
+  MixedDiffusionIntegrator (const Array<shared_ptr<CoefficientFunction>> & coeffs) 
     : coef_a(coeffs[0])
   { ; }
 
