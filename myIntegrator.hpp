@@ -60,9 +60,9 @@ namespace ngfem
   // integrator for \int f v dx
   class MySourceIntegrator : public LinearFormIntegrator
   {
-    CoefficientFunction * coef_f;
+    shared_ptr<CoefficientFunction> coef_f;
   public:
-    MySourceIntegrator (const Array<CoefficientFunction*> & coeffs) 
+    MySourceIntegrator (const Array<shared_ptr<CoefficientFunction>> & coeffs) 
       : coef_f(coeffs[0])
     { ; }
 
