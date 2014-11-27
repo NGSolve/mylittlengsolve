@@ -27,8 +27,6 @@ namespace ngfem
                                      SliceVector<> shape) const
   {
     double x = ip(0);
-    // FlatArray<double> shapearray (ndof, &shape(0));
-    // T_CalcShape (x, shapearray);
     T_CalcShape (x, shape);
   }
 
@@ -91,7 +89,6 @@ namespace ngfem
   {
     double x = ip(0);
     double y = ip(1);
-    // FlatArray<double> shapearray (ndof, &shape(0));
     T_CalcShape (x, y, shape);
   }
 

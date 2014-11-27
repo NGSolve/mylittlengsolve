@@ -165,7 +165,7 @@ public:
     double err, err0;
     double energy, energyold;
 
-    *d = vecf - applya * vecu;
+    d = vecf - applya * vecu;
     err0 = L2Norm(*d);
 
     for (int i = 1; i <= maxit; i++)
@@ -175,9 +175,9 @@ public:
 	bfa -> AssembleLinearization (vecu, lh);
 
 	// bfa->GetMatrix().SetInverseType (SPARSECHOLESKY);
-	BaseMatrix & inva = *bfa -> GetMatrix().InverseMatrix();
+	auto inva = bfa -> GetMatrix().InverseMatrix();
 
-	*d = vecf - applya * vecu;
+	d = vecf - applya * vecu;
 	err = L2Norm(*d);
 	energy = bfa->Energy(vecu) - InnerProduct (vecf, vecu);
 
@@ -186,14 +186,14 @@ public:
 
 	energyold = energy;
 
-	*w = inva * *d;
-	*uold = vecu;
+	w = *inva * d;
+	uold = vecu;
 	int lin_its = 0;
 	double tau = 1;
 
 	do
 	  {
-	    vecu = *uold + tau * *w;
+	    vecu = uold + tau * w;
 	    energy = bfa->Energy(vecu) - InnerProduct (vecf, vecu);
 
 	    cout << "tau = " << tau
@@ -203,7 +203,6 @@ public:
 	  }
 	while (energy > energyold && lin_its++ < 30 && err > 1e-7*err0);
 
-	delete &inva;
 	if (err < 1e-7*err0) break;
       }
   }

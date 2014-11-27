@@ -74,8 +74,8 @@ namespace myAssembling
 
       VVector<double> vecf (fes->GetNDof());
 
-      LaplaceIntegrator<2> laplace (new ConstantCoefficientFunction (1));
-      SourceIntegrator<2> source (new ConstantCoefficientFunction (1));
+      LaplaceIntegrator<2> laplace (make_shared<ConstantCoefficientFunction> (1));
+      SourceIntegrator<2> source (make_shared<ConstantCoefficientFunction> (1));
 
       mat = 0.0;
       vecf = 0.0;
