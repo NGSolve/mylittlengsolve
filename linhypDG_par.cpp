@@ -95,7 +95,7 @@ public:
 	HeapReset hr(lh);
 	
 	const DGFiniteElement<D> & fel = dynamic_cast<const DGFiniteElement<D>&> (fes.GetFE (i, lh));
-	const IntegrationRuleTP<D> ir(ma.GetTrafo(i,0,lh), 2*fel.Order(), false, lh);
+	const IntegrationRuleTP<D> ir(ma.GetTrafo(i,0,lh), 2*fel.Order(), &lh);
 
 	const_cast<DGFiniteElement<D>&> (fel).PrecomputeShapes (ir);
 	const_cast<DGFiniteElement<D>&> (fel).PrecomputeTrace ();
@@ -123,9 +123,14 @@ public:
 
 
     Array<int> elnums, fnums, vnums;
-    
+
+    MyMPI_Barrier();
+    cout << "id = " << MyMPI_GetId() << ", nf = " << nf << endl;
+    MyMPI_Barrier();
+
     for (int i = 0; i < nf; i++)
       {
+	cout << "id = " << MyMPI_GetId() << ", facet nr " << i << endl;
 	HeapReset hr(lh);
 	
 	const DGFiniteElement<D-1> & felfacet = 
@@ -177,16 +182,31 @@ public:
       }
     
 
+    MyMPI_Barrier();
+    cout << "alle hier, A" << " id = " << MyMPI_GetId() << endl;
+    MyMPI_Barrier();
 
 
-    ndf = fes.GetFacetFE (0, lh).GetNDof();
-
-    Array<Node> dofnodes(ndf*nf);
-    for (int i = 0; i < nf; i++)
-      for (int j = 0; j < ndf; j++)
-	dofnodes[i*ndf+j] = Node(NODE_TYPE(D-1), i);
+    if (ne)
+      {
+	ndf = fes.GetFacetFE (0, lh).GetNDof();
+	
+	Array<Node> dofnodes(ndf*nf);
+	for (int i = 0; i < nf; i++)
+	  for (int j = 0; j < ndf; j++)
+	    dofnodes[i*ndf+j] = Node(NODE_TYPE(D-1), i);
     
-    pardofs = new ParallelMeshDofs (ma, dofnodes);
+	pardofs = new ParallelMeshDofs (ma, dofnodes);
+      }
+    else
+      {
+	Array<Node> dofnodes(0);
+	pardofs = new ParallelMeshDofs (ma, dofnodes);
+      }
+
+    MyMPI_Barrier();
+    cout << "alle hier, B" << " id = " << MyMPI_GetId() << endl;
+    MyMPI_Barrier();
 
 
 
@@ -268,7 +288,7 @@ public:
 	  HeapReset hr(lh);
 	  
 	  const ScalarFiniteElement<D> & fel = dynamic_cast<const ScalarFiniteElement<D>&> (fes.GetFE (i, lh));
-	  const IntegrationRuleTP<D> ir( ma.GetTrafo(i,0,lh), 2*fel.Order(), false, lh);
+	  const IntegrationRuleTP<D> ir( ma.GetTrafo(i,0,lh), 2*fel.Order(), &lh);
 	  
 	  IntRange dn = fes.GetElementDofs (i);
 	  
@@ -290,7 +310,7 @@ public:
 
     
 
-    ParallelVVector<> traces (pardofs->GetNDof(), pardofs);
+    ParallelVVector<> traces (pardofs->GetNDofLocal(), pardofs);
     traces.SetStatus (DISTRIBUTED);
 
     timer_facet.Start();
