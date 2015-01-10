@@ -25,6 +25,7 @@ namespace ngcomp
 
   public:
     MyPreconditioner (const PDE & pde, const Flags & flags, const string & aname);
+    MyPreconditioner (shared_ptr<BilinearForm> & abfa, const Flags & flags, const string & aname);
     ~MyPreconditioner ();
     virtual void Update();
     
@@ -54,6 +55,13 @@ namespace ngcomp
 
     bfa = pde.GetBilinearForm (flags.GetStringFlag ("bilinearform", ""));
   }
+
+  MyPreconditioner :: MyPreconditioner (shared_ptr<BilinearForm> & abfa, const Flags & flags, const string & aname)
+    : Preconditioner (abfa, flags, name)
+  {
+    bfa = abfa;
+  }
+
     
   
   MyPreconditioner :: ~MyPreconditioner ()
