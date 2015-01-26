@@ -57,12 +57,9 @@ namespace ngcomp
   }
 
   MyPreconditioner :: MyPreconditioner (shared_ptr<BilinearForm> & abfa, const Flags & flags, const string & aname)
-    : Preconditioner (abfa, flags, name)
-  {
-    bfa = abfa;
-  }
+    : Preconditioner (abfa, flags, name), bfa(abfa)
+  { ; }
 
-    
   
   MyPreconditioner :: ~MyPreconditioner ()
   {
@@ -73,7 +70,7 @@ namespace ngcomp
   void MyPreconditioner :: Update()
   {
     const BaseSparseMatrix & mat = dynamic_cast<const BaseSparseMatrix&> (bfa->GetMatrix());
-    const BitArray * freedofs = bfa->GetFESpace()->GetFreeDofs();
+    const BitArray * freedofs = bfa->GetFESpace()->GetFreeDofs(bfa->UsesEliminateInternal());
 
     jacobi = mat.CreateJacobiPrecond (freedofs);
 
