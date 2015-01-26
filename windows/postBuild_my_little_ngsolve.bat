@@ -73,6 +73,12 @@ C:\Windows\System32\xcopy "%PROJ_DIR%..\HDG\*.vol" "%INSTALL_FOLDER%\my_little_n
 C:\Windows\System32\xcopy "%PROJ_DIR%..\HDG\*.in2d" "%INSTALL_FOLDER%\my_little_ngsolve\HDG\*.in2d" /i /d /y
 C:\Windows\System32\xcopy "%PROJ_DIR%..\HDG\*.vol.*" "%INSTALL_FOLDER%\my_little_ngsolve\HDG\*.vol.*" /i /d /y
 
+C:\Windows\System32\xcopy "%PROJ_DIR%..\python\*.pde" "%INSTALL_FOLDER%\my_little_ngsolve\python\*.pde" /i /d /y
+C:\Windows\System32\xcopy "%PROJ_DIR%..\python\*.vol" "%INSTALL_FOLDER%\my_little_ngsolve\python\*.vol" /i /d /y
+C:\Windows\System32\xcopy "%PROJ_DIR%..\python\*.in2d" "%INSTALL_FOLDER%\my_little_ngsolve\python\*.in2d" /i /d /y
+C:\Windows\System32\xcopy "%PROJ_DIR%..\python\*.vol.*" "%INSTALL_FOLDER%\my_little_ngsolve\python\*.vol.*" /i /d /y
+C:\Windows\System32\xcopy "%PROJ_DIR%..\python\*.py" "%INSTALL_FOLDER%\my_little_ngsolve\python\*.py" /i /d /y
+
 echo %PROJ_NAME%
 if /i "%PROJ_NAME%" == "libtcldemo" (
 C:\Windows\System32\xcopy "%PROJ_DIR%..\tcl\*.tcl" "%INSTALL_FOLDER%\bin\*.tcl" /i /d /y
