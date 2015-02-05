@@ -28,7 +28,7 @@ namespace all_in_one
 
   public:
     
-    NumProcAllInOne (PDE & apde, const Flags & flags)
+    NumProcAllInOne (shared_ptr<PDE> apde, const Flags & flags)
       : NumProc (apde)
     { 
       cout << "Constructor of NumProcAllInOne" << endl;

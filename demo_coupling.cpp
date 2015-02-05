@@ -45,14 +45,14 @@ public:
     In the constructor, the solver class gets the flags from the pde - input file.
     the PDE class apde constains all bilinear-forms, etc...
   */
-  NumProcCouplingDemo (PDE & apde, const Flags & flags)
+  NumProcCouplingDemo (shared_ptr<PDE> apde, const Flags & flags)
     : NumProc (apde)
   {
     // in the input-file, you specify the linear-form and the gridfunction as
     // -linearform=f -gridfunction=u
 
-    lff = pde.GetLinearForm (flags.GetStringFlag ("linearform", "f"));
-    gfu = pde.GetGridFunction (flags.GetStringFlag ("gridfunction", "u"));
+    lff = apde->GetLinearForm (flags.GetStringFlag ("linearform", "f"));
+    gfu = apde->GetGridFunction (flags.GetStringFlag ("gridfunction", "u"));
   }
 
   virtual ~NumProcCouplingDemo() 
