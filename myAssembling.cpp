@@ -24,12 +24,12 @@ namespace myAssembling
 
   public:
     
-    NumProcMyAssembling (PDE & apde, const Flags & flags)
+    NumProcMyAssembling (shared_ptr<PDE> apde, const Flags & flags)
       : NumProc (apde)
     { 
       cout << "We assemble matrix and rhs vector" << endl;
 
-      gfu = pde.GetGridFunction (flags.GetStringFlag ("gridfunction", "u"));
+      gfu = apde->GetGridFunction (flags.GetStringFlag ("gridfunction", "u"));
     }
   
     virtual string GetClassName () const
