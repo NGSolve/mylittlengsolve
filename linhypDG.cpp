@@ -57,14 +57,14 @@ protected:
     
 public:
     
-  NumProcLinearHyperbolic (PDE & apde, const Flags & flags)
+  NumProcLinearHyperbolic (shared_ptr<PDE> apde, const Flags & flags)
     : NumProc (apde), 
       timer_element("convection - time element"), 
       timer_facet("convection - time facet"),
       timer_mass("convection - time mass")
   {
-    gfu = pde.GetGridFunction (flags.GetStringFlag ("gridfunction", "u"));
-    cfflow = pde.GetCoefficientFunction (flags.GetStringFlag ("flow", "flow"));
+    gfu = apde->GetGridFunction (flags.GetStringFlag ("gridfunction", "u"));
+    cfflow = apde->GetCoefficientFunction (flags.GetStringFlag ("flow", "flow"));
 
     dt = flags.GetNumFlag ("dt", 0.001);
     tend = flags.GetNumFlag ("tend", 1);

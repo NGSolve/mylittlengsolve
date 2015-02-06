@@ -135,12 +135,12 @@ protected:
   int maxit;
 
 public:
-  NumProcNonlinearSolve (PDE & apde, const Flags & flags)
+  NumProcNonlinearSolve (shared_ptr<PDE> apde, const Flags & flags)
     : NumProc (apde)
   { 
-    bfa = pde.GetBilinearForm (flags.GetStringFlag ("bilinearforma", "a"));
-    lff = pde.GetLinearForm (flags.GetStringFlag ("linearform", "f"));
-    gfu = pde.GetGridFunction (flags.GetStringFlag ("gridfunction", "u"));
+    bfa = apde->GetBilinearForm (flags.GetStringFlag ("bilinearforma", "a"));
+    lff = apde->GetLinearForm (flags.GetStringFlag ("linearform", "f"));
+    gfu = apde->GetGridFunction (flags.GetStringFlag ("gridfunction", "u"));
 
     maxit = int ( flags.GetNumFlag ("maxit", 30));
   }
