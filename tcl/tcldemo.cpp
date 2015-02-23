@@ -11,7 +11,7 @@ using namespace ngsolve;
 #include <tcl.h>
 
 
-static PDE * global_pde;
+static shared_ptr<PDE> global_pde;
 
 
 int NGS_TclDemo (ClientData clientData,
@@ -21,11 +21,10 @@ int NGS_TclDemo (ClientData clientData,
   cout << "argv[0] = " << argv[0] << endl;
   cout << "argv[1] = " << argv[1] << endl;
 
-  EvalFunction eval(argv[1]);
-  Array<EvalFunction*> ae(1); 
-  ae[0] = &eval;
+  Array<shared_ptr<EvalFunction>> ae(1); 
+  ae[0] = make_shared<EvalFunction> (argv[1]);
 
-  DomainVariableCoefficientFunction<2> coef(ae);
+  auto coef = make_shared<DomainVariableCoefficientFunction>(ae);
 
   LocalHeap lh(1000000, "tcldemo-heap");
   SetValues (coef, *global_pde->GetGridFunction("u"), VOL, NULL, lh);
@@ -38,13 +37,13 @@ class NumProcTclDemo : public NumProc
 {
 protected:
 public:
-  NumProcTclDemo (PDE & apde, const Flags & flags)
+  NumProcTclDemo (shared_ptr<PDE> apde, const Flags & flags)
     : NumProc (apde)
   {
-    global_pde = &pde;
-    pde.Tcl_Eval ("source tcldemo.tcl");
-
-    Tcl_CreateCommand (pde.GetTclInterpreter(), 
+    global_pde = apde;
+    apde->Tcl_Eval ("source tcldemo.tcl");
+    
+    Tcl_CreateCommand (apde->GetTclInterpreter(), 
                        "NGS_TclDemo", NGS_TclDemo,
                        (ClientData)NULL,
                        (Tcl_CmdDeleteProc*) NULL);
