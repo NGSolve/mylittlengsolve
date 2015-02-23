@@ -1,4 +1,4 @@
-NGSCXX = /opt/netgen/bin/ngscxx
+NGSCXX = ${NETGENDIR}/ngscxx
 
 
 objects = all_in_one.o demo_instat.o demo_stokes.o myElement.o	 \
