@@ -14,16 +14,16 @@ demo_fem:  demo_fem.cpp
 	$(NGSCXX) demo_fem.cpp -o demo_fem -lngfem -lngstd
 
 demo_comp:  demo_comp.cpp
-	$(NGSCXX) demo_comp.cpp -o demo_comp  -lngcomp -lngla -lngfem -lngstd -lnglib -linterface
+	$(NGSCXX) demo_comp.cpp -o demo_comp  -lngcomp -lngsolve -lngla -lngfem  -lngstd -lnglib -linterface
 
 demo_comp1d:  demo_comp1d.cpp netgen_dummy.cpp
-	$(NGSCXX) demo_comp1d.cpp netgen_dummy.cpp -o demo_comp1d  -lngcomp -lngla -lngfem -lngstd -lnglib -linterface
+	$(NGSCXX) demo_comp1d.cpp netgen_dummy.cpp -o demo_comp1d  -lngcomp -lngsolve -lngla -lngfem  -lngstd -lnglib -linterface
 
 
 
 
 demo_solve:  demo_solve.cpp
-	$(NGSCXX) demo_solve.cpp -o demo_solve   -lngcomp -lngsolve -lngla -lngfem -lngstd -lnglib -linterface
+	$(NGSCXX) demo_solve.cpp -o demo_solve   -lngcomp -lngsolve -lngla -lngfem  -lngstd -lnglib -linterface
 
 
 demo_parallel:  demo_parallel.cpp
