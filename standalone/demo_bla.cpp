@@ -41,6 +41,16 @@ int main ()
   m3 = 1.0;
   cout << "m3 * u3 = " << m3 * u3 << endl;
 
+  {
+    // C++11 : initializer lists
+    Vector<> x = { 1, 2, 3 };
+    Matrix<> m = { { 2, 2, 2 }, { 5, 5, 5 } };
+    Vector<> y = m * x;
+    cout << "x = " << x << endl;
+    cout << "m = " << m << endl;
+    cout << "y = " << y << endl;
+  }
+
 
   // own memory management:
   double data[1000];
