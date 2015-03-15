@@ -7,16 +7,13 @@ shared = libmyngsolve
 define coefficient lam
 1,
 
-define coefficient penalty
-1e5, 0,
-
 define coefficient coef_source
 1,
 
 
 # create an instance of our new FESpace
 
-define fespace v -type=myfespace -secondorder
+define fespace v -type=myfespace -secondorder -dirichlet=[2]
 # define fespace v -type=myhofespace -order=5
 
 
@@ -25,8 +22,6 @@ define gridfunction u -fespace=v -nested
 # use our new laplace integrator (and standard robin integrator)
 define bilinearform a -fespace=v -symmetric -printelmat -fespace=v
 mylaplace lam
-robin penalty
-
 
 define linearform f -fespace=v
 mysource coef_source
