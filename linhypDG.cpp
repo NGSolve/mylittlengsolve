@@ -5,7 +5,7 @@ Solver for the linear hyperbolic equation
 
 du/dt  +  div (b u) = 0
 
-by an explicit time-stepping method
+by an explicit time-stepping method.
 
 */
 
@@ -22,7 +22,9 @@ template <int D>
 class NumProcLinearHyperbolic : public NumProc
 {
 protected:
+
   shared_ptr<CoefficientFunction> cfflow;
+
   shared_ptr<GridFunction> gfu;
 
   double dt;
@@ -30,7 +32,8 @@ protected:
 
   Timer timer_element, timer_facet, timer_mass;
 
-  class FacetData
+
+  class FacetData  // Struct with time-independent facet reusables
   {
   public:
     int elnr[2];
@@ -41,18 +44,21 @@ protected:
       : flown(nip) { ; }
   };
 
-  class ElementData
+  
+  
+  class ElementData // Struct with time-independent element reusables
   {
   public:
-    MatrixFixWidth<D> flowip;
-    Matrix<> invmass;
+    MatrixFixWidth<D> flowip;   // mapped flow field b at integration points
+    Matrix<> invmass;           // mass matrix inverse on this element
 
     ElementData (int ndof, int nip)
       : flowip(nip), invmass(ndof) { ; }
   };
 
-  Array<FacetData*> facetdata;
-  Array<ElementData*> elementdata;
+  
+  Array<FacetData*> facetdata;      // one per facet
+  Array<ElementData*> elementdata;  // one per element 
 
     
 public:
@@ -78,8 +84,12 @@ public:
 
 
 
-    // prepare ...
-
+    // The method is formulated using these forms:
+    //     integral of du/dt .  v    over element K
+    //    -integral of b u . grad v  over element K
+    //    +integral of b . n uhat v  over element boundary d K.
+    // The time derivative du/dt is approximated by Euler-like scheme.
+    
     const L2HighOrderFESpace & fes = 
       dynamic_cast<const L2HighOrderFESpace&> (*gfu->GetFESpace());
 
@@ -97,7 +107,8 @@ public:
       {
 	HeapReset hr(lh);
 	
-	const DGFiniteElement<D> & fel = dynamic_cast<const DGFiniteElement<D>&> (fes.GetFE (i, lh));
+	const DGFiniteElement<D> & fel =
+	  dynamic_cast<const DGFiniteElement<D>&> (fes.GetFE (i, lh));
 	const IntegrationRule ir(fel.ElementType(), 2*fel.Order());
 
         const_cast<DGFiniteElement<D>&> (fel).PrecomputeShapes (ir);
@@ -109,10 +120,12 @@ public:
 	elementdata[i] = new ElementData (fel.GetNDof(), ir.Size());
 	ElementData & edi = *elementdata[i];
 
+	// evaluate flowfield b at mapped integration points
 	cfflow -> Evaluate (mir, FlatMatrix<> (edi.flowip));
 			    
 	for (int j = 0; j < ir.Size(); j++)
 	  {
+	    
 	    Vec<D> flow = mir[j].GetJacobianInverse() * edi.flowip.Row(j);
 	    flow *= ir[j].Weight() * mir[j].GetMeasure();		
 	    edi.flowip.Row(j) = flow;
@@ -183,7 +196,7 @@ public:
 
 
 
-
+    // improved Euler 
 
     BaseVector & vecu = gfu->GetVector();
     auto conv = vecu.CreateVector();
