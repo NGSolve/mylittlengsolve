@@ -14,25 +14,20 @@ define coefficient reg
 define coefficient one
 1,
 
-define coefficient penalty
-1e8, 1e8,
-
 define coefficient ubound
-0, (1e8*y*(1-y)), 
+(y*(1-y)), 0, 0, 0,
 
-define fespace v -type=stokes  -order=5
+define fespace v -type=stokes  -order=5 -dirichlet=[1,2]
 
 define gridfunction up -fespace=v -addcoef
+
+numproc setvalues npsv -gridfunction=up.2 -coefficient=ubound -boundary
 
 define bilinearform a -fespace=v  -symmetric
 stokes nu 
 mass reg -comp=3
-robin penalty -comp=1
-robin penalty -comp=2
-
 
 define linearform f -fespace=v
-neumann ubound -comp=2
 
 
 define preconditioner c -type=direct -bilinearform=a
@@ -56,7 +51,7 @@ define coefficient velocity ( (up.1, up.2) )
 numproc draw npd1 -coefficient=velocity -label=velocity
 
 
-numproc visualization npv1 -vectorfunction=velocity -minval=0 -maxval=0.25
+#numproc visualization npv1 -vectorfunction=velocity -minval=0 -maxval=0.25
 
 
 

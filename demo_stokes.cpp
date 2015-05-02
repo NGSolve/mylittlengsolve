@@ -35,6 +35,8 @@ public:
     Flags uflags, pflags;
     uflags.SetFlag ("order", order+1);
     uflags.SetFlag ("orderinner", order+1);
+    if (flags.NumListFlagDefined ("dirichlet"))
+	uflags.SetFlag ("dirichlet", flags.GetNumListFlag ("dirichlet"));
     AddSpace (make_shared<H1HighOrderFESpace> (ma, uflags));
     AddSpace (make_shared<H1HighOrderFESpace> (ma, uflags));
     
