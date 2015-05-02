@@ -12,7 +12,7 @@ by an explicit time-stepping method
 
 
 #include <solve.hpp>
-// #include <compatibility.hpp>
+
 using namespace ngsolve;
 using ngfem::ELEMENT_TYPE;
 
@@ -185,48 +185,34 @@ public:
 
 
 
-    FlatVector<> vecu = gfu->GetVector().FVDouble();
-    Vector<> conv(vecu.Size());
-    Vector<> w(vecu.Size());
-    Vector<> hu(vecu.Size());
-    
-#pragma omp parallel
-    {
-      LocalHeap lh2 = lh.Split();
-      
+    BaseVector & vecu = gfu->GetVector();
+    auto conv = vecu.CreateVector();
+    auto w = vecu.CreateVector();
+    auto hu = vecu.CreateVector();
 
-      for (double t = 0; t < tend; t += dt)
-        {
+    for (double t = 0; t < tend; t += dt)
+      {
+        cout << "\rt = " << setw(6) << t << flush;
+        
+        CalcConvection (vecu.FV<double>(), conv.FV<double>(), lh);
+        SolveM (conv.FV<double>(), w.FV<double>(), lh);
+          
+        hu = vecu + (0.5*dt) * w;
 
-#pragma omp single
-          cout << "\rt = " << setw(6) << t << flush;
+        CalcConvection (hu.FV<double>(), conv.FV<double>(), lh);
+        SolveM (conv.FV<double>(), w.FV<double>(), lh);
           
-          CalcConvection (vecu, conv, lh2);
-          SolveM (conv, w, lh2);
-          
-#pragma omp single
-          {
-            hu = vecu + (0.5*dt) * w;
-          }
-
-          CalcConvection (hu, conv, lh2);
-          SolveM (conv, w, lh2);
-          
-#pragma omp single
-          {
-            vecu += dt * w;
-            
-            /*
-              cout << " time T/F/M [us] = "
-              << 1e6 * timer_element.GetTime()/timer_element.GetCounts()/vecu.Size() << " / "
-              << 1e6 * timer_facet.GetTime()/timer_facet.GetCounts()/vecu.Size() << " / "
-              << 1e6 * timer_mass.GetTime()/timer_mass.GetCounts()/vecu.Size() 
-              << "\r";
-            */
-            Ng_Redraw();
-          }
-        }
-    }
+        vecu += dt * w;
+        
+        /*
+          cout << " time T/F/M [us] = "
+          << 1e6 * timer_element.GetTime()/timer_element.GetCounts()/vecu.Size() << " / "
+          << 1e6 * timer_facet.GetTime()/timer_facet.GetCounts()/vecu.Size() << " / "
+          << 1e6 * timer_mass.GetTime()/timer_mass.GetCounts()/vecu.Size() 
+          << "\r";
+        */
+        Ng_Redraw();
+      }
   }
 
 
@@ -239,17 +225,17 @@ public:
     const L2HighOrderFESpace & fes = 
       dynamic_cast<const L2HighOrderFESpace&> (*gfu->GetFESpace());
 
-#pragma omp single
     timer_mass.Start();
 
-#pragma omp for
-    for (int i = 0; i < ne; i++)
-      {
-	IntRange dn = fes.GetElementDofs (i);
-	vecu.Range (dn) = elementdata[i]->invmass * res.Range (dn);
-      }
+    
+    // for (int i = 0; i < ne; i++)
+    ParallelFor (ne, 
+                 [&] (int i)
+                 {
+                   IntRange dn = fes.GetElementDofs (i);
+                   vecu.Range (dn) = elementdata[i]->invmass * res.Range (dn);
+                 });
 
-#pragma omp single
     timer_mass.Stop();
   }
 
@@ -266,16 +252,14 @@ public:
       dynamic_cast<const L2HighOrderFESpace&> (*gfu->GetFESpace());
     
     
-#pragma omp single
     timer_element.Start();
     
-    
     int ne = ma->GetNE();
-      
-#pragma omp for
-      for (int i = 0; i < ne; i++)
-	{
-	  HeapReset hr(lh);
+    
+    ParallelFor
+      (ne, [&] (int i)
+       {
+         LocalHeap slh = lh.Split(), &lh = slh;
 	  
 	  const ScalarFiniteElement<D> & fel = 
             static_cast<const ScalarFiniteElement<D>&> (fes.GetFE (i, lh));
@@ -309,22 +293,21 @@ public:
 	    flowui.Row(k) *= elui(k);
 	  
 	  fel.EvaluateGradTrans (ir, flowui, conv.Range(dn));
-	}
+       });
 
 
-#pragma omp single
-      {
-        timer_element.Stop();
-        timer_facet.Start();
-      }
-
+      timer_element.Stop();
+      timer_facet.Start();
 
       int nf = ma->GetNFacets();
-      
-#pragma omp for
-      for (int i = 0; i < nf; i++)
-	{
-	  HeapReset hr(lh);
+
+      ParallelFor 
+        (nf, [&] (int i)
+         {
+           // HeapReset hr(lh);
+           LocalHeap slh = lh.Split();
+           LocalHeap & lh = slh;
+
 	  
 	  const FacetData & fai = *facetdata[i];
 	  if (fai.elnr[1] != -1)
@@ -409,13 +392,9 @@ public:
 		conv.Range (dn1) -= elu1;
 	      }
 	    }
-	}
+         });
 
-#pragma omp single    
       timer_facet.Stop(); 
-      
-
-
   }
 };
 
