@@ -2,8 +2,8 @@
 # mesh = beam.vol.gz
 # geometry = plate.geo
 # mesh = plate.vol.gz
-geometry = pipet.geo
-mesh = pipet.vol.gz
+geometry = pipe.geo
+mesh = pipe.vol.gz
 
 define constant heapsize = 20000000
 define constant geometryorder = 4
