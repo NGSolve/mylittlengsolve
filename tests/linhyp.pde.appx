@@ -1,0 +1,30 @@
+
+define coefficient dist
+( (y-0.5)*(y-0.5)+(x-0.5)*(x-0.5) ),
+
+define coefficient indicator
+( dist < 0.25 ),
+
+define coefficient sol
+(exp(-40*(
+          (x-sin(pi/4 + 10)*sqrt(0.08)-0.5)
+         *(x-sin(pi/4 + 10)*sqrt(0.08)-0.5)
+         +(y-cos(pi/4 + 10)*sqrt(0.08)-0.5)
+         *(y-cos(pi/4 + 10)*sqrt(0.08)-0.5)))
+         *indicator
+ ),
+
+bilinearform m -fespace=v -symmetric -nonassemble
+mass 1
+
+fespace verr -type=l2ho -order=0
+gridfunction err -fespace=verr
+
+numproc difference npd -bilinearform=m -solution=u -function=sol -diff=err
+numproc testvariable nptv_err -variable=calcdiff.npd.diff -refvalue=0 -tolerance=7.4e-3 -abstol -cdash
+
+# To visualize exact solution
+# gridfunction uu -fespace=v
+# numproc setvalues nps1 -gridfunction=uu -coefficient=sol
+# numproc visualization npv2 -scalarfunction=uu -subdivision=3 -nolineartexture -minval=0 -maxval=1
+

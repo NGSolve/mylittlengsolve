@@ -1,0 +1,3 @@
+
+numproc testvariable nptv_it1 -variable=bvp.np1.its -refvalue=2 -tolerance=0 -abstol -cdash
+numproc testvariable nptv_it3 -variable=bvp.np3.its -refvalue=2 -tolerance=0 -abstol -cdash
