@@ -1,5 +1,5 @@
 set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${TEST_DIR}/mixed )
 add_library( mixed SHARED ../../mixed/mixed_diffusion.cpp ../../mixed/hybridmixed.cpp )
 target_link_libraries( mixed ngcomp ngsolve )
-test_pde( mixed.pde ${TEST_DIR}/mixed )
-test_pde( hybridmixed.pde ${TEST_DIR}/mixed )
+test_pde( mixed.pde ${TEST_DIR}/mixed libmixed.so )
+test_pde( hybridmixed.pde ${TEST_DIR}/mixed libmixed.so )
