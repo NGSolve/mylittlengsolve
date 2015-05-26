@@ -22,10 +22,8 @@ add_library( myngsolve SHARED ../all_in_one.cpp ../demo_instat.cpp ../demo_stoke
 
 target_link_libraries( myngsolve ngfem ngcomp ngsolve )
 
-function(test_pde pde_file working_dir)
-    message( "${CMAKE_CURRENT_SOURCE_DIR}/${pde_file}.appx" )
+function(test_pde pde_file working_dir )
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${pde_file}.appx")
-        message("found ${pde_file}.appx")
         file(READ ${CMAKE_CURRENT_SOURCE_DIR}/${pde_file}.appx CONTENTS)
         file(APPEND ${working_dir}/${pde_file} ${CONTENTS})
     endif()      
@@ -33,11 +31,14 @@ function(test_pde pde_file working_dir)
     set_tests_properties ( ${pde_file} PROPERTIES TIMEOUT 30 )
     set_tests_properties ( ${pde_file} PROPERTIES ATTACHED_FILES "${working_dir}/ng.prof" )
     set_tests_properties ( ${pde_file} PROPERTIES LABELS "standard")
+    if(${ARGC} GREATER 2)
+        set_tests_properties ( ${pde_file} PROPERTIES REQUIRED_FILES ${ARGN} )
+    endif()
 endfunction(test_pde)
 
 set(pde_tests "all_in_one.pde;coupling.pde;linhyp.pde;my_assembling.pde;nonlinear.pde;simple.pde;stokes.pde" )
 foreach(pde_file ${pde_tests})
-  test_pde( ${pde_file} ${TEST_DIR} )
+  test_pde( ${pde_file} ${TEST_DIR} libmyngsolve.so )
 endforeach()
 # instat.pde;precond.pde;  -> take too long
 
