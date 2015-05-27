@@ -38,7 +38,7 @@ endfunction(test_pde)
 
 set(pde_tests "all_in_one.pde;coupling.pde;linhyp.pde;my_assembling.pde;nonlinear.pde;simple.pde;stokes.pde" )
 foreach(pde_file ${pde_tests})
-  test_pde( ${pde_file} ${TEST_DIR} libmyngsolve.so )
+  test_pde( ${pde_file} ${TEST_DIR} ${TEST_DIR}/libmyngsolve.so )
 endforeach()
 # instat.pde;precond.pde;  -> take too long
 
