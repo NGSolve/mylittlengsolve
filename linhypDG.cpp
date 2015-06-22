@@ -37,24 +37,34 @@ protected:
     int facetnr[2];
     Vector<> flown;
 
-    FacetData (int nip)
-      : flown(nip) { ; }
+    FacetData() = default;
+    // FacetData(const FacetData & ed2) = default;
+    // FacetData(FacetData && ed2) = default;
+    FacetData (int nip) : flown(nip) { ; }
+    // ~FacetData() = default;
+    // FacetData & operator= (const FacetData & el2) = default;
+    // FacetData & operator= (FacetData && el2) = default;
   };
+
 
   class ElementData
   {
   public:
     MatrixFixWidth<D> flowip;
     Matrix<> invmass;
-
-    ElementData (int ndof, int nip)
-      : flowip(nip), invmass(ndof) { ; }
+    
+    ElementData() = default;
+    // ElementData(const ElementData & ed2) = default;
+    // ElementData(ElementData && ed2) = default;
+    ElementData (int ndof, int nip) : flowip(nip), invmass(ndof) { ; }
+    // ~ElementData() = default;
+    // ElementData & operator= (const ElementData & el2) = default;
+    // ElementData & operator= (ElementData && el2) = default;
   };
 
-  Array<FacetData*> facetdata;
-  Array<ElementData*> elementdata;
+  Array<FacetData> facetdata;         // new move semantics
+  Array<ElementData> elementdata;     // new move semantics
 
-    
 public:
     
   NumProcLinearHyperbolic (shared_ptr<PDE> apde, const Flags & flags)
@@ -80,55 +90,49 @@ public:
 
     // prepare ...
 
-    const L2HighOrderFESpace & fes = 
-      dynamic_cast<const L2HighOrderFESpace&> (*gfu->GetFESpace());
+    auto & fes = dynamic_cast<const L2HighOrderFESpace&> (*gfu->GetFESpace());
+    
+    elementdata.SetAllocSize (ma->GetNE());
 
+    MassIntegrator<D> bfi(make_shared<ConstantCoefficientFunction> (1));
 
-    int ne = ma->GetNE();
-    int nf = ma->GetNFacets();
-
-    elementdata.SetSize (ne);
-    facetdata.SetSize (nf);
-
-    ConstantCoefficientFunction one(1);
-    MassIntegrator<D> bfi(&one);
-
-    for (int i = 0; i < ne; i++)
+    for (auto ei : ma->Elements())
       {
 	HeapReset hr(lh);
 	
-	const DGFiniteElement<D> & fel = dynamic_cast<const DGFiniteElement<D>&> (fes.GetFE (i, lh));
+	auto & fel = dynamic_cast<const DGFiniteElement<D>&> (fes.GetFE (ei, lh));
 	const IntegrationRule ir(fel.ElementType(), 2*fel.Order());
 
         const_cast<DGFiniteElement<D>&> (fel).PrecomputeShapes (ir);
         const_cast<DGFiniteElement<D>&> (fel).PrecomputeTrace ();
 
-
-	MappedIntegrationRule<D,D> mir(ir, ma->GetTrafo (i, 0, lh), lh);
+        auto & trafo = ma->GetTrafo(ei, lh);
+	MappedIntegrationRule<D,D> mir(ir, trafo, lh);
 	
-	elementdata[i] = new ElementData (fel.GetNDof(), ir.Size());
-	ElementData & edi = *elementdata[i];
-
-	cfflow -> Evaluate (mir, FlatMatrix<> (edi.flowip));
+	ElementData edi(fel.GetNDof(), ir.Size());
+        cfflow -> Evaluate (mir, edi.flowip);
 			    
 	for (int j = 0; j < ir.Size(); j++)
 	  {
 	    Vec<D> flow = mir[j].GetJacobianInverse() * edi.flowip.Row(j);
-	    flow *= ir[j].Weight() * mir[j].GetMeasure();		
+            flow *= mir[j].GetWeight();	 // weight times Jacobian	
 	    edi.flowip.Row(j) = flow;
 	  }
 
+	bfi.CalcElementMatrix (fel, trafo, edi.invmass, lh);
+	CalcInverse (edi.invmass);
 
-	FlatMatrix<> mass(fel.GetNDof(), lh);
-	bfi.CalcElementMatrix (fel, ma->GetTrafo(i, 0, lh), mass, lh);
-	CalcInverse (mass, edi.invmass);
+        elementdata.Append (move(edi));
       }
+
 
 
 
     Array<int> elnums, fnums, vnums;
     
-    for (int i = 0; i < nf; i++)
+    facetdata.SetAllocSize (ma->GetNFacets());
+
+    for (auto i : Range(ma->GetNFacets()))
       {
 	HeapReset hr(lh);
 	
@@ -136,19 +140,18 @@ public:
 	  dynamic_cast<const DGFiniteElement<D-1>&> (fes.GetFacetFE (i, lh));
 	IntegrationRule ir (felfacet.ElementType(), 2*felfacet.Order());
         const_cast<DGFiniteElement<D-1>&> (felfacet).PrecomputeShapes (ir);
-	
 
-	facetdata[i] = new FacetData (ir.Size());
-	FacetData & fai = *facetdata[i];
+
+        FacetData fai(ir.Size());
 
 	ma->GetFacetElements (i, elnums);
-	
+
 	fai.elnr[1] = -1;
-	for (int j = 0; j < elnums.Size(); j++)
+	for (int j : Range(elnums))
 	  {
 	    fai.elnr[j] = elnums[j];
 	    ma->GetElFacets (elnums[j], fnums);
-	    for (int k = 0; k < fnums.Size(); k++)
+	    for (int k : Range(fnums))
 	      if (fnums[k] == i) fai.facetnr[j] = k;
 	  }
 
@@ -163,10 +166,9 @@ public:
 	
 	// transform facet coordinates to element coordinates
 	IntegrationRule & irt = transform(fai.facetnr[0], ir, lh);  
-	MappedIntegrationRule<D,D> mir(irt, ma->GetTrafo(elnums[0], 0, lh), lh);
+	MappedIntegrationRule<D,D> mir(irt, ma->GetTrafo(ElementId(VOL, elnums[0]), lh), lh);
 	
 	FlatMatrixFixWidth<D> flowir(nip, lh);
-	
 	cfflow -> Evaluate (mir, flowir);
 	
 	for (int j = 0; j < nip; j++)
@@ -176,6 +178,8 @@ public:
 	    fai.flown(j) = InnerProduct (normal, flowir.Row(j));
 	    fai.flown(j) *= ir[j].Weight() * mir[j].GetJacobiDet();
 	  }
+
+	facetdata.Append (move(fai));
       }
     
 
@@ -221,19 +225,15 @@ public:
   void SolveM (FlatVector<double> res, FlatVector<double> vecu,
 	       LocalHeap & lh)
   {
-    int ne = ma->GetNE();
-    const L2HighOrderFESpace & fes = 
-      dynamic_cast<const L2HighOrderFESpace&> (*gfu->GetFESpace());
+    auto fes = dynamic_pointer_cast<L2HighOrderFESpace> (gfu->GetFESpace());
 
     timer_mass.Start();
 
-    
-    // for (int i = 0; i < ne; i++)
-    ParallelFor (ne, 
+    ParallelFor (ma->GetNE(), 
                  [&] (int i)
                  {
-                   IntRange dn = fes.GetElementDofs (i);
-                   vecu.Range (dn) = elementdata[i]->invmass * res.Range (dn);
+                   IntRange dn = fes->GetElementDofs (i);
+                   vecu.Range(dn) = elementdata[i].invmass * res.Range(dn);
                  });
 
     timer_mass.Stop();
@@ -254,19 +254,16 @@ public:
     
     timer_element.Start();
     
-    int ne = ma->GetNE();
-    
     ParallelFor
-      (ne, [&] (int i)
+      (ma->GetNE(), [&] (int i)
        {
          LocalHeap slh = lh.Split(), &lh = slh;
-	  
-	  const ScalarFiniteElement<D> & fel = 
-            static_cast<const ScalarFiniteElement<D>&> (fes.GetFE (i, lh));
-	  const IntegrationRule ir(fel.ElementType(), 2*fel.Order());
-
-	  FlatMatrixFixWidth<D> flowip = elementdata[i]->flowip;
-
+	 
+         auto & fel = static_cast<const ScalarFiniteElement<D>&> (fes.GetFE (i, lh));
+         const IntegrationRule ir(fel.ElementType(), 2*fel.Order());
+         
+         FlatMatrixFixWidth<D> flowip = elementdata[i].flowip;
+         
 	  /*
 	  // use this for time-dependent flow
 	  MappedIntegrationRule<D,D> mir(ir, ma->GetTrafo (i, 0, lh), lh);
@@ -288,9 +285,8 @@ public:
 	  
 	  fel.Evaluate (ir, vecu.Range (dn), elui);
 	  
-	  flowui = flowip;
-	  for (int k = 0; k < nipt; k++)
-	    flowui.Row(k) *= elui(k);
+	  for (auto k : Range(nipt))
+	    flowui.Row(k) = elui(k) * flowip.Row(k);
 	  
 	  fel.EvaluateGradTrans (ir, flowui, conv.Range(dn));
        });
@@ -299,20 +295,15 @@ public:
       timer_element.Stop();
       timer_facet.Start();
 
-      int nf = ma->GetNFacets();
-
       ParallelFor 
-        (nf, [&] (int i)
+        (ma->GetNFacets(), [&] (int i)
          {
-           // HeapReset hr(lh);
-           LocalHeap slh = lh.Split();
-           LocalHeap & lh = slh;
-
-	  
-	  const FacetData & fai = *facetdata[i];
-	  if (fai.elnr[1] != -1)
-	    {
-	      const DGFiniteElement<D> & fel1 = 
+           LocalHeap slh = lh.Split(), &lh = slh;
+           
+           const FacetData & fai = facetdata[i];
+           if (fai.elnr[1] != -1)
+             {
+               const DGFiniteElement<D> & fel1 = 
 		static_cast<const DGFiniteElement<D>&> (fes.GetFE (fai.elnr[0], lh));
 	      const DGFiniteElement<D> & fel2 = 
 		static_cast<const DGFiniteElement<D>&> (fes.GetFE (fai.elnr[1], lh));
