@@ -175,6 +175,7 @@ public:
   virtual int DimFlux () const { return D*(D+1)/2; }
   virtual int DimElement () const { return D; }
   virtual int DimSpace () const { return D; }
+  virtual bool IsSymmetric() const { return true; }
 
   virtual void CalcElementMatrix (const FiniteElement & fel,
                                   const ElementTransformation & eltrans, 

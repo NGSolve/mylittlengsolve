@@ -4,7 +4,8 @@ mesh = square.vol
 define constant heapsize = 1000000
 shared = libmyngsolve
 
-
+flags tracer = -max_size=200 
+# -nothreads -nothread_counter
 
 define coefficient flow
 ( (y-0.5), (0.5-x) ),

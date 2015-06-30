@@ -63,6 +63,7 @@ public:
   virtual int DimElement () const { return 2; }
   virtual int DimSpace () const { return 1; }
   virtual bool BoundaryForm () const { return false; }
+  virtual bool IsSymmetric() const { return true; }
 
   // Calculates the element matrix
   virtual void
