@@ -30,7 +30,7 @@ namespace ngfem
 
     virtual int DimElement () const { return 2; }
     virtual int DimSpace () const { return 2; }
-
+    virtual bool IsSymmetric () const { return true; }
 
     // it is not a boundary integral (but a domain integral)
     virtual bool BoundaryForm () const { return false; }

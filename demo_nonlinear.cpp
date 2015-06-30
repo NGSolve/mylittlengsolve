@@ -28,8 +28,9 @@ public:
   
   virtual string Name () const { return "MyNonlinear"; }
 
-  virtual bool BoundaryForm () const { return 0; }
-  
+  virtual bool BoundaryForm () const { return false; }
+  virtual bool IsSymmetric() const { return true; }
+
   virtual void
   CalcElementMatrix (const FiniteElement & fel,
 		     const ElementTransformation & eltrans, 
