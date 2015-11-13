@@ -158,7 +158,7 @@ namespace ngfem
 
 
 
-
+  // integrators for 2D, need 1 coefficient
   static RegisterBilinearFormIntegrator<MyLaplaceIntegrator> initlap ("mylaplace", 2, 1);
   static RegisterLinearFormIntegrator<MySourceIntegrator> initsource ("mysource", 2, 1);
 }
