@@ -58,6 +58,8 @@ namespace ngcomp
     
     // needed to draw solution function
     evaluator = make_shared<T_DifferentialOperator<DiffOpId<2>>>();
+    flux_evaluator = make_shared<T_DifferentialOperator<DiffOpGradient<2>>>();
+    boundary_evaluator = make_shared<T_DifferentialOperator<DiffOpIdBoundary<2>>>();
 
     integrator = GetIntegrators().CreateBFI("mass", ma->GetDimension(), 
                                             make_shared<ConstantCoefficientFunction>(1));
