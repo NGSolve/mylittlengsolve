@@ -17,7 +17,7 @@ a += BFI("mylaplace", coef=1)
 # a += SymbolicBFI(grad(u)*grad(v))
 
 f = LinearForm(fes)
-f += LFI("mysource", coef=1)
+f += LFI("mysource", coef=x*y)
 # f += SymbolicLFI(x*y*v)
 
 a.Assemble()
