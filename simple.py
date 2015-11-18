@@ -1,6 +1,7 @@
 from ngsolve import *
 
 from ctypes import CDLL
+# on Windows replace '.so' with '.dll'
 mylngs = CDLL("libmyngsolve.so")
 
 m = Mesh("square.vol")
