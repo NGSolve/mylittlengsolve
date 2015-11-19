@@ -228,6 +228,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
       <Command>postBuild_my_little_ngsolve.bat "$(ProjectName)" "$(TargetFileName)" "$(Configuration)" "$(Platform)" "$(ProjectDir)" libtcldemo</Command>
@@ -258,6 +259,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX64</TargetMachine>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
       <Command>postBuild_my_little_ngsolve.bat "$(ProjectName)" "$(TargetFileName)" "$(Configuration)" "$(Platform)" "$(ProjectDir)" libtcldemo</Command>
