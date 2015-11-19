@@ -239,6 +239,7 @@ postBuild_my_little_ngsolve.bat "$(ProjectName)" "$(TargetFileName)" "$(Configur
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(OutDir)\myngspy.dll" "$(NETGENDIR)\myngspy.pyd"
@@ -270,6 +271,7 @@ postBuild_my_little_ngsolve.bat "$(ProjectName)" "$(TargetFileName)" "$(Configur
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX64</TargetMachine>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(OutDir)\myngspy.dll" "$(NETGENDIR)\myngspy.pyd"
