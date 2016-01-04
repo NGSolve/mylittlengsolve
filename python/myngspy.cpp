@@ -18,7 +18,7 @@ class NumProcPyDemo : public NumProc
 
 public:
     
-  NumProcPyDemo (PDE & apde, const Flags & flags)
+  NumProcPyDemo (shared_ptr<PDE> apde, const Flags & flags)
     : NumProc (apde) { ; }
 
   virtual void Do(LocalHeap & lh)
