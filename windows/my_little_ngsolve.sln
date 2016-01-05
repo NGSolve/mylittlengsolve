@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libHDG", "HDG.vcxproj", "{D
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmyngspy", "libmyngspy.vcxproj", "{0839AFD8-0695-46B1-A04A-740FF5D20417}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "equilibrate", "equilibrate.vcxproj", "{224F1097-E110-4F40-AF23-44C9ED0C1A47}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -107,6 +109,22 @@ Global
 		{0839AFD8-0695-46B1-A04A-740FF5D20417}.Release_MKL|x64.ActiveCfg = Release|x64
 		{0839AFD8-0695-46B1-A04A-740FF5D20417}.Release|Win32.ActiveCfg = Release|x64
 		{0839AFD8-0695-46B1-A04A-740FF5D20417}.Release|x64.ActiveCfg = Release|x64
+		{224F1097-E110-4F40-AF23-44C9ED0C1A47}.Debug|Win32.ActiveCfg = Debug|Win32
+		{224F1097-E110-4F40-AF23-44C9ED0C1A47}.Debug|Win32.Build.0 = Debug|Win32
+		{224F1097-E110-4F40-AF23-44C9ED0C1A47}.Debug|x64.ActiveCfg = Debug|x64
+		{224F1097-E110-4F40-AF23-44C9ED0C1A47}.Debug|x64.Build.0 = Debug|x64
+		{224F1097-E110-4F40-AF23-44C9ED0C1A47}.Release_Lapack|Win32.ActiveCfg = Release|Win32
+		{224F1097-E110-4F40-AF23-44C9ED0C1A47}.Release_Lapack|Win32.Build.0 = Release|Win32
+		{224F1097-E110-4F40-AF23-44C9ED0C1A47}.Release_Lapack|x64.ActiveCfg = Release|x64
+		{224F1097-E110-4F40-AF23-44C9ED0C1A47}.Release_Lapack|x64.Build.0 = Release|x64
+		{224F1097-E110-4F40-AF23-44C9ED0C1A47}.Release_MKL|Win32.ActiveCfg = Release|Win32
+		{224F1097-E110-4F40-AF23-44C9ED0C1A47}.Release_MKL|Win32.Build.0 = Release|Win32
+		{224F1097-E110-4F40-AF23-44C9ED0C1A47}.Release_MKL|x64.ActiveCfg = Release|x64
+		{224F1097-E110-4F40-AF23-44C9ED0C1A47}.Release_MKL|x64.Build.0 = Release|x64
+		{224F1097-E110-4F40-AF23-44C9ED0C1A47}.Release|Win32.ActiveCfg = Release|Win32
+		{224F1097-E110-4F40-AF23-44C9ED0C1A47}.Release|Win32.Build.0 = Release|Win32
+		{224F1097-E110-4F40-AF23-44C9ED0C1A47}.Release|x64.ActiveCfg = Release|x64
+		{224F1097-E110-4F40-AF23-44C9ED0C1A47}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

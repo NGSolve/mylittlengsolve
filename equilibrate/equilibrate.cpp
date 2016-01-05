@@ -186,7 +186,7 @@ void EquilibratePatches (CoefficientFunction & flux,
             {
               FlatVector<> shape_facet(facetfel.Facet(k).GetNDof(), lh);
               
-              ELEMENT_TYPE etfacet = ElementTopology::GetFacetType(eltype, k);
+              ngfem::ELEMENT_TYPE etfacet = ElementTopology::GetFacetType(eltype, k);
               IntegrationRule ir_facet(etfacet, facetfel.Order() * 2+2);
 
               FlatVector<> rfi(ir_facet.Size(), lh);
