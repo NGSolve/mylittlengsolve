@@ -59,21 +59,11 @@ void EquilibratePatches (CoefficientFunction & flux,
   // build vertex -> edge table:  
   TableCreator<int> creatoredges(nv);
   for (; !creatoredges.Done(); creatoredges++)
-    {
-      // edges on patch boundary
-      for (Ngs_Element el : ma.Elements(VOL))
-        for (int e : el.Edges())
-          for (int v : el.Vertices())
-            if (!ma.GetEdgePNums(e).Contains(v))
-              creatoredges.Add(v, e); 
+    for (int i = 0; i < nedges; i++)
+      if (!dirichlet_edge[i])
+        for (int v : ma.GetEdgePNums(i))
+          creatoredges.Add(v, i);
 
-      // edges containing v 
-      for (int i = 0; i < nedges; i++)
-        if (!dirichlet_edge[i])
-          for (int v : ma.GetEdgePNums(i))
-            creatoredges.Add(v, i);
-    }
-  
   Table<int> patch_edges = creatoredges.MoveTable();
 
   // cout << "patch_elements:" << endl << patch_elements << endl;
@@ -101,7 +91,34 @@ void EquilibratePatches (CoefficientFunction & flux,
       if (!dirichlet_vertex[i])
         globaldofs += numberdofs;
 
-      // cout << "globaldofs = " << endl << globaldofs << endl;
+
+      // cout << "globaldofs1 = " << endl << globaldofs << endl;
+      
+      // remove external sigma dofs:
+      Array<int> facetdofs;
+      for (int el : patch_elements[i])
+        {
+          ElementId ei(VOL, el);
+          const FiniteElement & felx = fespace_x->GetFE(ei, lh);
+          auto & cfelx = dynamic_cast<const CompoundFiniteElement&>(felx);
+          auto & hdivfel = dynamic_cast<const HDivFiniteElement<2>&> (cfelx[0]);
+          
+          Array<int> dnums(felx.GetNDof(), lh);
+          fespace_x->GetDofNrs(el, dnums);
+          FlatArray<int> dnums_hdiv = dnums.Range(cfelx.GetRange(0));
+          
+          auto edges = ma.GetElement(el).Edges();
+          for (int k = 0; k < 3; k++)
+            if (!ma.GetEdgePNums(edges[k]).Contains(i))
+              {
+                hdivfel.GetFacetDofs(k, facetdofs);
+                for (int d : facetdofs)
+                  globaldofs.DeleteElement(globaldofs.Pos(dnums_hdiv[d]));
+              }
+
+        }
+      
+      // cout << "globaldofs2 = " << endl << globaldofs << endl;
 
       int ldofs = globaldofs.Size();
       QuickSort(globaldofs);
@@ -147,7 +164,7 @@ void EquilibratePatches (CoefficientFunction & flux,
           ScalarFE<ET_TRIG, 1> p1fe;
           FlatVector<> p1vec(p1fe.GetNDof(), lh);
           p1vec = 0;
-          p1vec(ma.GetElVertices(el).Pos(i)) = 1;
+          p1vec(ma.GetElement(ei).Vertices().Pos(i)) = 1;
           
           p1fe.Evaluate(ir, p1vec, hat);
           p1fe.EvaluateGrad(ir, p1vec, dhat);
