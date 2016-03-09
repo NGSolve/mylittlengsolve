@@ -43,6 +43,10 @@ namespace ngfem
      */
     virtual void CalcDShape (const IntegrationPoint & ip, 
                              SliceMatrix<> dshape) const;
+
+    // there are some more functions to bring in ...
+    using ScalarFiniteElement<2>::CalcShape;    
+    using ScalarFiniteElement<2>::CalcDShape;
   };
 
 
@@ -59,6 +63,9 @@ namespace ngfem
   
     virtual void CalcDShape (const IntegrationPoint & ip, 
                              SliceMatrix<> dshape) const;
+
+    using ScalarFiniteElement<2>::CalcShape;    
+    using ScalarFiniteElement<2>::CalcDShape;    
   };
 
 }
