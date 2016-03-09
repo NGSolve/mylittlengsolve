@@ -106,11 +106,12 @@ public:
 
   virtual FiniteElement & GetFE (int enr, LocalHeap & lh) const
   {
-    GetFE (ElementId(VOL, enr), lh);
+    return GetFE (ElementId(VOL, enr), lh);
   }
+  
   virtual FiniteElement & GetSFE (int enr, LocalHeap & lh) const
   {
-    GetFE (ElementId(BND, enr), lh);
+    return GetFE (ElementId(BND, enr), lh);
   }
 
   virtual FiniteElement & GetFE (ElementId ei, Allocator & alloc) const
