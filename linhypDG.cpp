@@ -229,7 +229,7 @@ public:
 
     timer_mass.Start();
 
-    ParallelFor (ma->GetNE(), 
+    ParallelFor (Range(ma->GetNE()), 
                  [&] (int i)
                  {
                    IntRange dn = fes->GetElementDofs (i);
@@ -255,7 +255,7 @@ public:
     timer_element.Start();
     
     ParallelFor
-      (ma->GetNE(), [&] (int i)
+      (Range(ma->GetNE()), [&] (int i)
        {
          LocalHeap slh = lh.Split(), &lh = slh;
 	 
@@ -296,7 +296,7 @@ public:
       timer_facet.Start();
 
       ParallelFor 
-        (ma->GetNFacets(), [&] (int i)
+        (Range(ma->GetNFacets()), [&] (int i)
          {
            LocalHeap slh = lh.Split(), &lh = slh;
            

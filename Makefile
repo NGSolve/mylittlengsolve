@@ -1,18 +1,16 @@
-NGSCXX = ${NETGENDIR}/ngscxx
-
-
 objects = all_in_one.o demo_instat.o demo_stokes.o myElement.o	 \
 myHOElement.o myIntegrator.o demo_coupling.o demo_coupling_adv.o \
 demo_nonlinear.o myFESpace.o myHOFESpace.o myPreconditioner.o	 \
 myAssembling.o linhypDG.o periodic.o
+#
 # 
 
 %.o : %.cpp
-	$(NGSCXX) -I. -c $? -o $@
+	${NETGENDIR}/ngscxx -I. -c $? -o $@
 
 
 libmyngsolve.so : $(objects)
-	$(NGSCXX) -shared $(objects) -lngfem -lngcomp -lngsolve -o $@
+	${NETGENDIR}/ngsld -shared $(objects) -lngfem -lngcomp -lngsolve -lngla -o $@
 
 clean:
 	rm *.o libmyngsolve.so

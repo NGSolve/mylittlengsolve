@@ -125,7 +125,7 @@ public:
     return "Coupling (Demo)";
   }
 
-  virtual void PrintReport (ostream & ost)
+  virtual void PrintReport (ostream & ost) const
   {
     ost << GetClassName() << endl
 	<< "Linear-form     = " << lff->GetName() << endl
