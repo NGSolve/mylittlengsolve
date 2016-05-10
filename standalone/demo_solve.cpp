@@ -11,10 +11,10 @@ int main(int argc, char ** argv)
 
   ngsolve::MyMPI mympi(argc, argv);
 
-  ngsolve::PDE pde; 
+  // ngsolve::PDE pde; 
 
-  pde.LoadPDE (argv[1]); 
-  pde.Solve();
+  auto pde = ngcomp::LoadPDE (argv[1]); 
+  pde->Solve();
 
   return 0;
 }
