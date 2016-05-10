@@ -1,34 +1,41 @@
-NGSCXX = /opt/netgen/bin/ngscxx
+NGSCXX = ${NETGENDIR}/ngscxx
+NGSLD = ${NETGENDIR}/ngsld
 
 
 all: demo_std demo_bla  demo_fem  demo_comp  demo_solve demo_parallel
 # demo_comp1d
 
 demo_std:  demo_std.cpp
-	$(NGSCXX) demo_std.cpp -o demo_std -lngstd
+	$(NGSCXX) -c demo_std.cpp 
+	$(NGSLD) -o $@ demo_std.o -lngstd
 
 demo_bla:  demo_bla.cpp
-	$(NGSCXX) demo_bla.cpp -o demo_bla -lngstd -lngbla
+	$(NGSCXX) -c demo_bla.cpp 
+	$(NGSLD) -o $@ demo_bla.o -lngstd -lngbla -lblas
 
 demo_fem:  demo_fem.cpp
-	$(NGSCXX) demo_fem.cpp -o demo_fem -lngfem -lngstd
+	$(NGSCXX) -c demo_fem.cpp 
+	$(NGSLD) -o $@ demo_fem.o -lngfem -lngstd -lngbla
 
 demo_comp:  demo_comp.cpp
-	$(NGSCXX) demo_comp.cpp -o demo_comp  -lngcomp -lngsolve -lngla -lngfem  -lngstd -lnglib -linterface
+	$(NGSCXX) -c demo_comp.cpp 
+	$(NGSLD) -o $@ demo_comp.o -lngcomp -lngsolve -lngla -lngfem  -lngstd -lnglib -linterface
 
 demo_comp1d:  demo_comp1d.cpp netgen_dummy.cpp
-	$(NGSCXX) demo_comp1d.cpp netgen_dummy.cpp -o demo_comp1d  -lngcomp -lngsolve -lngla -lngfem  -lngstd -lnglib -linterface
+	$(NGSCXX) -c demo_comp1d.cpp netgen_dummy.cpp
+	$(NGSLD) -o $@ demo_comp1d.o netgen_dummy.o -o demo_comp1d -lngcomp -lngsolve -lngla -lngfem  -lngstd -lnglib -linterface
 
 
 
 
 demo_solve:  demo_solve.cpp
-	$(NGSCXX) demo_solve.cpp -o demo_solve   -lngcomp -lngsolve -lngla -lngfem  -lngstd -lnglib -linterface
+	$(NGSCXX) -c demo_solve.cpp 
+	$(NGSLD) -o $@ demo_solve.o -lngcomp -lngsolve -lngla -lngfem  -lngstd -lnglib -linterface
 
 
 demo_parallel:  demo_parallel.cpp
-	$(NGSCXX) demo_parallel.cpp -o demo_parallel -lngstd
-
+	$(NGSCXX) -c demo_parallel.cpp 
+	$(NGSLD) -o $@ demo_parallel.o -lngstd
 
 
 install:
