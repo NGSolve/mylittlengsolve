@@ -24,7 +24,7 @@ namespace ngfem
 
 
   void MyHighOrderSegm :: CalcShape (const IntegrationPoint & ip, 
-                                     SliceVector<> shape) const
+                                     BareSliceVector<> shape) const
   {
     double x = ip(0);
     T_CalcShape (x, shape);
@@ -42,7 +42,7 @@ namespace ngfem
   }
 
   template <class T>
-  void MyHighOrderSegm :: T_CalcShape (T x, SliceVector<T> shape) const
+  void MyHighOrderSegm :: T_CalcShape (T x, BareSliceVector<T> shape) const
   {
     T lami[2] = { x, 1-x };
     
@@ -85,7 +85,7 @@ namespace ngfem
 
 
   void MyHighOrderTrig :: CalcShape (const IntegrationPoint & ip, 
-                                     SliceVector<> shape) const
+                                     BareSliceVector<> shape) const
   {
     double x = ip(0);
     double y = ip(1);
@@ -111,7 +111,7 @@ namespace ngfem
 
 
   template <class T>
-  void MyHighOrderTrig :: T_CalcShape (const T & x, const T & y, SliceVector<T> shape) const
+  void MyHighOrderTrig :: T_CalcShape (const T & x, const T & y, BareSliceVector<T> shape) const
   {
     T lami[3] = { x, y, 1-x-y };
     

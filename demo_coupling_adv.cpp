@@ -30,14 +30,15 @@ using namespace ngsolve;
 class MyDifferentialOperator : public DifferentialOperator
 {
 public:
-  virtual int Dim() const { return 1; }
-  virtual bool Boundary() const { return false; }
-  virtual int DiffOrder() const { return 0; }
+  MyDifferentialOperator () : DifferentialOperator(1, 1, false, 0) { ; }
+  // virtual int Dim() const { return 1; }
+  // virtual bool Boundary() const { return false; }
+  // virtual int DiffOrder() const { return 0; }
 
   virtual void
   CalcMatrix (const FiniteElement & fel,
 	      const BaseMappedIntegrationPoint & mip,
-	      FlatMatrix<double> mat, 
+	      SliceMatrix<double, ColMajor> mat, 
 	      LocalHeap & lh) const 
   { cout << "never used ... uuuups" << endl; }
   

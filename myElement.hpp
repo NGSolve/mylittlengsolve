@@ -35,7 +35,7 @@ namespace ngfem
       ip is given in the reference element.
      */
     virtual void CalcShape (const IntegrationPoint & ip, 
-                            SliceVector<> shape) const;
+                            BareSliceVector<> shape) const;
   
     /*
       Calculate the matrix of derivatives of the shape functions in the point ip.
@@ -59,7 +59,7 @@ namespace ngfem
     MyQuadraticTrig ();
     virtual ELEMENT_TYPE ElementType() const { return ET_TRIG; }
     virtual void CalcShape (const IntegrationPoint & ip, 
-                            SliceVector<> shape) const;
+                            BareSliceVector<> shape) const;
   
     virtual void CalcDShape (const IntegrationPoint & ip, 
                              SliceMatrix<> dshape) const;
