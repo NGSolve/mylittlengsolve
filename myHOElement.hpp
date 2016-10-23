@@ -31,14 +31,14 @@ namespace ngfem
     void SetVertexNumber (int i, int v) { vnums[i] = v; }
 
     virtual void CalcShape (const IntegrationPoint & ip, 
-                            SliceVector<> shape) const;
+                            BareSliceVector<> shape) const;
   
     virtual void CalcDShape (const IntegrationPoint & ip, 
                              SliceMatrix<> dshape) const;
 
   private:
     template <class T>
-    void T_CalcShape (T x, SliceVector<T> shape) const;
+    void T_CalcShape (T x, BareSliceVector<T> shape) const;
   };
 
 
@@ -55,14 +55,14 @@ namespace ngfem
     void SetVertexNumber (int i, int v) { vnums[i] = v; }
 
     virtual void CalcShape (const IntegrationPoint & ip, 
-                            SliceVector<> shape) const;
+                            BareSliceVector<> shape) const;
   
     virtual void CalcDShape (const IntegrationPoint & ip, 
                              SliceMatrix<> dshape) const;
 
   private:
     template <class T>
-    void T_CalcShape (const T & x, const T & y, SliceVector<T> shape) const;
+    void T_CalcShape (const T & x, const T & y, BareSliceVector<T> shape) const;
   };
 }
 

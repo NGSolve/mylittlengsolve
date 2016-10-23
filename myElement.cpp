@@ -28,7 +28,7 @@ namespace ngfem
 
 
   void MyLinearTrig :: CalcShape (const IntegrationPoint & ip, 
-                                  SliceVector<> shape) const
+                                  BareSliceVector<> shape) const
   {
     // coordinates in reference elements
     double x = ip(0);
@@ -77,7 +77,7 @@ namespace ngfem
 
 
   void MyQuadraticTrig :: CalcShape (const IntegrationPoint & ip, 
-                                     SliceVector<> shape) const
+                                     BareSliceVector<> shape) const
   {
     // now, use barycentric coordinates x, y, 1-x-y:
     double lam[3] = { ip(0), ip(1), 1-ip(0)-ip(1) };
