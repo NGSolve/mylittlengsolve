@@ -131,6 +131,9 @@ public:
           fe->SetVertexNumbers (dofmap[ngel.Vertices()]);
           return *fe;
         }
+      default:
+        throw Exception (string ("PeriodicH1, element not implemented: ")+
+                         ElementTopology::GetElementName (ngel.GetType()));
       }
     throw Exception("GetFE: undefined element");
   }
