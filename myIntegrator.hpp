@@ -35,6 +35,9 @@ namespace ngfem
     // it is not a boundary integral (but a domain integral)
     virtual bool BoundaryForm () const { return false; }
 
+    // a volume integral (ngsolve 6.2)
+    virtual VorB VB() const { return VOL; }
+
     // Calculates the element matrix
     virtual void
     CalcElementMatrix (const FiniteElement & fel,
@@ -69,7 +72,8 @@ namespace ngfem
     virtual string Name () const { return "MySource"; }
 
     virtual bool BoundaryForm () const { return false; }
-
+    virtual VorB VB() const { return VOL; }
+    
     // Calculates the right hand side element vector
     virtual void
     CalcElementVector (const FiniteElement & fel,

@@ -83,11 +83,11 @@ namespace myAssembling
       for (int i = 0; i < ne; i++)   // loop over elements
 	{  
 	  HeapReset hr(lh); 
-
-	  const ElementTransformation & eltrans = ma->GetTrafo (i, 0, lh);
+          ElementId ei(VOL, i);
+	  const ElementTransformation & eltrans = ma->GetTrafo (ei, lh);
 	  
 	  fes->GetDofNrs (i, dnums);
-	  const FiniteElement & fel =  fes->GetFE (i, lh);
+	  const FiniteElement & fel =  fes->GetFE (ei, lh);
 	  
 	  FlatMatrix<> elmat (dnums.Size(), lh);
 	  laplace.CalcElementMatrix (fel, eltrans, elmat, lh);
