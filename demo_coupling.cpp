@@ -74,7 +74,7 @@ public:
       {  
         HeapReset hr(lh);    // reset the local heap memory at the end of the loop
 		
-        const ElementTransformation & eltrans = ma->GetTrafo (i, 0, lh);
+        const ElementTransformation & eltrans = ma->GetTrafo (i, VOL, lh);
 
         const ScalarFiniteElement<2> & felu = 
 	  dynamic_cast<const ScalarFiniteElement<2>&> (fesu->GetFE (i, lh));

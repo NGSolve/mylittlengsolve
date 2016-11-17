@@ -28,12 +28,20 @@ namespace ngcomp
     order = int(flags.GetNumFlag ("order", 2));
 
     // needed to draw solution function
+    /*
     evaluator = make_shared<T_DifferentialOperator<DiffOpId<2>>>();
     flux_evaluator = make_shared<T_DifferentialOperator<DiffOpGradient<2>>>();
     boundary_evaluator = make_shared<T_DifferentialOperator<DiffOpIdBoundary<2>>>();
 
     integrator = GetIntegrators().CreateBFI("mass", ma->GetDimension(), 
                                             make_shared<ConstantCoefficientFunction>(1));
+    */
+    evaluator[VOL] = make_shared<T_DifferentialOperator<DiffOpId<2>>>();
+    flux_evaluator[VOL] = make_shared<T_DifferentialOperator<DiffOpGradient<2>>>();
+    evaluator[BND] = make_shared<T_DifferentialOperator<DiffOpIdBoundary<2>>>();
+    
+    integrator[VOL] = GetIntegrators().CreateBFI("mass", ma->GetDimension(), 
+                                                 make_shared<ConstantCoefficientFunction>(1));
   }
     
   
@@ -145,6 +153,32 @@ namespace ngcomp
 
     return *segm;
   }
+
+  
+  FiniteElement & MyHighOrderFESpace :: GetFE (ElementId ei, Allocator & alloc) const
+  {
+    Ngs_Element ngel = ma->GetElement (ei);
+    switch (ngel.GetType())
+      {
+      case ET_TRIG:
+        {
+          MyHighOrderTrig * trig = new (alloc) MyHighOrderTrig(order);
+          for (int i = 0; i < 3; i++)
+            trig->SetVertexNumber (i, ngel.vertices[i]);
+          return *trig;
+        }
+      case ET_SEGM:
+        {
+          MyHighOrderSegm * segm = new (alloc) MyHighOrderSegm(order);
+          for (int i = 0; i < 2; i++)
+            segm->SetVertexNumber (i, ngel.vertices[i]);
+          return *segm;
+        }
+      default:
+        throw Exception (string("Element type ")+ToString(ngel.GetType())+" not supported");
+      }
+  }
+  
 
 
 

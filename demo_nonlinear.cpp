@@ -29,6 +29,7 @@ public:
   virtual string Name () const { return "MyNonlinear"; }
 
   virtual bool BoundaryForm () const { return false; }
+  virtual VorB VB() const { return VOL; } 
   virtual bool IsSymmetric() const { return true; }
 
   virtual void
