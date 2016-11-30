@@ -59,14 +59,14 @@ public:
     AddSpace (make_shared<HDivHighOrderFESpace> (ma, hdivflags));        
 
     if (ma->GetDimension()== 2)
-      boundary_evaluator = make_shared<T_DifferentialOperator<DiffOpIdBndHDivHCurl<2>>>();
+      evaluator[BND] = make_shared<T_DifferentialOperator<DiffOpIdBndHDivHCurl<2>>>();
     else
       {
-        boundary_integrator = 
+        integrator[BND] = 
           make_shared<T_BDBIntegrator<DiffOpIdBndHDivHCurl<3>, DiagDMat<3>>>
           (make_shared<ConstantCoefficientFunction> (1));
-        boundary_evaluator = make_shared<T_DifferentialOperator<DiffOpIdBndHDivHCurl<3>>>();
-        evaluator = make_shared<T_DifferentialOperator< DiffOpIdHDiv<3>>>();
+        evaluator[BND] = make_shared<T_DifferentialOperator<DiffOpIdBndHDivHCurl<3>>>();
+        evaluator[VOL] = make_shared<T_DifferentialOperator< DiffOpIdHDiv<3>>>();
       }
   }
 };
@@ -172,6 +172,7 @@ public:
   virtual ~HDG_ElasticityIntegrator () { ; }
 
   virtual bool BoundaryForm () const { return 0; }
+  virtual VorB VB () const { return VOL; }
   virtual int DimFlux () const { return D*(D+1)/2; }
   virtual int DimElement () const { return D; }
   virtual int DimSpace () const { return D; }

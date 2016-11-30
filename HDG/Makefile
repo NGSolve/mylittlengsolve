@@ -4,7 +4,7 @@ objects = HDGLaplace.o HDGElasticity.o
 	ngscxx -c $? -o $@
 
 libHDG.so : $(objects)
-	ngscxx -shared $(objects) -lngcomp -lngsolve -o $@
+	ngsld -shared $(objects) -lngcomp -lngsolve -o $@
 
 clean:
 	rm *.o libHDG.so

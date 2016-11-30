@@ -4,7 +4,7 @@ objects = mixed_diffusion.o hybridmixed.o
 	ngscxx -c $? -o $@
 
 libmixed.so : $(objects)
-	ngscxx -shared $(objects) -lngcomp -lngsolve -o $@
+	ngsld -shared $(objects) -lngcomp -lngsolve -o $@
 
 clean:
 	rm *.o libmixed.so

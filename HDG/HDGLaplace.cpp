@@ -55,6 +55,7 @@ public:
   virtual ~MyHDG_LaplaceIntegrator () { ; }
 
   virtual bool BoundaryForm () const { return 0; }
+  virtual VorB VB () const { return VOL; }
   virtual bool IsSymmetric() const { return true; }
 
   virtual void CalcElementMatrix (const FiniteElement & fel,
