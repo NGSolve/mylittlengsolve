@@ -69,25 +69,26 @@ public:
     
     lff -> GetVector() = 0.0;
 
-    int ne = ma->GetNE();
-    for (int i = 0; i < ne; i++)   // loop over elements
+    // int ne = ma->GetNE();
+    //    for (int i = 0; i < ne; i++)   // loop over elements
+    for (auto el : ma->Elements(VOL))
       {  
         HeapReset hr(lh);    // reset the local heap memory at the end of the loop
 		
-        const ElementTransformation & eltrans = ma->GetTrafo (i, VOL, lh);
+        const ElementTransformation & eltrans = ma->GetTrafo (el, lh);
 
         const ScalarFiniteElement<2> & felu = 
-	  dynamic_cast<const ScalarFiniteElement<2>&> (fesu->GetFE (i, lh));
+	  dynamic_cast<const ScalarFiniteElement<2>&> (fesu->GetFE (el, lh));
         const ScalarFiniteElement<2> & felf = 
-	  dynamic_cast<const ScalarFiniteElement<2>&> (fesf->GetFE (i, lh));
+	  dynamic_cast<const ScalarFiniteElement<2>&> (fesf->GetFE (el, lh));
 
 	int nd_u = felu.GetNDof();
 	int nd_f = felf.GetNDof();
 
 	Array<int> dnumsu(nd_u, lh), dnumsf(nd_f, lh);  // the dof-numbes for u and f
 		      
-        fesu->GetDofNrs (i, dnumsu);
-        fesf->GetDofNrs (i, dnumsf);
+        fesu->GetDofNrs (el, dnumsu);
+        fesf->GetDofNrs (el, dnumsf);
 
         FlatVector<> elu (nd_u, lh), shape (nd_f, lh), elf (nd_f, lh);
 

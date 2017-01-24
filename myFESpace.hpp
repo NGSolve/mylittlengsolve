@@ -23,9 +23,6 @@ namespace ngcomp
   {
     bool secondorder;
     int ndof, nvert;
-
-    FiniteElement * reference_element;
-    FiniteElement * reference_surface_element;
     
   public:
     /*
@@ -46,20 +43,9 @@ namespace ngcomp
 
 
     virtual void Update(LocalHeap & lh);
-    virtual dof_int_type GetNDof () const { return ndof; }
-
-    virtual void GetDofNrs (int elnr, Array<int> & dnums) const;
-    virtual void GetSDofNrs (int selnr, Array<int> & dnums) const;
-
-    virtual const FiniteElement & GetFE (int elnr, LocalHeap & lh) const;
-    virtual const FiniteElement & GetSFE (int selnr, LocalHeap & lh) const;
-
-    // 6.2 version
-    virtual void GetDofNrs (ElementId ei, Array<int> & dnums) const
-    {
-      if (ei.IsVolume()) GetDofNrs (ei.Nr(), dnums);
-      else GetSDofNrs (ei.Nr(), dnums);
-    }
+    virtual size_t GetNDof () const { return ndof; }
+    
+    virtual void GetDofNrs (ElementId ei, Array<DofId> & dnums) const;
     virtual FiniteElement & GetFE (ElementId ei, Allocator & alloc) const;
   };
 

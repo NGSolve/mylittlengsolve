@@ -76,82 +76,35 @@ namespace ngcomp
     ndof = ii;
   }
 
-  
-  void MyHighOrderFESpace :: GetDofNrs (int elnr, Array<int> & dnums) const
+
+  void MyHighOrderFESpace :: GetDofNrs (ElementId ei, Array<DofId> & dnums) const
   {
     // returns dofs of element number elnr
 
     dnums.SetSize(0);
 
-    Ngs_Element ngel = ma->GetElement (elnr);
+    Ngs_Element ngel = ma->GetElement (ei);
 
     // vertex dofs
-    for (int i = 0; i < 3; i++)
-      dnums.Append (ngel.vertices[i]);
+    for (auto v : ngel.Vertices())
+      dnums.Append(v);
 
     // edge dofs
-    for (int i = 0; i < 3; i++)
+    for (auto e : ngel.Edges())
       {
-        int first = first_edge_dof[ngel.edges[i]];
-        int next  = first_edge_dof[ngel.edges[i]+1];
+        int first = first_edge_dof[e];
+        int next  = first_edge_dof[e+1];
         for (int j = first; j < next; j++)
           dnums.Append (j);
       }
 
-    int first = first_cell_dof[elnr];
-    int next  = first_cell_dof[elnr+1];
-    for (int j = first; j < next; j++)
-      dnums.Append (j);
-
-    // cout << "dnums = " << dnums << endl;
-  }
-
-
-  void MyHighOrderFESpace :: GetSDofNrs (int elnr, Array<int> & dnums) const
-  {
-    // the same for the surface elements
-
-    dnums.SetSize(0);
-
-    Ngs_Element ngel = ma->GetSElement (elnr);
-
-    // vertex dofs
-    for (int i = 0; i < 2; i++)
-      dnums.Append (ngel.vertices[i]);
-
-    // edge dofs
-    int first = first_edge_dof[ngel.edges[0]];
-    int next  = first_edge_dof[ngel.edges[0]+1];
-    for (int j = first; j < next; j++)
-      dnums.Append (j);
-  }
-
-
-  /// returns the reference-element 
-  const FiniteElement & MyHighOrderFESpace :: GetFE (int elnr, LocalHeap & lh) const
-  {
-    MyHighOrderTrig * trig = new (lh) MyHighOrderTrig(order);
-
-    Ngs_Element ngel = ma->GetElement (elnr);
-
-    for (int i = 0; i < 3; i++)
-      trig->SetVertexNumber (i, ngel.vertices[i]);
-
-    return *trig;
-  }
-
-
-  /// the same for the surface elements
-  const FiniteElement & MyHighOrderFESpace :: GetSFE (int elnr, LocalHeap & lh) const
-  {
-    MyHighOrderSegm * segm = new (lh) MyHighOrderSegm(order);
-
-    Ngs_Element ngel = ma->GetSElement (elnr);
-
-    for (int i = 0; i < 2; i++)
-      segm->SetVertexNumber (i, ngel.vertices[i]);
-
-    return *segm;
+    if (ei.IsVolume())
+      {
+        int first = first_cell_dof[ei.Nr()];
+        int next  = first_cell_dof[ei.Nr()+1];
+        for (int j = first; j < next; j++)
+          dnums.Append (j);
+      }
   }
 
   

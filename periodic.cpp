@@ -139,20 +139,12 @@ public:
   }
   
 
-  virtual void GetDofNrs (int elnr, Array<int> & dnums) const
+  virtual void GetDofNrs (ElementId ei, Array<int> & dnums) const
   {
-    H1HighOrderFESpace::GetDofNrs (elnr, dnums);
-    for (int i = 0; i < dnums.Size(); i++)
+    H1HighOrderFESpace::GetDofNrs (ei, dnums);
+    for (size_t i = 0; i < dnums.Size(); i++)
       dnums[i] = dofmap[dnums[i]];
   }
-
-  virtual void GetSDofNrs (int elnr, Array<int> & dnums) const
-  {
-    H1HighOrderFESpace::GetSDofNrs (elnr, dnums);
-    for (int i = 0; i < dnums.Size(); i++)
-      dnums[i] = dofmap[dnums[i]];
-  }
-
 };
 
 static RegisterFESpace<PeriodicH1HighOrderFESpace> myinitifes ("periodic_h1ho");
