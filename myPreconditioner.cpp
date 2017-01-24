@@ -70,7 +70,7 @@ namespace ngcomp
   void MyPreconditioner :: Update()
   {
     const BaseSparseMatrix & mat = dynamic_cast<const BaseSparseMatrix&> (bfa->GetMatrix());
-    const BitArray * freedofs = bfa->GetFESpace()->GetFreeDofs(bfa->UsesEliminateInternal());
+    shared_ptr<BitArray> freedofs = bfa->GetFESpace()->GetFreeDofs(bfa->UsesEliminateInternal());
 
     jacobi = mat.CreateJacobiPrecond (freedofs);
 

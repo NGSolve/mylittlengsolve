@@ -22,10 +22,12 @@ element, and the global mesh.
 #include "myElement.hpp"
 #include "myFESpace.hpp"
 
+/*
 #include <diffop_impl.hpp>
 #ifdef WIN32
       template ngcomp::T_DifferentialOperator<ngcomp::DiffOpId<2> >;
 #endif
+*/
 
 namespace ngcomp
 {
@@ -43,30 +45,8 @@ namespace ngcomp
     else
       cout << "You have chosen second order elements" << endl;
 
-
-    if (!secondorder)
-      reference_element = new MyLinearTrig;
-    else
-      reference_element = new MyQuadraticTrig;
-
-
-    if (!secondorder)
-      reference_surface_element = new FE_Segm1;
-    else
-      reference_surface_element = new FE_Segm2;
-
     
     // needed to draw solution function
-    /*
-    evaluator = make_shared<T_DifferentialOperator<DiffOpId<2>>>();
-    flux_evaluator = make_shared<T_DifferentialOperator<DiffOpGradient<2>>>();
-    boundary_evaluator = make_shared<T_DifferentialOperator<DiffOpIdBoundary<2>>>();
-
-    integrator = GetIntegrators().CreateBFI("mass", ma->GetDimension(), 
-                                            make_shared<ConstantCoefficientFunction>(1));
-    */
-
-    // ngsolve 6.2
     evaluator[VOL] = make_shared<T_DifferentialOperator<DiffOpId<2>>>();
     flux_evaluator[VOL] = make_shared<T_DifferentialOperator<DiffOpGradient<2>>>();
     evaluator[BND] = make_shared<T_DifferentialOperator<DiffOpIdBoundary<2>>>();
@@ -89,7 +69,6 @@ namespace ngcomp
     cout << "Update MyFESpace, #vert = " << ma->GetNV() 
          << ", #edge = " << ma->GetNEdges() << endl;
 
-
     nvert = ma->GetNV();
     // number of dofs:
     if (!secondorder)
@@ -98,83 +77,49 @@ namespace ngcomp
       ndof = nvert + ma->GetNEdges();  // num vertics + num edges
   }
 
-  
-  void MyFESpace :: GetDofNrs (int elnr, Array<int> & dnums) const
+  void MyFESpace :: GetDofNrs (ElementId ei, Array<int> & dnums) const
   {
-    // returns dofs of element number elnr
-
+    // returns dofs of element ei
+    // may be a volume triangle or boundary segment
+    
     dnums.SetSize(0);
 
     Array<int> vert_nums;
-    ma->GetElVertices (elnr, vert_nums);  // global vertex numbers
-    
-    // first 3 dofs are vertex numbers:
-    for (int i = 0; i < 3; i++)
-      dnums.Append (vert_nums[i]);
+    ma->GetElVertices (ei, vert_nums);  // global vertex numbers
+
+    // first dofs are vertex numbers:
+    for (auto v : vert_nums)
+      dnums.Append (v);
 
     if (secondorder)
       {
-        // 3 more dofs on edges:
+        // more dofs on edges:
 
         Array<int> edge_nums;
-        ma->GetElEdges (elnr, edge_nums);    // global edge numbers
+        ma->GetElEdges (ei, edge_nums);    // global edge numbers
 
-        for (int i = 0; i < 3; i++)
-          dnums.Append (nvert+edge_nums[i]);
+        for (auto e : edge_nums)
+          dnums.Append (nvert+e);
       }
   }
-
-
-  void MyFESpace :: GetSDofNrs (int elnr, Array<int> & dnums) const
-  {
-    // the same for the surface elements
-
-    dnums.SetSize(0);
-
-    Array<int> vert_nums;
-    ma->GetSElVertices (elnr, vert_nums);  
-    
-    // first 2 dofs are vertex numbers:
-    for (int i = 0; i < 2; i++)
-      dnums.Append (vert_nums[i]);
-
-    if (secondorder)
-      {
-        // 1 more dof on the edge:
-
-        Array<int> edge_nums;
-        ma->GetSElEdges (elnr, edge_nums);    // global edge number
-
-        dnums.Append (nvert+edge_nums[0]);
-      }
-  }
-
-  /// returns the reference-element 
-  const FiniteElement & MyFESpace :: GetFE (int elnr, LocalHeap & lh) const
-  {
-    if (ma->GetElType(elnr) == ET_TRIG)
-      return *reference_element;
-
-    // should return different elements for mixed-element type meshes
-    throw Exception ("Sorry, only triangular elements are supported");
-  }
-
-  /// the same for the surface elements
-  const FiniteElement & MyFESpace :: GetSFE (int selnr, LocalHeap & lh) const
-  {
-    return *reference_surface_element;
-  }
-
-
   
   FiniteElement & MyFESpace :: GetFE (ElementId ei, Allocator & alloc) const
   {
     if (ei.IsVolume())
-      return *reference_element;
+      {
+        if (!secondorder)
+          return * new (alloc) MyLinearTrig;
+        else
+          return * new (alloc) MyQuadraticTrig;          
+      }
     else
-      return *reference_surface_element;
+      {
+        if (!secondorder)
+          return * new (alloc) FE_Segm1;
+        else
+          return * new (alloc) FE_Segm2;          
+      }
   }
-
 
 
 
