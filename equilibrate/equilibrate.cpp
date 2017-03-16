@@ -1,4 +1,4 @@
-// ngscxx -shared equilibrate.cpp -lngcomp -o libequilibrate.so
+// ngscxx  -c equilibrate.cpp ; ngsld -shared equilibrate.o -lngcomp -lngfem -lngstd -o libequilibrate.so
 
 #include <comp.hpp>
 #include <python_ngstd.hpp>
@@ -256,8 +256,17 @@ void EquilibratePatches (CoefficientFunction & flux,
 }
 
 
-BOOST_PYTHON_MODULE(libequilibrate) {
-  
-  bp::def("EquilibratePatches", &EquilibratePatches);
-  
+PYBIND11_PLUGIN(libequilibrate) {
+  py::module m("equilibrate", "equilibrate");
+
+  m.def("EquilibratePatches",
+        [](PyWrapper<CoefficientFunction> flux,
+           PyWrapper<CoefficientFunction> source,
+           PyWrapper<BilinearForm> bf,
+           PyWrapper<GridFunction> equflux,
+           PyWrapper<FESpace> fespace_u)
+        {
+          EquilibratePatches(*flux, *source, *bf, *equflux.Get(), *fespace_u);
+        });
+  return m.ptr();
 }
