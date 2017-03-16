@@ -23,6 +23,7 @@ element, and the global mesh.
 #include "myFESpace.hpp"
 
 /*
+  // why should we need that ? 
 #include <diffop_impl.hpp>
 #ifdef WIN32
       template ngcomp::T_DifferentialOperator<ngcomp::DiffOpId<2> >;
@@ -56,49 +57,37 @@ namespace ngcomp
   }
     
   
-  MyFESpace :: ~MyFESpace ()
-  {
-    // nothing to do
-  }
-
   
   void MyFESpace :: Update(LocalHeap & lh)
   {
     // some global update:
-
     cout << "Update MyFESpace, #vert = " << ma->GetNV() 
          << ", #edge = " << ma->GetNEdges() << endl;
 
+    // number of vertices
     nvert = ma->GetNV();
+    
     // number of dofs:
-    if (!secondorder)
-      ndof = nvert;  // number of vertices
-    else
-      ndof = nvert + ma->GetNEdges();  // num vertics + num edges
+    ndof = nvert;
+    if (secondorder)
+      ndof += ma->GetNEdges();  // num vertics + num edges
   }
 
-  void MyFESpace :: GetDofNrs (ElementId ei, Array<int> & dnums) const
+  void MyFESpace :: GetDofNrs (ElementId ei, Array<DofId> & dnums) const
   {
     // returns dofs of element ei
     // may be a volume triangle or boundary segment
     
     dnums.SetSize(0);
 
-    Array<int> vert_nums;
-    ma->GetElVertices (ei, vert_nums);  // global vertex numbers
-
     // first dofs are vertex numbers:
-    for (auto v : vert_nums)
+    for (auto v : ma->GetElVertices(ei))
       dnums.Append (v);
 
     if (secondorder)
       {
         // more dofs on edges:
-
-        Array<int> edge_nums;
-        ma->GetElEdges (ei, edge_nums);    // global edge numbers
-
-        for (auto e : edge_nums)
+        for (auto e : ma->GetElEdges(ei))
           dnums.Append (nvert+e);
       }
   }

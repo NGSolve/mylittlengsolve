@@ -32,15 +32,11 @@ namespace ngcomp
     */
     MyFESpace (shared_ptr<MeshAccess> ama, const Flags & flags);
 
-    // destructor
-    virtual ~MyFESpace ();
-
     // a name for our new fe-space
     virtual string GetClassName () const
     {
       return "MyFESpace";
     }
-
 
     virtual void Update(LocalHeap & lh);
     virtual size_t GetNDof () const { return ndof; }
