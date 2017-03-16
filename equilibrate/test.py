@@ -25,7 +25,7 @@ primal_flux = grad(u)
 eqflux = Equilibrate(primal_flux, source, fes, order=3)
 
 Draw(u)
-Draw(primal_flux, mesh, "primal flux")
+Draw(primal_flux, mesh, "primal_flux")
 Draw(eqflux)
-Draw(div(eqflux), mesh, "div eqflux")
+Draw(div(eqflux), mesh, "div_eqflux")
 
