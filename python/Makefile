@@ -5,7 +5,7 @@ objects = myngspy.o
 
 
 libmyngspy.so : $(objects)
-	ngscxx -shared $(objects) -lngfem -lngcomp -lngsolve -o $@
+	ngsld -v -shared $(objects) -lngfem -lngcomp -lngsolve -o $@
 
 clean:
 	rm *.o libmyngspy.so
