@@ -48,20 +48,20 @@ static RegisterNumProc<NumProcPyDemo> npinit1("demopy");
 
 
 
-
-BOOST_PYTHON_MODULE(libmyngspy) {
+PYBIND11_PLUGIN(libmyngspy) {
+  py::module m("myngspy", "myngspy doc-string");
   
-  bp::def("Hello", &Hello);
+  m.def("Hello", &Hello);
 
-  bp::class_<NumProcPyDemo,bp::bases<NumProc>> 
-    ("NumProcPyDemo", bp::no_init)
+  py::class_<NumProcPyDemo,shared_ptr<NumProcPyDemo>>
+    (m, "NumProcPyDemo")
 
     .def ("Hello", &NumProcPyDemo::Hello)
     .def ("Sum", &NumProcPyDemo::Sum)
     ;
+
+  return m.ptr();
 }
-
-
 
 
 
