@@ -103,17 +103,7 @@ public:
       if (dofmap[i] != i)
         ctofdof[i] = UNUSED_DOF;
   }
-
-  virtual FiniteElement & GetFE (int enr, LocalHeap & lh) const
-  {
-    return GetFE (ElementId(VOL, enr), lh);
-  }
   
-  virtual FiniteElement & GetSFE (int enr, LocalHeap & lh) const
-  {
-    return GetFE (ElementId(BND, enr), lh);
-  }
-
   virtual FiniteElement & GetFE (ElementId ei, Allocator & alloc) const
   {
     Ngs_Element ngel = ma->GetElement (ei);
