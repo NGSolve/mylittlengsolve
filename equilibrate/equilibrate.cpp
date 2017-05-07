@@ -107,7 +107,7 @@ void EquilibratePatches (CoefficientFunction & flux,
           fespace_x->GetDofNrs(el, dnums);
           FlatArray<int> dnums_hdiv = dnums.Range(cfelx.GetRange(0));
           
-          auto edges = ma.GetElement(el).Edges();
+          auto edges = ma.GetElement(ElementId(VOL,el)).Edges();
           for (int k = 0; k < 3; k++)
             if (!ma.GetEdgePNums(edges[k]).Contains(i))
               {
@@ -266,7 +266,7 @@ PYBIND11_PLUGIN(libequilibrate) {
            PyWrapper<GridFunction> equflux,
            PyWrapper<FESpace> fespace_u)
         {
-          EquilibratePatches(*flux, *source, *bf, *equflux.Get(), *fespace_u);
+          EquilibratePatches(*flux, *source, *bf, *equflux, *fespace_u);
         });
   return m.ptr();
 }
