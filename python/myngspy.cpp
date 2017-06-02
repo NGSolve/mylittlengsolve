@@ -48,7 +48,7 @@ static RegisterNumProc<NumProcPyDemo> npinit1("demopy");
 
 
 
-PYBIND11_PLUGIN(libmyngspy) {
+PYBIND11_PLUGIN(myngspy) {
   py::module m("myngspy", "myngspy doc-string");
   
   m.def("Hello", &Hello);
@@ -79,8 +79,6 @@ struct Init {
          << "np.Sum (3,8)"
 
          << endl << endl << endl;
-
-    PyImport_AppendInittab("myngspy", PyInit_libmyngspy); 
   }
 };
 static Init init;
