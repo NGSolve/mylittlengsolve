@@ -14,4 +14,4 @@ add_library(myngsolve SHARED
 
 target_link_libraries(myngsolve solve)
 
-install(TARGET myngsolve DESTINATION lib)
+install(TARGETS myngsolve DESTINATION lib)

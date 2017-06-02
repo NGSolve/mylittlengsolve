@@ -150,15 +150,15 @@ public:
 	for (int j : Range(elnums))
 	  {
 	    fai.elnr[j] = elnums[j];
-	    ma->GetElFacets (elnums[j], fnums);
+	    auto fnums = ma->GetElFacets (ElementId(VOL,elnums[j]));
 	    for (int k : Range(fnums))
 	      if (fnums[k] == i) fai.facetnr[j] = k;
 	  }
 
 	
-	ELEMENT_TYPE eltype = ma->GetElType(elnums[0]);
+	ELEMENT_TYPE eltype = ma->GetElType(ElementId(VOL,elnums[0]));
 
-	ma->GetElVertices (elnums[0], vnums);
+	vnums = ma->GetElVertices (ElementId(VOL,elnums[0]));
 	Facet2ElementTrafo transform(eltype, vnums); 
 	FlatVec<D> normal_ref = ElementTopology::GetNormals(eltype) [fai.facetnr[0]];
 	
@@ -259,7 +259,7 @@ public:
        {
          LocalHeap slh = lh.Split(), &lh = slh;
 	 
-         auto & fel = static_cast<const ScalarFiniteElement<D>&> (fes.GetFE (i, lh));
+         auto & fel = static_cast<const ScalarFiniteElement<D>&> (fes.GetFE (ElementId(VOL,i), lh));
          const IntegrationRule ir(fel.ElementType(), 2*fel.Order());
          
          FlatMatrixFixWidth<D> flowip = elementdata[i].flowip;
@@ -304,9 +304,9 @@ public:
            if (fai.elnr[1] != -1)
              {
                const DGFiniteElement<D> & fel1 = 
-		static_cast<const DGFiniteElement<D>&> (fes.GetFE (fai.elnr[0], lh));
+                 static_cast<const DGFiniteElement<D>&> (fes.GetFE (ElementId(VOL,fai.elnr[0]), lh));
 	      const DGFiniteElement<D> & fel2 = 
-		static_cast<const DGFiniteElement<D>&> (fes.GetFE (fai.elnr[1], lh));
+		static_cast<const DGFiniteElement<D>&> (fes.GetFE (ElementId(VOL,fai.elnr[1]), lh));
 	      const DGFiniteElement<D-1> & felfacet = 
 		static_cast<const DGFiniteElement<D-1>&> (fes.GetFacetFE (i, lh));
 
@@ -350,7 +350,7 @@ public:
 	  else
 	    {
 	      const DGFiniteElement<D> & fel1 = 
-		dynamic_cast<const DGFiniteElement<D>&> (fes.GetFE (fai.elnr[0], lh));
+		dynamic_cast<const DGFiniteElement<D>&> (fes.GetFE (ElementId(VOL,fai.elnr[0]), lh));
 	      const DGFiniteElement<D-1> & felfacet = 
 		dynamic_cast<const DGFiniteElement<D-1>&> (fes.GetFacetFE (i, lh));
 
