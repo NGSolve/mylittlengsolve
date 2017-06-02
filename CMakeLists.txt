@@ -2,8 +2,10 @@ project(mylittlengsolve)
 cmake_minimum_required(VERSION 3.1)
 
 find_package(NGSolve CONFIG REQUIRED
-  HINTS /opt/netgen/lib/cmake /Applications/Netgen.app/Contents/Resource/CMake C:/netgen
+  HINTS $ENV{NETGENDIR}/.. /opt/netgen/ /Applications/Netgen.app/Contents/Resource/CMake C:/netgen
 )
+
+set(CMAKE_INSTALL_PREFIX ${NGSOLVE_DIR} CACHE PATH "Install dir" FORCE)
         
 add_library(myngsolve SHARED 
   all_in_one.cpp demo_instat.cpp demo_stokes.cpp myElement.cpp
@@ -14,4 +16,11 @@ add_library(myngsolve SHARED
 
 target_link_libraries(myngsolve solve)
 
-install(TARGETS myngsolve DESTINATION lib)
+add_subdirectory(python)
+add_subdirectory(standalone)
+add_subdirectory(mixed)
+add_subdirectory(HDG)
+add_subdirectory(precond)
+# add_subdirectory(tcl)
+
+install(TARGETS myngsolve DESTINATION ${NGSOLVE_INSTALL_DIR_LIB})
