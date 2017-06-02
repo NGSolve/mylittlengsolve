@@ -30,7 +30,7 @@ using namespace ngsolve;
 class MyDifferentialOperator : public DifferentialOperator
 {
 public:
-  MyDifferentialOperator () : DifferentialOperator(1, 1, false, 0) { ; }
+  MyDifferentialOperator () : DifferentialOperator(1, 1, VOL, 0) { ; }
   // virtual int Dim() const { return 1; }
   // virtual bool Boundary() const { return false; }
   // virtual int DiffOrder() const { return 0; }
