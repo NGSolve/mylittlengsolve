@@ -24,7 +24,7 @@ public:
     cout << "H1HighOrderSpace with smoothing-blocks tutorial" << endl;
   }
 
-  virtual Table<int> * CreateSmoothingBlocks (const Flags & flags) const
+  virtual shared_ptr<Table<int>> CreateSmoothingBlocks (const Flags & flags) const
   {
     cout << "My CreateSmoothingBlocks" << endl;
 
@@ -52,7 +52,7 @@ public:
       eliminated internal dofs
      */
 
-    FilteredTableCreator creator(GetFreeDofs(elim));
+    FilteredTableCreator creator(GetFreeDofs(elim).get());
 
     for ( ; !creator.Done(); creator++)
       {
@@ -83,7 +83,7 @@ public:
       }
 
     // *testout << "smoothing block: " << endl << *creator.GetTable() << endl;
-    return creator.GetTable();
+    return shared_ptr<Table<int>>(creator.GetTable());
   }
 
 
