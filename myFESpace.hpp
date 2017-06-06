@@ -47,4 +47,9 @@ namespace ngcomp
 
 }    
 
+#ifdef NGS_PYTHON
+#include <python_ngstd.hpp>
+void ExportMyFESpace(py::module m);
+#endif // NGS_PYTHON
+
 #endif

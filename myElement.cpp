@@ -132,3 +132,25 @@ namespace ngfem
   }
 
 }
+
+
+#ifdef NGS_PYTHON
+
+void ExportMyElement(py::module m)
+{
+  using namespace ngfem;
+  /*
+    Our Trig is derived
+    from the classes ScalarFiniteElement<2> -> BaseScalarFiniteElement -> FiniteElement.
+    Only BaseScalarFiniteElement and FiniteElement are exported to python
+    (see ngsolve/fem/python_fem.cpp), so we derive from BaseScalarFiniteElement (which derives from
+    FiniteElement).
+    If we only want to use it in our FESpace we do not need to do this, but it's nice for debugging :)
+  */
+  py::class_<MyLinearTrig, shared_ptr<MyLinearTrig>, BaseScalarFiniteElement>
+    (m, "MyLinearTrig", "My new linear Trig")
+    .def(py::init<>())
+    ;
+}
+
+#endif // NGS_PYTHON
