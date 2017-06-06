@@ -1,13 +1,10 @@
+from netgen.geom2d import unit_square
 from ngsolve import *
+from myngspy import *
 
-from ctypes import CDLL
-# on Windows replace '.so' with '.dll'
-mylngs = CDLL("libmyngsolve.so")
+mesh = Mesh(unit_square.GenerateMesh(maxh=0.2))
 
-m = Mesh("square.vol")
-
-# fes = FESpace("myfespace", m, dirichlet=[1,2,3,4], flags = { "secondorder" : True } )
-fes = FESpace("myhofespace", m, dirichlet=[1,2,3,4], order = 5)
+fes = MyFESpace(mesh, dirichlet="top|bottom|right|left", order = 5)
 print ("freedofs: ", fes.FreeDofs())
 
 u = fes.TrialFunction()

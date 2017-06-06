@@ -70,5 +70,10 @@ namespace ngfem
 
 }
 
-#endif
+#ifdef NGS_PYTHON
+#include <python_ngstd.hpp>
+void ExportMyElement(py::module m);
+#endif // NGS_PYTHON
+
+#endif // FILE_MYELEMENT_HPP
 
