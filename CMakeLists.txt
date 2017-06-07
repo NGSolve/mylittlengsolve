@@ -21,6 +21,7 @@ add_subdirectory(standalone)
 add_subdirectory(mixed)
 add_subdirectory(HDG)
 add_subdirectory(precond)
+add_subdirectory(equilibrate)
 # add_subdirectory(tcl)
 
 install(TARGETS myngsolve DESTINATION ${NGSOLVE_INSTALL_DIR_LIB})
