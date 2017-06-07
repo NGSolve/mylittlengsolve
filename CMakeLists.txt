@@ -14,14 +14,19 @@ add_library(myngsolve SHARED
   myAssembling.cpp linhypDG.cpp periodic.cpp
   )
 
-target_link_libraries(myngsolve solve)
+target_link_libraries(myngsolve ngsolve)
+if(WIN32)
+	target_compile_definitions(myngsolve PRIVATE MYNGS_DLL_HEADER=__declspec\(dllexport\))
+else()
+	target_compile_definitions(myngsolve PRIVATE MYNGS_DLL_HEADER)
+endif()
 
 add_subdirectory(python)
-add_subdirectory(standalone)
+# add_subdirectory(standalone)
 add_subdirectory(mixed)
 add_subdirectory(HDG)
 add_subdirectory(precond)
 add_subdirectory(equilibrate)
 # add_subdirectory(tcl)
 
-install(TARGETS myngsolve DESTINATION ${NGSOLVE_INSTALL_DIR_LIB})
+install(TARGETS myngsolve RUNTIME DESTINATION ${NGSOLVE_INSTALL_DIR_BIN} LIBRARY DESTINATION ${NGSOLVE_INSTALL_DIR_LIB} ARCHIVE DESTINATION ${NGSOLVE_INSTALL_DIR_LIB})
