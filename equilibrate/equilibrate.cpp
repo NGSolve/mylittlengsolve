@@ -109,7 +109,7 @@ void EquilibratePatches (CoefficientFunction & flux,
           
           auto edges = ma.GetElement(ElementId(VOL,el)).Edges();
           for (int k = 0; k < 3; k++)
-            if (!ma.GetEdgePNums(edges[k]).Contains(i))
+            if (ma.GetEdgePNums(edges[k])[0]!=i && ma.GetEdgePNums(edges[k])[1]!=i)
               {
                 hdivfel.GetFacetDofs(k, facetdofs);
                 for (int d : facetdofs)
@@ -257,16 +257,16 @@ void EquilibratePatches (CoefficientFunction & flux,
 
 
 PYBIND11_PLUGIN(libequilibrate) {
-  py::module m("equilibrate", "equilibrate");
+  py::module m("libequilibrate", "equilibrate");
 
   m.def("EquilibratePatches",
-        [](PyWrapper<CoefficientFunction> flux,
-           PyWrapper<CoefficientFunction> source,
-           PyWrapper<BilinearForm> bf,
-           PyWrapper<GridFunction> equflux,
-           PyWrapper<FESpace> fespace_u)
+        [](CoefficientFunction & flux,
+           CoefficientFunction & source,
+           BilinearForm & bf,
+           GridFunction & equflux,
+           FESpace & fespace_u)
         {
-          EquilibratePatches(*flux, *source, *bf, *equflux, *fespace_u);
+          EquilibratePatches(flux, source, bf, equflux, fespace_u);
         });
   return m.ptr();
 }
