@@ -1,5 +1,8 @@
+.. _basics:
+
 NGSolve Basics
 =================
+
 
 Firstly we want to show how you can modify NGSolve classes to your needs and export them to
 Python for proper use.
