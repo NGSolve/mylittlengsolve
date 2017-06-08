@@ -130,6 +130,7 @@ PYBIND11_PLUGIN(myngspy) {
   ExportMyDiffOp(m);
 
   m.def("MyAssemble", &myassemble::MyAssemble);
+  m.def("MyCoupling", &mycoupling::MyCoupling);
 
   return m.ptr();
 }

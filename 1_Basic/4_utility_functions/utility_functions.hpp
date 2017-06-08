@@ -8,4 +8,10 @@ namespace myassemble
                                       shared_ptr<LinearFormIntegrator> lfi);
 }
 
+namespace mycoupling
+{
+  shared_ptr<LinearForm> MyCoupling(shared_ptr<GridFunction> gfu,
+                                    shared_ptr<FESpace> fes2);
+}
+
 #endif // MY_UTILITY_FUNCTIONS_HPP
