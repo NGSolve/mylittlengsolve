@@ -26,10 +26,6 @@ void ExportMyCoefficient(py::module m)
 {
   py::class_<MyCoefficientFunction, shared_ptr<MyCoefficientFunction>, CoefficientFunction>
     (m, "MyCoefficient", "CoefficientFunction that reads value from file")
-    /*
-      The pybind init<string> method creates a Python __init__(self, string) method that calls
-      the C++ constructor with a string argument.
-    */
     .def(py::init<string>())
     ;
 }

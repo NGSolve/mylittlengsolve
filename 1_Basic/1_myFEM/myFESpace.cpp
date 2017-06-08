@@ -119,67 +119,13 @@ namespace ngcomp
 void ExportMyFESpace(py::module m)
 {
   using namespace ngcomp;
+  /*
+    We just export the class here and use the FESpace constructor to create our space.
+    This has the advantage, that we do not need to specify all the flags to parse (like
+    dirichlet, definedon,...)
+   */
   py::class_<MyFESpace, shared_ptr<MyFESpace>, FESpace>
     (m, "MyFESpace", "FESpace with first order and second order trigs on 2d mesh")
-  /*
-    for more complicated constructors, or if we have to polish some arguments coming from
-    python before we can put them in the c++ constructor we can define the __init__ function.
-    In the init function we need to construct the new object into the existing pointer.
-   */
-    .def("__init__", [] (MyFESpace * instance, shared_ptr<MeshAccess> mesh, py::object dirichlet,
-                         py::object definedon, py::kwargs kwargs)
-         {
-          cout << "in init" << endl;
-          auto flags = py::extract<Flags>(kwargs)();
-          if (py::isinstance<py::list>(dirichlet)) {
-            flags.SetFlag("dirichlet", makeCArray<double>(py::list(dirichlet)));
-          }
-          if (py::isinstance<py::str>(dirichlet))
-            {
-              cout << "dir is string" << endl;
-              std::regex pattern(dirichlet.cast<string>());
-              Array<double> dirlist;
-              for (int i = 0; i < mesh->GetNBoundaries(); i++)
-                if (std::regex_match (mesh->GetMaterial(BND, i), pattern))
-                  dirlist.Append (i+1);
-              cout << "dirlist = " << dirlist << endl;
-              flags.SetFlag("dirichlet", dirlist);
-            }
-
-          if (py::isinstance<py::str>(definedon))
-            {
-              std::regex pattern(definedon.cast<string>());
-              Array<double> defonlist;
-              for (int i = 0; i < mesh->GetNDomains(); i++)
-                if (regex_match(mesh->GetMaterial(VOL,i), pattern))
-                  defonlist.Append(i+1);
-              flags.SetFlag ("definedon", defonlist);
-            }
-
-          if (py::isinstance<py::list> (definedon))
-            flags.SetFlag ("definedon", makeCArray<double> (definedon));
-          py::extract<Region> definedon_reg(definedon);
-          if (definedon_reg.check() && definedon_reg().IsVolume())
-            {
-              Array<double> defonlist;
-              for (int i = 0; i < definedon_reg().Mask().Size(); i++)
-                if (definedon_reg().Mask().Test(i))
-                  defonlist.Append(i+1);
-              flags.SetFlag ("definedon", defonlist);
-            }
-
-           auto fes = new (instance) MyFESpace(mesh,flags);
-           LocalHeap lh(100000, "myfes - lh");
-           fes->Update(lh);
-           fes->FinalizeUpdate(lh);
-         },
-         /*
-           pybind allows us to give the arguments keywords and default values. Secondorder is
-           default false and the flags are defaulted to an empty dictionary. Python dicts
-           are automatically converted to flags objects if passed. So you can always pass
-           a flags object.
-          */
-         py::arg("mesh"), py::arg("dirichlet")=DummyArgument(), py::arg("definedon")=DummyArgument())
     ;
 }
 
