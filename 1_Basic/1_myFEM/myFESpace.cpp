@@ -40,11 +40,12 @@ namespace ngcomp
       cout << "You have chosen second order elements" << endl;
 
     
-    // needed to draw solution function
+    // needed for symbolic integrators and to draw solution
     evaluator[VOL] = make_shared<T_DifferentialOperator<DiffOpId<2>>>();
     flux_evaluator[VOL] = make_shared<T_DifferentialOperator<DiffOpGradient<2>>>();
     evaluator[BND] = make_shared<T_DifferentialOperator<DiffOpIdBoundary<2>>>();
 
+    // needed to draw solution
     integrator[VOL] = GetIntegrators().CreateBFI("mass", ma->GetDimension(), 
                                                  make_shared<ConstantCoefficientFunction>(1));
   }
