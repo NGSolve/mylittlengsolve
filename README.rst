@@ -13,7 +13,7 @@ how to overload them or provide C++ utility functions, as well as export all tha
 
    1_Basic/basic.rst
 
-The advanced section gives some more useful examples to browse threw.
+The advanced section gives some more useful examples to browse through.
 
 .. toctree::
    :caption: Advanced
