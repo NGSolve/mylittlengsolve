@@ -10,10 +10,10 @@ set(CMAKE_INSTALL_PREFIX ${NGSOLVE_DIR} CACHE PATH "Install dir" FORCE)
 set(PYTHON_PACKAGE_INSTALL_PATH ${NGSOLVE_INSTALL_DIR_PYTHON} CACHE PATH "Python install dir" FORCE)
 
 add_library(myngsolve SHARED
-  1-1_myFEM/myElement.cpp 1-1_myFEM/myFESpace.cpp 1-1_myFEM/myIntegrator.cpp
-  1-1_myFEM/myPreconditioner.cpp
-  1-2_myHOFEM/myHOFESpace.cpp 1-2_myHOFEM/myHOElement.cpp
-  1-4_utility_functions/demo_coupling.cpp 1-4_utility_functions/myAssembling.cpp
+  1_myFEM/myElement.cpp 1_myFEM/myFESpace.cpp 1_myFEM/myIntegrator.cpp
+  1_myFEM/myPreconditioner.cpp
+  2_myHOFEM/myHOFESpace.cpp 2_myHOFEM/myHOElement.cpp
+  4_utility_functions/demo_coupling.cpp 4_utility_functions/myAssembling.cpp
   )
 
 target_link_libraries(myngsolve ngsolve)

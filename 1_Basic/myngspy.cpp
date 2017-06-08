@@ -1,10 +1,10 @@
 #include <solve.hpp>
 using namespace ngsolve;
 #include <python_ngstd.hpp>
-#include "1-1_myFEM/myElement.hpp"
-#include "1-1_myFEM/myFESpace.hpp"
-#include "1-1_myFEM/myCoefficient.hpp"
-#include "1-1_myFEM/myDiffop.hpp"
+#include "1_myFEM/myElement.hpp"
+#include "1_myFEM/myFESpace.hpp"
+#include "1_myFEM/myCoefficient.hpp"
+#include "1_myFEM/myDiffop.hpp"
 
 
 
