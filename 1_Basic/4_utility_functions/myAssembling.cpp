@@ -7,104 +7,94 @@
 
 /*
 
-Assembling the matrix
+  In this example we pass a fespace, a bilinearformintegrator and a linearformintegrator
+  to our function. We will build the system matrix and vector in parallel together and
+  solve the system. The result will be stored in a new created GridFunction which we will
+  return. This function is exported to Python.
 
 */
 
 #include <solve.hpp>
-
 using namespace ngsolve;
+#include "utility_functions.hpp"
 
-namespace myAssembling
+
+namespace myassemble
 {
-  class NumProcMyAssembling : public NumProc
+  shared_ptr<GridFunction> MyAssemble(shared_ptr<FESpace> fes,
+                                      shared_ptr<BilinearFormIntegrator> bfi,
+                                      shared_ptr<LinearFormIntegrator> lfi)
   {
-  protected:
-    shared_ptr<GridFunction> gfu;
+    cout << "We assemble matrix and rhs vector" << endl;
 
-  public:
-    
-    NumProcMyAssembling (shared_ptr<PDE> apde, const Flags & flags)
-      : NumProc (apde)
-    { 
-      cout << "We assemble matrix and rhs vector" << endl;
+    auto ma = fes->GetMeshAccess();
 
-      gfu = apde->GetGridFunction (flags.GetStringFlag ("gridfunction", "u"));
-    }
-  
-    virtual string GetClassName () const
-    {
-      return "MyAssembling";
-    }
-
-
-    virtual void Do (LocalHeap & lh)
-    {
-      shared_ptr<FESpace> fes = gfu -> GetFESpace();
-
-      int ndof = fes->GetNDof();
-      int ne = ma->GetNE();
+    int ndof = fes->GetNDof();
+    int ne = ma->GetNE();
     
 
-      // setup element->dof table:
+    // setup element->dof table:
 
-      // first we get the number of dofs per element ...
-      Array<int> dnums;
-      Array<int> cnt(ne);
+    // first we get the number of dofs per element ...
+    Array<int> dnums;
+    Array<int> cnt(ne);
 
-      for (auto ei : ma->Elements(VOL))
-	{
-	  fes->GetDofNrs (ei, dnums);
-	  cnt[ei.Nr()] = dnums.Size();
-	}	  
+    for (auto ei : ma->Elements(VOL))
+      {
+        fes->GetDofNrs (ei, dnums);
+        cnt[ei.Nr()] = dnums.Size();
+      }
       
-      // allocate the table in compressed form ...
-      Table<int> el2dof(cnt);
+    // allocate the table in compressed form ...
+    Table<int> el2dof(cnt);
 
-      // and fill it
-      for (auto ei : ma->Elements(VOL))        
-	{
-	  fes->GetDofNrs (ei, dnums);
-          el2dof[ei.Nr()] = dnums;
-	}
-      cout << "el2dof - table: " << el2dof << endl;
+    // and fill it
+    for (auto ei : ma->Elements(VOL))
+      {
+        fes->GetDofNrs (ei, dnums);
+        el2dof[ei.Nr()] = dnums;
+      }
+    cout << "el2dof - table: " << el2dof << endl;
 
-      // generate sparse matrix from element-to-dof table
-      auto mat = make_shared<SparseMatrixSymmetric<double>> (ndof, el2dof);
+    // generate sparse matrix from element-to-dof table
+    auto mat = make_shared<SparseMatrixSymmetric<double>> (ndof, el2dof);
 
-      VVector<double> vecf (fes->GetNDof());
+    VVector<double> vecf (fes->GetNDof());
 
-      LaplaceIntegrator<2> laplace (make_shared<ConstantCoefficientFunction> (1));
-      SourceIntegrator<2> source (make_shared<ConstantCoefficientFunction> (1));
+    *mat = 0.0;
+    vecf = 0.0;
 
-      *mat = 0.0;
-      vecf = 0.0;
+    /*
+      Parallel iteration over elements using element coloring
+      This automatically splits the lh into partial localheaps and
+      calls the given lambda function with the element and the splitted lh
+      We can create flatmatrices and -vectors on the local heap without
+      memory management efficiently - the local heap will be reseted by
+      IterateElements automatically.
+    */
+    LocalHeap lh(100000);
+    IterateElements(*fes, VOL, lh, [&] (FESpace::Element el, LocalHeap &lh)
+                    {
+                      const ElementTransformation& eltrans = ma->GetTrafo(el,lh);
+                      const FiniteElement& fel = fes->GetFE(el,lh);
+                      fes->GetDofNrs(el, dnums);
+                      FlatMatrix<> elmat(dnums.Size(),lh);
+                      bfi->CalcElementMatrix(fel,eltrans,elmat,lh);
+                      mat->AddElementMatrix(dnums,elmat);
+                      FlatVector<> elvec(dnums.Size(),lh);
+                      lfi->CalcElementVector(fel, eltrans, elvec, lh);
+                      vecf.AddIndirect(dnums,elvec);
+                    });
 
-      for (ElementId ei : ma->Elements(VOL))
-	{  
-	  HeapReset hr(lh); 
-	  const ElementTransformation & eltrans = ma->GetTrafo (ei, lh);
-	  
-	  fes->GetDofNrs (ei, dnums);
-	  const FiniteElement & fel =  fes->GetFE (ei, lh);
-	  
-	  FlatMatrix<> elmat (dnums.Size(), lh);
-	  laplace.CalcElementMatrix (fel, eltrans, elmat, lh);
-	  mat->AddElementMatrix (dnums, elmat);
+    *testout << "mat = " << *mat << endl;
+    *testout << "vecf = " << vecf << endl;
 
-	  FlatVector<> elvec (dnums.Size(), lh);
-	  source.CalcElementVector (fel, eltrans, elvec, lh);
-	  vecf.AddIndirect (dnums, elvec);
-	} 
+    shared_ptr<BaseMatrix> inv = mat->InverseMatrix (fes->GetFreeDofs());
 
-      *testout << "mat = " << *mat << endl;
-      *testout << "vecf = " << vecf << endl;
-
-      shared_ptr<BaseMatrix> inv = mat->InverseMatrix (fes->GetFreeDofs());
-
-      gfu -> GetVector() = (*inv) * vecf;
-    }
-  };
-
-  static RegisterNumProc<NumProcMyAssembling> npinit1("myassembling");
+    Flags gfuFlags;
+    auto gfu = make_shared<T_GridFunction<double>> (fes, "u", gfuFlags);
+    gfu->Update();
+    gfu -> GetVector() = (*inv) * vecf;
+    return gfu;
+  }
 }

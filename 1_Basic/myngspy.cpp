@@ -5,6 +5,7 @@ using namespace ngsolve;
 #include "1_myFEM/myFESpace.hpp"
 #include "1_myFEM/myCoefficient.hpp"
 #include "1_myFEM/myDiffop.hpp"
+#include "4_utility_functions/utility_functions.hpp"
 
 
 
@@ -127,6 +128,8 @@ PYBIND11_PLUGIN(myngspy) {
   ExportMyFESpace(m);
   ExportMyCoefficient(m);
   ExportMyDiffOp(m);
+
+  m.def("MyAssemble", &myassemble::MyAssemble);
 
   return m.ptr();
 }

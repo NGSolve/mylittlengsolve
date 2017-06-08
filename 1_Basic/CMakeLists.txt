@@ -17,5 +17,5 @@ add_ngsolve_python_module(myngspy myngspy.cpp
 
 target_link_libraries (myngspy ngsolve)
 
-message("Package will be installed to: ${CMAKE_PREFIX_PATH}")
+message("With 'make install' the python package will be installed to: ${CMAKE_PREFIX_PATH}")
 install(TARGETS myngspy DESTINATION ${CMAKE_PREFIX_PATH})
