@@ -4,7 +4,7 @@ from myngspy import *
 
 mesh = Mesh(unit_square.GenerateMesh(maxh=0.2))
 
-fes = MyFESpace(mesh, dirichlet="top|bottom|right|left", order = 5)
+fes = FESpace("myfespace", mesh, dirichlet="top|bottom|right|left", order = 5)
 print ("freedofs: ", fes.FreeDofs())
 
 u = fes.TrialFunction()
