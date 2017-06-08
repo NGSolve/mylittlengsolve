@@ -3,8 +3,10 @@ MyLittleNGSolve - An Introduction into C++ Programming with NGSolve
 
 This project is divided into 3 sections:
 
-The ref::`Basic Section<basics>` should provide you with knowledge about NGSolve's classes and
+The `basic section` should provide you with knowledge about NGSolve's classes and
 how to overload them or provide C++ utility functions, as well as export all that to python.
+
+.. _basic section: 1_Basic/basic.rst
 
 .. toctree::
    :caption: Basic
