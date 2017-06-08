@@ -4,6 +4,7 @@
 
 #include <comp.hpp>
 using namespace ngcomp;
+using ngstd::INT;
 
 
 class PeriodicH1HighOrderFESpace : public H1HighOrderFESpace
