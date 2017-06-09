@@ -21,7 +21,6 @@ element, and the global mesh.
 
 #include "myElement.hpp"
 #include "myFESpace.hpp"
-#include "myDiffop.hpp"
 
 
 namespace ngcomp
