@@ -11,6 +11,8 @@ u, v = fes.TrialFunction(), fes.TestFunction()
 bfi = SymbolicBFI(grad(u)*grad(v))
 lfi = SymbolicLFI(v)
 
-u = MyAssemble(fes,bfi,lfi)
+# use taskmanager to have parallel IterateElements
+with TaskManager():
+    u = MyAssemble(fes,bfi,lfi)
 
 Draw(u)

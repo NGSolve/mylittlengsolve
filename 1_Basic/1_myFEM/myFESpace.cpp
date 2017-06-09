@@ -21,6 +21,7 @@ element, and the global mesh.
 
 #include "myElement.hpp"
 #include "myFESpace.hpp"
+#include "myDiffop.hpp"
 
 
 namespace ngcomp
@@ -45,7 +46,7 @@ namespace ngcomp
     flux_evaluator[VOL] = make_shared<T_DifferentialOperator<DiffOpGradient<2>>>();
     evaluator[BND] = make_shared<T_DifferentialOperator<DiffOpIdBoundary<2>>>();
 
-    // needed to draw solution
+    // (still) needed to draw solution
     integrator[VOL] = GetIntegrators().CreateBFI("mass", ma->GetDimension(), 
                                                  make_shared<ConstantCoefficientFunction>(1));
   }
@@ -123,10 +124,11 @@ void ExportMyFESpace(py::module m)
   /*
     We just export the class here and use the FESpace constructor to create our space.
     This has the advantage, that we do not need to specify all the flags to parse (like
-    dirichlet, definedon,...)
+    dirichlet, definedon,...), but we can still append new functions only for that space.
    */
   py::class_<MyFESpace, shared_ptr<MyFESpace>, FESpace>
     (m, "MyFESpace", "FESpace with first order and second order trigs on 2d mesh")
+    .def("GetNVert", &MyFESpace::GetNVert)
     ;
 }
 

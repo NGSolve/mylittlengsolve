@@ -43,6 +43,8 @@ namespace ngcomp
     
     virtual void GetDofNrs (ElementId ei, Array<DofId> & dnums) const;
     virtual FiniteElement & GetFE (ElementId ei, Allocator & alloc) const;
+
+    int GetNVert() { return nvert; }
   };
 
 }    

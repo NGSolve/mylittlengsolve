@@ -30,12 +30,16 @@ a2 += SymbolicBFI(grad(u2)*grad(v2))
 # penalty term
 a2 += SymbolicBFI(1e7*u2*v2,definedon=mesh.Boundaries("top|right"))
 
+f2 = LinearForm(fes2)
+
+# allocate the vector
+f2.Assemble()
+
 u2 = GridFunction(fes2,"u2")
 
 with TaskManager():
     a2.Assemble()
-    # f2 is already assembled in MyCoupling
-    f2 = MyCoupling(u1,fes2)
+    MyCoupling(u1,f2)
     u2.vec.data = a2.mat.Inverse() * f2.vec
 
 Draw(u1)

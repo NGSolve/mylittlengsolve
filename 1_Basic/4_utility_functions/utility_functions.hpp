@@ -10,8 +10,7 @@ namespace myassemble
 
 namespace mycoupling
 {
-  shared_ptr<LinearForm> MyCoupling(shared_ptr<GridFunction> gfu,
-                                    shared_ptr<FESpace> fes2);
+  void MyCoupling(shared_ptr<GridFunction> gfu, shared_ptr<LinearForm> lfu);
 }
 
 #endif // MY_UTILITY_FUNCTIONS_HPP
