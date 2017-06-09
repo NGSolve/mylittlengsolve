@@ -17,12 +17,10 @@ the second one is
 
 Similar problems occur when coupling different physical fields.
 
-The Function 'MyCoupling' gets a gridfunction from the solution space and returns
-a LinearForm which can be used as a right hand side to solve the second problem.
+The Function 'MyCoupling' gets a gridfunction from the solution space and
+a LinearForm.
+It will use the GridFunction to build the right hand side of the equation.
 
-Note that the function spaces in the equations can differ, because of this we give our function
-a second argument, the space of the second equation. When binding to Python we will give the
-space of gfu as default argument for the second space.
 
 */
 
@@ -33,14 +31,13 @@ using namespace ngsolve;
 
 namespace mycoupling
 {
-  shared_ptr<LinearForm> MyCoupling(shared_ptr<GridFunction> gfu, shared_ptr<FESpace> fes_lfu)
+  void MyCoupling(shared_ptr<GridFunction> gfu, shared_ptr<LinearForm> lfu)
   {
     cout << "Compute coupling terms" << endl;
     Flags lfuFlags;
     auto fes_gfu = gfu->GetFESpace();
-    auto lfu = make_shared<T_LinearForm<double>>(fes_lfu, "lfu", lfuFlags);
+    auto fes_lfu = lfu->GetFESpace();
     auto ma = fes_gfu->GetMeshAccess();
-    lfu->AllocateVector();
     lfu->GetVector() = 0.0;
 
     // create local heap for efficient memory management
@@ -93,6 +90,5 @@ namespace mycoupling
 
         lfu -> AddElementVector (dnums_lfu, el_lfu);
       }
-    return lfu;
   }
 }

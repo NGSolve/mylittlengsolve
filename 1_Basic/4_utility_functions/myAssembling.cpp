@@ -77,13 +77,13 @@ namespace myassemble
                     {
                       const ElementTransformation& eltrans = ma->GetTrafo(el,lh);
                       const FiniteElement& fel = fes->GetFE(el,lh);
-                      fes->GetDofNrs(el, dnums);
-                      FlatMatrix<> elmat(dnums.Size(),lh);
+                      auto dofs = el.GetDofs();
+                      FlatMatrix<> elmat(dofs.Size(),lh);
                       bfi->CalcElementMatrix(fel,eltrans,elmat,lh);
-                      mat->AddElementMatrix(dnums,elmat);
-                      FlatVector<> elvec(dnums.Size(),lh);
+                      mat->AddElementMatrix(dofs,elmat);
+                      FlatVector<> elvec(dofs.Size(),lh);
                       lfi->CalcElementVector(fel, eltrans, elvec, lh);
-                      vecf.AddIndirect(dnums,elvec);
+                      vecf.AddIndirect(dofs,elvec);
                     });
 
     *testout << "mat = " << *mat << endl;
