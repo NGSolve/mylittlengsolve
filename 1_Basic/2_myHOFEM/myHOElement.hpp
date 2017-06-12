@@ -22,13 +22,11 @@ namespace ngfem
     A Segment finite element with arbitrary order hierarchic basis
     functions
    */
-  class MyHighOrderSegm : public ScalarFiniteElement<1>
+  class MyHighOrderSegm : public ScalarFiniteElement<1>, public VertexOrientedFE<ET_SEGM>
   {
-    int vnums[2];
   public:
     MyHighOrderSegm (int order);
     virtual ELEMENT_TYPE ElementType() const { return ET_SEGM; }
-    void SetVertexNumber (int i, int v) { vnums[i] = v; }
 
     virtual void CalcShape (const IntegrationPoint & ip, 
                             BareSliceVector<> shape) const;
@@ -46,13 +44,11 @@ namespace ngfem
     A triangular finite element with arbitrary order hierarchic basis
     functions
    */
-  class MyHighOrderTrig : public ScalarFiniteElement<2>
+  class MyHighOrderTrig : public ScalarFiniteElement<2>, public VertexOrientedFE<ET_TRIG>
   {
-    int vnums[3];
   public:
     MyHighOrderTrig (int order);
     virtual ELEMENT_TYPE ElementType() const { return ET_TRIG; }
-    void SetVertexNumber (int i, int v) { vnums[i] = v; }
 
     virtual void CalcShape (const IntegrationPoint & ip, 
                             BareSliceVector<> shape) const;

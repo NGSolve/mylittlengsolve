@@ -53,15 +53,11 @@ namespace ngfem
     
     ArrayMem<T, 20> polx(order+1);
 
-    // edge dofs
-    const EDGE * edges = ElementTopology::GetEdges (ET_SEGM);
     if (order >= 2)  
-      { 
-        int es = edges[0][0], ee = edges[0][1];
-        if (vnums[es] > vnums[ee]) swap (es, ee);
-        
+      {
+        INT<2> edge = GetVertexOrientedEdge(0);
         IntegratedLegendrePolynomial (order, 
-                                      lami[ee]-lami[es], 
+                                      lami[edge[1]]-lami[edge[0]],
                                       polx);
         for (int j = 2; j <= order; j++)
           shape[ii++] = polx[j];
@@ -122,17 +118,13 @@ namespace ngfem
     
     ArrayMem<T, 20> polx(order+1), poly(order+1);
 
-    // edge dofs
-    const EDGE * edges = ElementTopology::GetEdges (ET_TRIG);
     for (int i = 0; i < 3; i++)
       if (order >= 2)   // more general: order_edge[i] 
-	{ 
-	  int es = edges[i][0], ee = edges[i][1];
-	  if (vnums[es] > vnums[ee]) swap (es, ee);
-          
+	{
+          auto edge = GetVertexOrientedEdge(i);
           ScaledIntegratedLegendrePolynomial (order, 
-                                              lami[ee]-lami[es], 
-                                              lami[es]+lami[ee], polx);
+                                              lami[edge[1]]-lami[edge[0]],
+                                              lami[edge[0]]+lami[edge[1]], polx);
           for (int j = 2; j <= order; j++)
             shape[ii++] = polx[j];
 	}
