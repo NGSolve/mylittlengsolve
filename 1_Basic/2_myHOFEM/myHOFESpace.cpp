@@ -108,15 +108,13 @@ namespace ngcomp
       case ET_TRIG:
         {
           MyHighOrderTrig * trig = new (alloc) MyHighOrderTrig(order);
-          for (int i = 0; i < 3; i++)
-            trig->SetVertexNumber (i, ngel.vertices[i]);
+          trig->SetVertexNumbers (ngel.vertices);
           return *trig;
         }
       case ET_SEGM:
         {
           MyHighOrderSegm * segm = new (alloc) MyHighOrderSegm(order);
-          for (int i = 0; i < 2; i++)
-            segm->SetVertexNumber (i, ngel.vertices[i]);
+          segm->SetVertexNumbers (ngel.vertices);
           return *segm;
         }
       default:
