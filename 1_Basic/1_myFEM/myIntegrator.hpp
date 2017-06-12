@@ -22,18 +22,14 @@ namespace ngfem
   {
     shared_ptr<CoefficientFunction> coef_lambda;
   public:
-    MyLaplaceIntegrator (const Array<shared_ptr<CoefficientFunction>> & coeffs) 
-      : coef_lambda(coeffs[0])
-    { ; }
+    MyLaplaceIntegrator (shared_ptr<CoefficientFunction> coef)
+      : coef_lambda(coef) { ; }
 
     virtual string Name () const { return "MyLaplace"; }
 
     virtual int DimElement () const { return 2; }
     virtual int DimSpace () const { return 2; }
     virtual bool IsSymmetric () const { return true; }
-
-    // it is not a boundary integral (but a domain integral)
-    virtual bool BoundaryForm () const { return false; }
 
     // a volume integral (ngsolve 6.2)
     virtual VorB VB() const { return VOL; }
@@ -44,18 +40,6 @@ namespace ngfem
                        const ElementTransformation & eltrans, 
                        FlatMatrix<double> elmat,
                        LocalHeap & lh) const;
-
-
-    // flux postprocessing 
-    virtual int DimFlux () const { return 2; }
-
-    virtual void
-    CalcFlux (const FiniteElement & fel,
-	      const BaseMappedIntegrationPoint & bsip,
-              FlatVector<double> elx, 
-	      FlatVector<double> flux,
-	      bool applyd,
-	      LocalHeap & lh) const;
   };
 
 
@@ -65,8 +49,8 @@ namespace ngfem
   {
     shared_ptr<CoefficientFunction> coef_f;
   public:
-    MySourceIntegrator (const Array<shared_ptr<CoefficientFunction>> & coeffs) 
-      : coef_f(coeffs[0])
+    MySourceIntegrator (shared_ptr<CoefficientFunction>coef)
+      : coef_f(coef)
     { ; }
 
     virtual string Name () const { return "MySource"; }
@@ -81,7 +65,8 @@ namespace ngfem
 		       FlatVector<double> elvec,
 		       LocalHeap & lh) const;
   };
-
-
 }
+
+#include <python_ngstd.hpp>
+void ExportMyIntegrator(py::module m);
 #endif

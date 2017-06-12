@@ -85,31 +85,6 @@ namespace ngfem
 
 
 
-
-  void MyLaplaceIntegrator ::
-  CalcFlux (const FiniteElement & base_fel,
-	    const BaseMappedIntegrationPoint & base_mip,
-            FlatVector<double> elx, 
-	    FlatVector<double> flux,
-	    bool applyd,
-	    LocalHeap & lh) const
-  {
-    const ScalarFiniteElement<2> & fel =
-      dynamic_cast<const ScalarFiniteElement<2> &> (base_fel);
-
-    const MappedIntegrationPoint<2,2> & mip =
-      static_cast<const MappedIntegrationPoint<2,2> &> (base_mip);
-    
-    Vec<2> flux_ref = fel.EvaluateGrad (mip.IP(), elx);
-    flux = Trans(mip.GetJacobianInverse()) * flux_ref;
-
-    if (applyd)
-      flux *= coef_lambda -> Evaluate (mip);
-  }
-
-
-
-
   /*
     Calculates the element vector.
 
@@ -155,11 +130,18 @@ namespace ngfem
         elvec += (fac*f) * shape;
       }     
   }
+}
 
-
-
-  // integrators for 2D, need 1 coefficient
-  static RegisterBilinearFormIntegrator<MyLaplaceIntegrator> initlap ("mylaplace", 2, 1);
-  static RegisterLinearFormIntegrator<MySourceIntegrator> initsource ("mysource", 2, 1);
+void ExportMyIntegrator(py::module m)
+{
+  using namespace ngfem;
+  py::class_<MyLaplaceIntegrator, shared_ptr<MyLaplaceIntegrator>, BilinearFormIntegrator>
+    (m, "MyLaplace")
+    .def(py::init<shared_ptr<CoefficientFunction>>())
+    ;
+  py::class_<MySourceIntegrator, shared_ptr<MySourceIntegrator>, LinearFormIntegrator>
+    (m, "MySource")
+    .def(py::init<shared_ptr<CoefficientFunction>>())
+    ;
 }
 
