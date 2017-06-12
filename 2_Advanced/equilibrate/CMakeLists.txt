@@ -7,3 +7,4 @@ find_package(NGSolve CONFIG REQUIRED
 )
 
 add_ngsolve_python_module(libequilibrate equilibrate.cpp)
+# add_ngsolve_python_module(libequilibrate equilibrate_simple.cpp)
