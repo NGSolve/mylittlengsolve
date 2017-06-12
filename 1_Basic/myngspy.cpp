@@ -7,6 +7,7 @@ using namespace ngsolve;
 #include "1_myFEM/myPreconditioner.hpp"
 #include "1_myFEM/myCoefficient.hpp"
 #include "4_utility_functions/utility_functions.hpp"
+#include "5_Performance_improvements/matrix_vs_flatmatrix.hpp"
 
 
 
@@ -133,6 +134,11 @@ PYBIND11_PLUGIN(myngspy) {
 
   m.def("MyAssemble", &myassemble::MyAssemble);
   m.def("MyCoupling", &mycoupling::MyCoupling);
+
+  py::class_<MyBetterLaplaceIntegrator, shared_ptr<MyBetterLaplaceIntegrator>, BilinearFormIntegrator>
+    (m, "MyBetterLaplace")
+    .def(py::init<shared_ptr<CoefficientFunction>>())
+    ;
 
   return m.ptr();
 }
