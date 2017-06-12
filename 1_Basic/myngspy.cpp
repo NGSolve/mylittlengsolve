@@ -17,7 +17,7 @@ protected:
   int count;
 public:
   MyBase(int acount) : count(acount) { ; }
-  int howmany() { return count; }
+  int HowMany() { return count; }
 };
 
 class MyClass : public MyBase
@@ -88,7 +88,7 @@ PYBIND11_PLUGIN(myngspy) {
   py::class_<MyBase, shared_ptr<MyBase>>
     (m, "MyBase", "My base class")
     .def(py::init<int>())
-    .def("howmany", &MyBase::howmany)
+    .def("howmany", &MyBase::HowMany)
     ;
 
   py::class_<MyClass, shared_ptr<MyClass>, MyBase>
