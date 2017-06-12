@@ -43,10 +43,6 @@ int main(int argc, char** argv)
   bfi = make_shared<RobinIntegrator<2>> (make_shared<DomainConstantCoefficientFunction> (penalty));
   bfa -> AddIntegrator (bfi);
 
-
-  bfi = make_shared<MassIntegrator<2>> (make_shared<ConstantCoefficientFunction> (1));
-  bfa -> AddIntegrator (bfi);
-
   Flags flags_lff;
   auto lff = make_shared<T_LinearForm<double>> (fes, "f", flags_lff);
 
