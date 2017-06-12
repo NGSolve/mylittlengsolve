@@ -44,6 +44,7 @@ namespace ngcomp
     virtual void GetDofNrs (ElementId ei, Array<DofId> & dnums) const;
     virtual FiniteElement & GetFE (ElementId ei, Allocator & alloc) const;
 
+    // some new functionality our space should have in Python
     int GetNVert() { return nvert; }
   };
 
