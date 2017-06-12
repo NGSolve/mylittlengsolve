@@ -11,10 +11,12 @@ u = fes.TrialFunction()
 v = fes.TestFunction()
 
 a = BilinearForm(fes)
-a += SymbolicBFI(grad(u)*grad(v))
+a += MyLaplace(CoefficientFunction(1))
+# a += SymbolicBFI(grad(u)*grad(v))
 
 f = LinearForm(fes)
-f += SymbolicLFI(x*y*v)
+f += MySource(x*y)
+# f += SymbolicLFI(x*y*v)
 
 a.Assemble()
 f.Assemble()
