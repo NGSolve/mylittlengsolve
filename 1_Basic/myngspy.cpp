@@ -4,6 +4,7 @@ using namespace ngsolve;
 #include "1_myFEM/myElement.hpp"
 #include "1_myFEM/myFESpace.hpp"
 #include "1_myFEM/myIntegrator.hpp"
+#include "1_myFEM/myPreconditioner.hpp"
 #include "1_myFEM/myCoefficient.hpp"
 #include "4_utility_functions/utility_functions.hpp"
 
@@ -127,6 +128,7 @@ PYBIND11_PLUGIN(myngspy) {
   ExportMyElement(m);
   ExportMyFESpace(m);
   ExportMyIntegrator(m);
+  ExportMyPreconditioner(m);
   ExportMyCoefficient(m);
 
   m.def("MyAssemble", &myassemble::MyAssemble);

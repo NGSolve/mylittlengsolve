@@ -13,58 +13,15 @@
 
 
 #include <solve.hpp>    // provides FESpace, ...
+#include <python_ngstd.hpp>
+#include "myPreconditioner.hpp"
 
 
 namespace ngcomp
 {
-  
-  class MyPreconditioner : public Preconditioner
-  {
-    shared_ptr<BilinearForm> bfa;
-    shared_ptr<BaseJacobiPrecond> jacobi;
-
-  public:
-    MyPreconditioner (const PDE & pde, const Flags & flags, const string & aname);
-    MyPreconditioner (shared_ptr<BilinearForm> & abfa, const Flags & flags, const string & aname);
-    ~MyPreconditioner ();
-    virtual void Update();
-    
-    virtual void Mult (const BaseVector & f, BaseVector & u) const
-    {
-      jacobi -> Mult (f, u);
-
-      /*
-      u = 0.0;
-      jacobi -> GSSmooth (u, f);
-      jacobi -> GSSmoothBack (u, f);
-      */
-    }
-
-    virtual const BaseMatrix & GetAMatrix() const
-    {
-      return bfa -> GetMatrix();
-    }
-
-  };
-
-
-  MyPreconditioner :: MyPreconditioner (const PDE & pde, const Flags & flags, const string & aname)
-    : Preconditioner (&pde, flags, aname), jacobi(NULL)
-  {
-    cout << "Constructor of MyPreconditioner" << endl;
-
-    bfa = pde.GetBilinearForm (flags.GetStringFlag ("bilinearform", ""));
-  }
-
-  MyPreconditioner :: MyPreconditioner (shared_ptr<BilinearForm> & abfa, const Flags & flags, const string & aname)
-    : Preconditioner (abfa, flags, name), bfa(abfa)
+  MyPreconditioner :: MyPreconditioner (shared_ptr<BilinearForm> abfa, Flags& flags)
+    : Preconditioner(abfa, flags, "MyPreconditioner"), bfa(abfa)
   { ; }
-
-  
-  MyPreconditioner :: ~MyPreconditioner ()
-  {
-    ;
-  }
 
   
   void MyPreconditioner :: Update()
@@ -76,10 +33,13 @@ namespace ngcomp
 
     if (test) Test();
   }
+}
 
-  
-  
-
-  static RegisterPreconditioner<MyPreconditioner> initpre ("mypreconditioner");
+void ExportMyPreconditioner(py::module m)
+{
+  using namespace ngcomp;
+  py::class_<MyPreconditioner, shared_ptr<MyPreconditioner>, Preconditioner>
+    (m, "MyPreconditioner")
+    .def(py::init<shared_ptr<BilinearForm>, Flags&>());
 }
 
