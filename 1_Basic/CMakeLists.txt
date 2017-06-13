@@ -6,7 +6,7 @@ find_package(NGSolve CONFIG REQUIRED
   HINTS $ENV{NETGENDIR}/.. /opt/netgen/ /Applications/Netgen.app/Contents/Resources/CMake C:/netgen
 )
 
-set(CMAKE_PREFIX_PATH ${NGSOLVE_INSTALL_DIR_PYTHON} CACHE PATH "Install dir")
+set(CMAKE_INSTALL_PREFIX ${NGSOLVE_INSTALL_DIR_PYTHON} CACHE PATH "Install dir")
 
 add_ngsolve_python_module(myngspy myngspy.cpp
   1_myFEM/myElement.cpp 1_myFEM/myFESpace.cpp 1_myFEM/myIntegrator.cpp
@@ -17,5 +17,5 @@ add_ngsolve_python_module(myngspy myngspy.cpp
 
 target_link_libraries (myngspy ngsolve)
 
-message("With 'make install' the python package will be installed to: ${CMAKE_PREFIX_PATH}")
-install(TARGETS myngspy DESTINATION ${CMAKE_PREFIX_PATH})
+message("With 'make install' the python package will be installed to: ${CMAKE_INSTALL_PREFIX}")
+install(TARGETS myngspy DESTINATION ${CMAKE_INSTALL_PREFIX})
