@@ -66,6 +66,9 @@ public:
 
 
 PYBIND11_PLUGIN(myngspy) {
+  // import ngsolve such that python base classes are defined
+  py::module::import("ngsolve");
+
   py::module m("myngspy", "myngspy doc-string");
   
   /*
