@@ -130,6 +130,35 @@ namespace ngfem
         elvec += (fac*f) * shape;
       }     
   }
+
+
+  void MyBetterLaplaceIntegrator :: CalcElementMatrix (const FiniteElement & base_fel,
+                                                       const ElementTransformation & eltrans,
+                                                       FlatMatrix<double> elmat,
+                                                       LocalHeap & lh) const
+  {
+    const ScalarFiniteElement<2> & fel =
+      dynamic_cast<const ScalarFiniteElement<2> &> (base_fel);
+    int ndof = fel.GetNDof();
+    elmat = 0;
+
+    // Allocate dshape matrices on the LocalHeap
+    FlatMatrixFixWidth<2> dshape_ref(ndof, lh);
+    FlatMatrixFixWidth<2> dshape(ndof, lh);
+    IntegrationRule ir(fel.ElementType(), 2*fel.Order());
+    // MappedIntegrationRule<2,2> mir(ir, eltrans, lh);
+
+    for (int i = 0 ; i < ir.GetNIP(); i++)
+      {
+        MappedIntegrationPoint<2,2> mip(ir[i],eltrans);
+        double lam = coef_lambda -> Evaluate (mip);
+        fel.CalcDShape (ir[i], dshape);
+        dshape = dshape_ref * mip.GetJacobianInverse();
+        double fac = mip.IP().Weight() * mip.GetMeasure();
+        elmat += (fac*lam) * dshape * Trans(dshape);
+      }
+  }
+  
 }
 
 void ExportMyIntegrator(py::module m)
@@ -141,6 +170,10 @@ void ExportMyIntegrator(py::module m)
     ;
   py::class_<MySourceIntegrator, shared_ptr<MySourceIntegrator>, LinearFormIntegrator>
     (m, "MySource")
+    .def(py::init<shared_ptr<CoefficientFunction>>())
+    ;
+  py::class_<MyBetterLaplaceIntegrator, shared_ptr<MyBetterLaplaceIntegrator>, BilinearFormIntegrator>
+    (m, "MyBetterLaplace")
     .def(py::init<shared_ptr<CoefficientFunction>>())
     ;
 }

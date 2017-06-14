@@ -33,16 +33,18 @@ namespace ngcomp
     MyFESpace (shared_ptr<MeshAccess> ama, const Flags & flags);
 
     // a name for our new fe-space
-    virtual string GetClassName () const
+    virtual string GetClassName () const override
     {
       return "MyFESpace";
     }
 
-    virtual void Update(LocalHeap & lh);
-    virtual size_t GetNDof () const { return ndof; }
+    virtual void Update(LocalHeap & lh) override;
+    virtual size_t GetNDof () const override { return ndof; }
     
-    virtual void GetDofNrs (ElementId ei, Array<DofId> & dnums) const;
-    virtual FiniteElement & GetFE (ElementId ei, Allocator & alloc) const;
+    virtual void GetDofNrs (ElementId ei, Array<DofId> & dnums) const override;
+    virtual FiniteElement & GetFE (ElementId ei, Allocator & alloc) const override;
+
+    virtual SymbolTable<shared_ptr<DifferentialOperator>> GetAdditionalEvaluators () const override;
 
     // some new functionality our space should have in Python
     int GetNVert() { return nvert; }

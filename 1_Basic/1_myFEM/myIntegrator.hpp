@@ -43,6 +43,29 @@ namespace ngfem
   };
 
 
+  class MyBetterLaplaceIntegrator : public BilinearFormIntegrator
+  {
+    shared_ptr<CoefficientFunction> coef_lambda;
+  public:
+    MyBetterLaplaceIntegrator (shared_ptr<CoefficientFunction> coef)
+      : coef_lambda(coef) { ; }
+
+    virtual string Name () const { return "MyLaplace"; }
+
+    virtual int DimElement () const { return 2; }
+    virtual int DimSpace () const { return 2; }
+    virtual bool IsSymmetric () const { return true; }
+
+    // a volume integral (ngsolve 6.2)
+    virtual VorB VB() const { return VOL; }
+
+    // Calculates the element matrix
+    virtual void
+    CalcElementMatrix (const FiniteElement & base_fel,
+                       const ElementTransformation & eltrans,
+                       FlatMatrix<double> elmat,
+                       LocalHeap & lh) const;
+  };
 
   // integrator for \int f v dx
   class MySourceIntegrator : public LinearFormIntegrator

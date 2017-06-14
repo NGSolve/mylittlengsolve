@@ -21,6 +21,7 @@ element, and the global mesh.
 
 #include "myElement.hpp"
 #include "myFESpace.hpp"
+#include "myDiffOp.hpp"
 
 
 namespace ngcomp
@@ -41,7 +42,7 @@ namespace ngcomp
 
     
     // needed for symbolic integrators and to draw solution
-    evaluator[VOL] = make_shared<T_DifferentialOperator<DiffOpId<2>>>();
+    evaluator[VOL] = make_shared<T_DifferentialOperator<MyIdentity>>();
     flux_evaluator[VOL] = make_shared<T_DifferentialOperator<DiffOpGradient<2>>>();
     evaluator[BND] = make_shared<T_DifferentialOperator<DiffOpIdBoundary<2>>>();
 
@@ -104,6 +105,14 @@ namespace ngcomp
       }
   }
 
+
+  SymbolTable<shared_ptr<DifferentialOperator>>
+  MyFESpace :: GetAdditionalEvaluators () const
+  {
+    SymbolTable<shared_ptr<DifferentialOperator>> additional;
+    additional.Set ("defaultId", make_shared<T_DifferentialOperator<DiffOpId<2>>>());
+    return additional;
+  }
 
 
   /*

@@ -18,6 +18,7 @@ a += MyLaplace(CoefficientFunction(1))
 f = LinearForm(fes)
 f += MySource(x*y)
 # f += SymbolicLFI(x*y*v)
+# f += SymbolicLFI(x*y*v.Operator("defaultId"))
 
 a.Assemble()
 f.Assemble()
@@ -28,3 +29,4 @@ print ("solve")
 u.vec.data = a.mat.Inverse(fes.FreeDofs()) * f.vec
 
 Draw(u)
+Draw(u.Operator("defaultId"), mesh, "defaultId")
