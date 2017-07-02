@@ -139,7 +139,4 @@ PYBIND11_PLUGIN(myngspy) {
   return m.ptr();
 }
 
-
-
-
 static RegisterNumProc<NumProcPyDemo> npinit1("demopy");
