@@ -83,7 +83,8 @@ public:
       }
 
     // *testout << "smoothing block: " << endl << *creator.GetTable() << endl;
-    return shared_ptr<Table<int>>(creator.GetTable());
+    // return shared_ptr<Table<int>>(creator.GetTable());
+    return make_shared<Table<int>>(creator.MoveTable());
   }
 
 
