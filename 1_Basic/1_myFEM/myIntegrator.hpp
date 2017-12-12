@@ -29,7 +29,7 @@ namespace ngfem
 
     virtual int DimElement () const { return 2; }
     virtual int DimSpace () const { return 2; }
-    virtual bool IsSymmetric () const { return true; }
+    virtual xbool IsSymmetric () const { return true; }
 
     // a volume integral (ngsolve 6.2)
     virtual VorB VB() const { return VOL; }
