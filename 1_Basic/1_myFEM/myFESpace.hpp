@@ -29,6 +29,7 @@ namespace ngcomp
       constructor. 
       Arguments are the access to the mesh data structure,
       and the flags from the define command in the pde-file
+      or the kwargs in the Python constructor.
     */
     MyFESpace (shared_ptr<MeshAccess> ama, const Flags & flags);
 
@@ -50,9 +51,7 @@ namespace ngcomp
 
 }    
 
-#ifdef NGS_PYTHON
-#include <python_ngstd.hpp>
 void ExportMyFESpace(py::module m);
-#endif // NGS_PYTHON
+
 
 #endif

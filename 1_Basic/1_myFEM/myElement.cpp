@@ -5,29 +5,30 @@
 /*********************************************************************/
 
 /*
-  
+
 My own simple first and second order triangular finite elements
 
 */
 
 
 #include <fem.hpp>
+#include <python_ngstd.hpp>
 #include "myElement.hpp"
 
 
 namespace ngfem
 {
-  
+
   MyLinearTrig :: MyLinearTrig ()
   /*
-    Call constructor for base class: 
+    Call constructor for base class:
     geometry is ET_TRIG, number of dofs is 3, maximal order is 1
    */
     : ScalarFiniteElement<2> (3, 1)
   { ; }
 
 
-  void MyLinearTrig :: CalcShape (const IntegrationPoint & ip, 
+  void MyLinearTrig :: CalcShape (const IntegrationPoint & ip,
                                   BareSliceVector<> shape) const
   {
     // coordinates in reference elements
@@ -44,10 +45,10 @@ namespace ngfem
     shape(1) = y;
     shape(2) = 1-x-y;
   }
-  
-  void MyLinearTrig :: CalcDShape (const IntegrationPoint & ip, 
+
+  void MyLinearTrig :: CalcDShape (const IntegrationPoint & ip,
                                    SliceMatrix<> dshape) const
-    
+
   {
     // matrix of derivatives:
 
@@ -59,24 +60,12 @@ namespace ngfem
     dshape(2,1) = -1;
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
   MyQuadraticTrig :: MyQuadraticTrig ()
     : ScalarFiniteElement<2> (6, 2)
   { ; }
 
 
-  void MyQuadraticTrig :: CalcShape (const IntegrationPoint & ip, 
+  void MyQuadraticTrig :: CalcShape (const IntegrationPoint & ip,
                                      BareSliceVector<> shape) const
   {
     // now, use barycentric coordinates x, y, 1-x-y:
@@ -92,16 +81,16 @@ namespace ngfem
     const EDGE * edges = ElementTopology::GetEdges (ET_TRIG);
     // table provides connection of edges and vertices
     // i-th edge is between vertex edges[i][0] and edges[i][1]
-    
+
     for (int i = 0; i < 3; i++)
       shape(3+i) = 4 * lam[edges[i][0]] * lam[edges[i][1]];
   }
 
 
-  
-  void MyQuadraticTrig :: CalcDShape (const IntegrationPoint & ip, 
+
+  void MyQuadraticTrig :: CalcDShape (const IntegrationPoint & ip,
                                       SliceMatrix<> dshape) const
-    
+
   {
     // Use automatic (exact !) differentiation with overloaded data-types
 
@@ -122,7 +111,7 @@ namespace ngfem
 
     // edge basis functions:
     const EDGE * edges = ElementTopology::GetEdges (ET_TRIG);
-    
+
     for (int i = 0; i < 3; i++)
       {
         AutoDiff<2> shape = 4 * lam[edges[i][0]] * lam[edges[i][1]];
@@ -133,9 +122,6 @@ namespace ngfem
 
 }
 
-
-#ifdef NGS_PYTHON
-
 void ExportMyElement(py::module m)
 {
   using namespace ngfem;
@@ -145,12 +131,11 @@ void ExportMyElement(py::module m)
     Only BaseScalarFiniteElement and FiniteElement are exported to python
     (see ngsolve/fem/python_fem.cpp), so we derive from BaseScalarFiniteElement (which derives from
     FiniteElement).
-    If we only want to use it in our FESpace we do not need to do this, but it's nice for debugging :)
+    If we only want to use it in our FESpace we do not need the Python hierarchy, but it's nice for
+    debugging :)
   */
   py::class_<MyLinearTrig, shared_ptr<MyLinearTrig>, BaseScalarFiniteElement>
     (m, "MyLinearTrig", "My new linear Trig")
     .def(py::init<>())
     ;
 }
-
-#endif // NGS_PYTHON

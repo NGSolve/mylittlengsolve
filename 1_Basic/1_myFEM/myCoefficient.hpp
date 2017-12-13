@@ -8,7 +8,7 @@ namespace ngfem
     string filename;
   public:
     MyCoefficientFunction(string afilename)
-      : CoefficientFunction(1),filename(afilename) { ; }
+      : CoefficientFunction(/*dimension = */ 1),filename(afilename) { ; }
 
     virtual double Evaluate(const BaseMappedIntegrationPoint& mip) const override
     {
@@ -20,8 +20,6 @@ namespace ngfem
   };
 }
 
-#ifdef NGS_PYTHON
-#include <python_ngstd.hpp>
 void ExportMyCoefficient(py::module m)
 {
   py::class_<MyCoefficientFunction, shared_ptr<MyCoefficientFunction>, CoefficientFunction>
@@ -29,6 +27,5 @@ void ExportMyCoefficient(py::module m)
     .def(py::init<string>())
     ;
 }
-#endif // NGS_PYTHON
 
 #endif //  __FILE_MYCOEFFICIENT_HPP

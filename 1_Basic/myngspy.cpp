@@ -65,12 +65,10 @@ public:
 };
 
 
-PYBIND11_PLUGIN(myngspy) {
+PYBIND11_MODULE(myngspy,m) {
   // import ngsolve such that python base classes are defined
   py::module::import("ngsolve");
 
-  py::module m("myngspy", "myngspy doc-string");
-  
   /*
     In python, classes are objects as well. Therefore we need to create all the class-objects
     we need in our module.
@@ -135,8 +133,6 @@ PYBIND11_PLUGIN(myngspy) {
 
   m.def("MyAssemble", &myassemble::MyAssemble);
   m.def("MyCoupling", &mycoupling::MyCoupling);
-
-  return m.ptr();
 }
 
 static RegisterNumProc<NumProcPyDemo> npinit1("demopy");
