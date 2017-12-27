@@ -47,7 +47,7 @@ namespace ngfem
   }
 
   void MyLinearTrig :: CalcDShape (const IntegrationPoint & ip,
-                                   SliceMatrix<> dshape) const
+                                   BareSliceMatrix<> dshape) const
 
   {
     // matrix of derivatives:
@@ -89,7 +89,7 @@ namespace ngfem
 
 
   void MyQuadraticTrig :: CalcDShape (const IntegrationPoint & ip,
-                                      SliceMatrix<> dshape) const
+                                      BareSliceMatrix<> dshape) const
 
   {
     // Use automatic (exact !) differentiation with overloaded data-types

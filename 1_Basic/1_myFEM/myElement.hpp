@@ -42,7 +42,7 @@ namespace ngfem
       dshape is an 3 by 2 matrix in our case.
      */
     virtual void CalcDShape (const IntegrationPoint & ip, 
-                             SliceMatrix<> dshape) const;
+                             BareSliceMatrix<> dshape) const;
 
     // there are some more functions to bring in ...
     using ScalarFiniteElement<2>::CalcShape;    
@@ -62,7 +62,7 @@ namespace ngfem
                             BareSliceVector<> shape) const;
   
     virtual void CalcDShape (const IntegrationPoint & ip, 
-                             SliceMatrix<> dshape) const;
+                             BareSliceMatrix<> dshape) const;
 
     using ScalarFiniteElement<2>::CalcShape;    
     using ScalarFiniteElement<2>::CalcDShape;    

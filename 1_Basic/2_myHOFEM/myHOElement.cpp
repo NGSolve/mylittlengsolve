@@ -32,7 +32,7 @@ namespace ngfem
 
 
   void MyHighOrderSegm :: CalcDShape (const IntegrationPoint & ip, 
-                                      SliceMatrix<> dshape) const
+                                      BareSliceMatrix<> dshape) const
   {
     AutoDiff<1> adx (ip(0), 0);
     Vector<AutoDiff<1> > shapearray(ndof);
@@ -90,7 +90,7 @@ namespace ngfem
 
 
   void MyHighOrderTrig :: CalcDShape (const IntegrationPoint & ip, 
-                                      SliceMatrix<> dshape) const
+                                      BareSliceMatrix<> dshape) const
   {
     AutoDiff<2> adx (ip(0), 0);
     AutoDiff<2> ady (ip(1), 1);
