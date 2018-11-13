@@ -39,6 +39,8 @@ namespace ngcomp
       return "MyFESpace";
     }
 
+    static DocInfo GetDocu();
+
     virtual void Update(LocalHeap & lh);
     virtual size_t GetNDof () const { return ndof; }
     

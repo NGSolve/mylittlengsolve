@@ -4,7 +4,7 @@ from myngspy import *
 
 mesh = Mesh(unit_square.GenerateMesh(maxh=0.2))
 
-fes = FESpace("myfespace", mesh)
+fes = MyFESpace(mesh, secondorder=True)
 
 u = GridFunction(fes,"shapes")
 

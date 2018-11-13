@@ -50,7 +50,13 @@ namespace ngcomp
                                                  make_shared<ConstantCoefficientFunction>(1));
   }
 
-
+  DocInfo MyFESpace :: GetDocu()
+  {
+    auto docu = FESpace::GetDocu();
+    docu.Arg("secondorder") = "bool = False\n"
+      "  Use second order basis functions";
+    return docu;
+  }
 
   void MyFESpace :: Update(LocalHeap & lh)
   {
@@ -121,8 +127,9 @@ void ExportMyFESpace(py::module m)
     This has the advantage, that we do not need to specify all the flags to parse (like
     dirichlet, definedon,...), but we can still append new functions only for that space.
   */
+  auto docu = MyFESpace::GetDocu();
   auto myfes = py::class_<MyFESpace, shared_ptr<MyFESpace>, FESpace>
-    (m, "MyFESpace", "FESpace with first order and second order trigs on 2d mesh");
+    (m, "MyFESpace", (docu.short_docu + "\n\n" + docu.long_docu).c_str());
   myfes
     /*
        this is optional, if you don't write an init function, you can create your fespace
@@ -133,21 +140,22 @@ void ExportMyFESpace(py::module m)
                     py::list info;
                     info.append(ma);
                     auto flags = CreateFlagsFromKwArgs(myfes, kwa, info);
-                    auto fes = make_shared<MyFESpace>(ma,flags);
-                    auto pyfes = py::cast(fes);
-                    pyfes.attr("__initialize__")(**kwa);
+                    auto fes = make_shared<MyFESpace>(ma, flags);
+                    LocalHeap glh(100000000, "init-fes-lh");
+                    fes->Update(glh);
+                    fes->FinalizeUpdate(glh);
                     return fes;
                   }), py::arg("mesh"))
     /*
       this is, so that we do not get an 'undocumented flag' warning
     */
-    .def_static("__flags_doc__", [] ()
+    .def_static("__flags_doc__", [docu] ()
                 {
                   auto doc = py::cast<py::dict>(py::module::import("ngsolve").
                                                 attr("FESpace").
                                                 attr("__flags_doc__")());
-                  doc["secondorder"] = "bool = False \n"
-                    "  Use second order elements.";
+                  for (auto & flagdoc : docu.arguments)
+                    doc[get<0>(flagdoc).c_str()] = get<1>(flagdoc);
                   return doc;
                 })
     .def("GetNVert", &MyFESpace::GetNVert)

@@ -4,7 +4,7 @@ from myngspy import *
 
 mesh = Mesh(unit_square.GenerateMesh(maxh=0.2))
 
-fes = FESpace("myfespace", mesh, dirichlet="top|bottom|right|left")
+fes = MyFESpace(mesh, dirichlet="top|bottom|right|left")
 # fes = FESpace("myfespace", mesh, dirichlet="top|bottom|right|left", flags={"secondorder":True})
 print ("freedofs: ", fes.FreeDofs())
 
