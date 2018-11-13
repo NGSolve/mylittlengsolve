@@ -24,7 +24,7 @@ This project is built using CMake, just create a build directory, execute cmake 
    make install
 
 As default mylittlengsolve is installed where your NGSolve installation is. If you want to change
-that behaviour, set the :samp:`CMAKE_INSTALL_PREFIX` variable:
+that behaviour, set the `CMAKE_INSTALL_PREFIX` variable:
 
 .. code-block:: bash
 
