@@ -11,7 +11,7 @@ u = GridFunction(fes,"shapes")
 Draw(u)
 
 # we can use the additionally exported function here
-for i in range(fes.GetNVert()):
+for i in range(fes.ndof):
     print("Draw basis function ", i)
     u.vec[:] = 0
     u.vec[i] = 1
