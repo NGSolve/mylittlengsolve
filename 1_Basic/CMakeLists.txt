@@ -14,10 +14,11 @@ add_ngsolve_python_module(myngspy myngspy.cpp
   4_utility_functions/demo_coupling.cpp 4_utility_functions/myAssembling.cpp
   )
 
-# check if CMAKE_INSTALL_PREFIX is set by user, if not install in NGSolve python dir
+# check if CMAKE_INSTALL_PREFIX is set by user, otherwise install to user-local python modules directory
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  set(CMAKE_INSTALL_PREFIX ${NGSOLVE_INSTALL_DIR}/${NGSOLVE_INSTALL_DIR_PYTHON} CACHE PATH "Install dir" FORCE)
+  execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import site; print(site.USER_SITE)" OUTPUT_VARIABLE install_dir OUTPUT_STRIP_TRAILING_WHITESPACE)
+  set(CMAKE_INSTALL_PREFIX ${install_dir} CACHE PATH "Install dir" FORCE)
 endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 
-message("With 'make install' the python package will be installed to: ${CMAKE_INSTALL_PREFIX}")
+message("The python package will be installed to: ${CMAKE_INSTALL_PREFIX}")
 install(TARGETS myngspy DESTINATION .)
