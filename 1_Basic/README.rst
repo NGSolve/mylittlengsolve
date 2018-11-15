@@ -29,7 +29,7 @@ On Windows you need to have Visual Studio/build tools 2017 installed:
    mkdir build
    cd build
    cmake .. -G "Visual Studio 15 2017 Win64"
-   cmake --build . --config release --target install
+   cmake --build . --config release --target install --config RelWithDebInfo
 
 As default mylittlengsolve is installed where your NGSolve installation is. If you want to change
 that behaviour, set the `CMAKE_INSTALL_PREFIX` variable:
