@@ -237,15 +237,10 @@ void EquilibratePatches (CoefficientFunction & flux,
               localrhs[globaldofs.Pos(dnums_facet[k])] += f_facet[k];
         }
       
-      // *testout << "localmata = " << endl << localmata << endl;
-      // *testout << "localrhs = " << endl << localrhs << endl;
-      
       FlatVector<> sol(ldofs, lh);
       CalcInverse(localmata);
       sol = localmata * localrhs;
 
-      // *testout << "sol = " << endl << sol << endl;
-      
       IntRange sigmadofs = fespace_x->GetRange(0);
       int end_sigma_dofs = 0;
       for (int i = 0; i < globaldofs.Size(); i++)
@@ -255,18 +250,7 @@ void EquilibratePatches (CoefficientFunction & flux,
     }  
 }
 
-
-PYBIND11_PLUGIN(libequilibrate) {
-  py::module m("libequilibrate", "equilibrate");
-
-  m.def("EquilibratePatches",
-        [](CoefficientFunction & flux,
-           CoefficientFunction & source,
-           BilinearForm & bf,
-           GridFunction & equflux,
-           FESpace & fespace_u)
-        {
-          EquilibratePatches(flux, source, bf, equflux, fespace_u);
-        });
-  return m.ptr();
+PYBIND11_MODULE(libequilibrate, m) {
+  m.def("EquilibratePatches", &EquilibratePatches)
+    ;
 }

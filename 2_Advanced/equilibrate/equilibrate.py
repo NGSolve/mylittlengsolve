@@ -23,7 +23,7 @@ def Equilibrate(flux, source, fes, order=None):
     if (order==None): order=fes.globalorder
 
     mesh = fes.mesh
-    Xsigma = HDiv(mesh, order=order, flags = { "discontinuous" : True })
+    Xsigma = HDiv(mesh, order=order, discontinuous=True)
     Xw     = L2(mesh,order=order-1)
     Xwf    = FESpace("facet", mesh, order=order)
     Xlam   = FESpace("number",mesh)
@@ -42,7 +42,7 @@ def Equilibrate(flux, source, fes, order=None):
     sigmacorr = GridFunction(Xsigma)
     EquilibratePatches (flux, source, aequ, sigmacorr, fes)
             
-    fesflux = HDiv(fes.mesh, order=order, flags = { "discontinuous" : False })
+    fesflux = HDiv(fes.mesh, order=order, discontinuous=False)
     hdivflux = GridFunction(fesflux, name="equflux")
     hdivflux.Set(flux-sigmacorr)
     return hdivflux
