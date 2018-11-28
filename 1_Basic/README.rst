@@ -1,8 +1,9 @@
 NGSolve Basics
 =================
 
-Firstly we want to show how you can modify NGSolve classes to your needs and export them to
-Python for proper use. This is not intended as an introduction to C++ programming, but to guide you
+In section one of `mylittlengsolve <https://github.com/NGSolve/mylittlengsolve>`_ we want to show how
+you can modify NGSolve classes to your needs and export them to Python for proper use.
+This is not intended as an introduction to C++ programming, but to guide you
 to the C++ parts of NGSolve. Some basic concepts of object orientated programming, generic programming
 (templates and that stuff) will make life a lot easier here ;) It is as well recommended to have
 a basic knowledge about C++11 features like smart pointers and lambda functions.
@@ -24,6 +25,7 @@ This project is built using CMake, just create a build directory, execute cmake 
    make install
 
 On Windows you need to have Visual Studio/build tools 2017 installed:
+
 .. code-block:: bash
 
    mkdir build
