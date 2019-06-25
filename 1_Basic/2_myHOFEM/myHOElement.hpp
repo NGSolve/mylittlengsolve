@@ -13,6 +13,7 @@ It is also simple to implement high order elements ...
 
 */
 
+#include "../1_myFEM/myElement.hpp"
 
 namespace ngfem
 {
@@ -22,7 +23,7 @@ namespace ngfem
     A Segment finite element with arbitrary order hierarchic basis
     functions
    */
-  class MyHighOrderSegm : public ScalarFiniteElement<1>, public VertexOrientedFE<ET_SEGM>
+  class MyHighOrderSegm : public MyBaseElement, public VertexOrientedFE<ET_SEGM>
   {
   public:
     MyHighOrderSegm (int order);
@@ -44,7 +45,7 @@ namespace ngfem
     A triangular finite element with arbitrary order hierarchic basis
     functions
    */
-  class MyHighOrderTrig : public ScalarFiniteElement<2>, public VertexOrientedFE<ET_TRIG>
+  class MyHighOrderTrig : public MyBaseElement, public VertexOrientedFE<ET_TRIG>
   {
   public:
     MyHighOrderTrig (int order);

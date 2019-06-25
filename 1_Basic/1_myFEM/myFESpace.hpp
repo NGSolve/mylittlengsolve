@@ -34,10 +34,7 @@ namespace ngcomp
     MyFESpace (shared_ptr<MeshAccess> ama, const Flags & flags);
 
     // a name for our new fe-space
-    virtual string GetClassName () const
-    {
-      return "MyFESpace";
-    }
+    virtual string GetClassName () const { return "MyFESpace"; }
 
     static DocInfo GetDocu();
 

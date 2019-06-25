@@ -42,8 +42,6 @@ namespace ngfem
                        LocalHeap & lh) const;
   };
 
-
-
   // integrator for \int f v dx
   class MySourceIntegrator : public LinearFormIntegrator
   {

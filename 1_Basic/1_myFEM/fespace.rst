@@ -14,14 +14,14 @@ Again there are only a few virtual function overrides necessary to get our space
 
 In the constructor we query the flags (if we want a second order space) and define evaluators for
 functions on the space, their derivatives and
-their boundary values:
+their boundary values (which will be left as an exercise):
 
 .. literalinclude:: myFESpace.cpp
    :language: cpp
-   :start-at: void MyFESpace :: Update
-   :end-at: }
+   :start-at: MyFESpace :: MyFESpace
+   :end-before: DocInfo MyFESpace
 
-In the ``Update`` function, the degrees of freedom are set:
+In the ``Update`` function, the number of degrees of freedom are set:
 
 .. literalinclude:: myFESpace.cpp
    :language: cpp
@@ -50,36 +50,30 @@ NGSolve has an internal register of finite element spaces, where we need to regi
    :start-at: static Register
    :end-at: static Register
 
-Registering you FESpace for Python is quite similar as before, only the init (optional) function
-is different:
+To register FESpace for Python we provide the helper function `ExportFESpace` in `python_comp.hpp`. This automatically creates the constructor and pickling support for the space. The function returns the Python class and additional functionality can be appended.
 
 .. literalinclude:: myFESpace.cpp
    :language: cpp
-   :start-at: auto myfes
-   :end-at: }), py::arg
+   :start-at: ExportFESpace
+   :end-at: ;
 
-The init function takes the mesh as argument and all the flags as keyword arguments,
-then we call the ``CreateFlagsFromKwArgs`` function with the mesh as additional information
-(you can just copy paste this from the base class constructor). This is necessary, because the
-base FESpace may have some flags we don't know anything about (and do not have to care about)
-in the derived class, i.e. dirichlet boundaries or it is defined on only a part of the domain.
-Then we create our new space and call the ``__initialize__`` function from the base class,
-which calls amongst other things the ``Update`` function of our space.
-Instead of this init function you can create the registered FESpace in Python as well just with
-
-.. code:: python
-
-   FESpace("myfespace", mesh, ...)
-
-with the name we registered it.
-
-If we want to use the `secondorder` flag now, we would get a warning, that we use an undocumented
-flag. This is a safety guide to prevent typos, so we want to register our flag for the space:
+If we want to use the `secondorder` flag now, we would get a warning, that we use an undocumented flag. This is a safety guide to prevent typos for keyword arguments, what we need to do is to provide documentation for our flag:
 
 .. literalinclude:: myFESpace.cpp
    :language: cpp
-   :start-at: .def_static
-   :end-before: .def("GetNVert"
+   :start-at: DocInfo MyFESpace
+   :end-before: void MyFESpace :: 
 
-Here we query the flags_doc from the base class and append our secondorder flag to the dictionary.
+..
+   TODO: Remove the derived flags that are not available.
 
+..
+   If we want to have a nice docstring including our flag we have to call another helper function that searches our module for all classes and appends the docstring:
+
+..
+   .. literalinclude:: ../myngspy.cpp
+      :language: cpp
+      :start-at: ngs.attr("_add_flags_doc")(m);
+      :end-at: ngs.attr
+
+Next we will show how to implement custom integrators.

@@ -13,6 +13,7 @@ My own FESpace for high order finite elements
 
 #include <comp.hpp>    // provides FESpace, ...
 
+#include "../1_myFEM/myDiffOp.hpp"
 #include "myHOElement.hpp"
 #include "myHOFESpace.hpp"
 
@@ -25,24 +26,16 @@ namespace ngcomp
   {
     cout << "Constructor of MyHighOrderFESpace" << endl;
 
+    type = "myhofespace";
+
+    // Get the order from the flags, default is 2
     order = int(flags.GetNumFlag ("order", 2));
 
-    // needed to draw solution function
-    evaluator[VOL] = make_shared<T_DifferentialOperator<DiffOpId<2>>>();
-    flux_evaluator[VOL] = make_shared<T_DifferentialOperator<DiffOpGradient<2>>>();
-    evaluator[BND] = make_shared<T_DifferentialOperator<DiffOpIdBoundary<2>>>();
-    
-    integrator[VOL] = GetIntegrators().CreateBFI("mass", ma->GetDimension(), 
-                                                 make_shared<ConstantCoefficientFunction>(1));
+    evaluator[VOL] = make_shared<T_DifferentialOperator<MyDiffOpId>>();
+    flux_evaluator[VOL] = make_shared<T_DifferentialOperator<MyDiffOpGradient>>();
+    // evaluator[BND] = make_shared<T_DifferentialOperator<MyDiffOpIdBoundary>>();
   }
     
-  
-  MyHighOrderFESpace :: ~MyHighOrderFESpace ()
-  {
-    // nothing to do
-  }
-
-  
   void MyHighOrderFESpace :: Update(LocalHeap & lh)
   {
     // some global update:
@@ -68,14 +61,11 @@ namespace ngcomp
     ndof = ii;
   }
 
-
   void MyHighOrderFESpace :: GetDofNrs (ElementId ei, Array<DofId> & dnums) const
   {
     // returns dofs of element number elnr
-
     dnums.SetSize(0);
-
-    Ngs_Element ngel = ma->GetElement (ei);
+    auto ngel = ma->GetElement (ei);
 
     // vertex dofs
     for (auto v : ngel.Vertices())
@@ -83,37 +73,30 @@ namespace ngcomp
 
     // edge dofs
     for (auto e : ngel.Edges())
-      {
-        int first = first_edge_dof[e];
-        int next  = first_edge_dof[e+1];
-        for (int j = first; j < next; j++)
-          dnums.Append (j);
-      }
+      for(auto j : Range(first_edge_dof[e], first_edge_dof[e+1]))
+        dnums.Append (j);
 
+    // inner dofs
     if (ei.IsVolume())
-      {
-        int first = first_cell_dof[ei.Nr()];
-        int next  = first_cell_dof[ei.Nr()+1];
-        for (int j = first; j < next; j++)
-          dnums.Append (j);
-      }
+      for(auto j : Range(first_cell_dof[ei.Nr()], first_cell_dof[ei.Nr()+1]))
+        dnums.Append (j);
   }
 
   
   FiniteElement & MyHighOrderFESpace :: GetFE (ElementId ei, Allocator & alloc) const
   {
-    Ngs_Element ngel = ma->GetElement (ei);
+    auto ngel = ma->GetElement (ei);
     switch (ngel.GetType())
       {
       case ET_TRIG:
         {
-          MyHighOrderTrig * trig = new (alloc) MyHighOrderTrig(order);
+          auto trig = new (alloc) MyHighOrderTrig(order);
           trig->SetVertexNumbers (ngel.vertices);
           return *trig;
         }
       case ET_SEGM:
         {
-          MyHighOrderSegm * segm = new (alloc) MyHighOrderSegm(order);
+          auto segm = new (alloc) MyHighOrderSegm(order);
           segm->SetVertexNumbers (ngel.vertices);
           return *segm;
         }
@@ -122,8 +105,5 @@ namespace ngcomp
       }
   }
   
-
-
-
   static RegisterFESpace<MyHighOrderFESpace> initifes ("myhofespace");
 }

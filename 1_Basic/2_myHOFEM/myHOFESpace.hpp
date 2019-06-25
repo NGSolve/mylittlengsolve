@@ -16,8 +16,6 @@
 
 namespace ngcomp
 {
-
-
   class MyHighOrderFESpace : public FESpace
   {
     int order;
@@ -33,9 +31,6 @@ namespace ngcomp
     */
     MyHighOrderFESpace (shared_ptr<MeshAccess> ama, const Flags & flags);
 
-    // destructor
-    virtual ~MyHighOrderFESpace ();
-
     // a name for our new fe-space
     virtual string GetClassName () const
     {
@@ -48,9 +43,6 @@ namespace ngcomp
     virtual void GetDofNrs (ElementId ei, Array<DofId> & dnums) const;
     virtual FiniteElement & GetFE (ElementId ei, Allocator & alloc) const;
   };
-
-
-
 }    
 
 #endif

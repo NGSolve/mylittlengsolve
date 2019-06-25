@@ -83,8 +83,6 @@ namespace ngfem
       }     
   }
 
-
-
   /*
     Calculates the element vector.
 

@@ -24,7 +24,7 @@ This project is built using CMake, just create a build directory, execute cmake 
    make -j
    make install
 
-On Windows you need to have Visual Studio/build tools 2017 installed:
+On Windows you need to have Visual Studio/build tools (at least 2017) installed:
 
 .. code-block:: bash
 
@@ -40,6 +40,8 @@ that behaviour, set the `CMAKE_INSTALL_PREFIX` variable:
 
    cmake .. -DCMAKE_INSTALL_PREFIX=your_install_path
 
+In this chapter we will look into how to implement new CoefficientFunctions and FESpaces in NGSolve and export them to Python. For the spaces we will need to create FiniteElements and DifferentialOperators.
+
 .. toctree::
    :maxdepth: 1
    :caption: Basic
@@ -50,6 +52,9 @@ that behaviour, set the `CMAKE_INSTALL_PREFIX` variable:
 
    1_myFEM/element.rst
 
+   1_myFEM/diffop.rst
+
    1_myFEM/fespace.rst
 
+   1_myFEM/integrators.rst
 

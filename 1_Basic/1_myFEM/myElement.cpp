@@ -18,16 +18,6 @@ My own simple first and second order triangular finite elements
 
 namespace ngfem
 {
-
-  MyLinearTrig :: MyLinearTrig ()
-  /*
-    Call constructor for base class:
-    geometry is ET_TRIG, number of dofs is 3, maximal order is 1
-   */
-    : ScalarFiniteElement<2> (3, 1)
-  { ; }
-
-
   void MyLinearTrig :: CalcShape (const IntegrationPoint & ip,
                                   BareSliceVector<> shape) const
   {
@@ -59,11 +49,6 @@ namespace ngfem
     dshape(2,0) = -1;
     dshape(2,1) = -1;
   }
-
-  MyQuadraticTrig :: MyQuadraticTrig ()
-    : ScalarFiniteElement<2> (6, 2)
-  { ; }
-
 
   void MyQuadraticTrig :: CalcShape (const IntegrationPoint & ip,
                                      BareSliceVector<> shape) const
@@ -119,23 +104,4 @@ namespace ngfem
         dshape(3+i,1) = shape.DValue(1);    // y-derivative
       }
   }
-
-}
-
-void ExportMyElement(py::module m)
-{
-  using namespace ngfem;
-  /*
-    Our Trig is derived
-    from the classes ScalarFiniteElement<2> -> BaseScalarFiniteElement -> FiniteElement.
-    Only BaseScalarFiniteElement and FiniteElement are exported to python
-    (see ngsolve/fem/python_fem.cpp), so we derive from BaseScalarFiniteElement (which derives from
-    FiniteElement).
-    If we only want to use it in our FESpace we do not need the Python hierarchy, but it's nice for
-    debugging :)
-  */
-  py::class_<MyLinearTrig, shared_ptr<MyLinearTrig>, BaseScalarFiniteElement>
-    (m, "MyLinearTrig", "My new linear Trig")
-    .def(py::init<>())
-    ;
 }

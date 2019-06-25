@@ -8,8 +8,9 @@ find_package(NGSolve CONFIG REQUIRED
 
 
 add_ngsolve_python_module(myngspy myngspy.cpp
-  1_myFEM/myElement.cpp 1_myFEM/myFESpace.cpp 1_myFEM/myIntegrator.cpp
-  1_myFEM/myPreconditioner.cpp
+  1_myFEM/myElement.cpp 1_myFEM/myFESpace.cpp
+  1_myFEM/myPreconditioner.cpp 1_myFEM/myCoefficient.cpp
+  1_myFEM/myIntegrator.cpp
   2_myHOFEM/myHOFESpace.cpp 2_myHOFEM/myHOElement.cpp
   4_utility_functions/demo_coupling.cpp 4_utility_functions/myAssembling.cpp
   )

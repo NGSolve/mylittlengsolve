@@ -4,19 +4,15 @@ from myngspy import *
 
 mesh = Mesh(unit_square.GenerateMesh(maxh=0.2))
 
-fes = FESpace("myhofespace", mesh, dirichlet="top|bottom|right|left", order = 5)
+fes = MyHOFESpace(mesh, dirichlet="top|bottom|right|left", order = 5)
+u,v = fes.TnT()
 print ("freedofs: ", fes.FreeDofs())
 
-u = fes.TrialFunction()
-v = fes.TestFunction()
-
 a = BilinearForm(fes)
-a += MyLaplace(CoefficientFunction(1))
-# a += SymbolicBFI(grad(u)*grad(v))
+a += grad(u)*grad(v)*dx
 
 f = LinearForm(fes)
-f += MySource(x*y)
-# f += SymbolicLFI(x*y*v)
+f += x*y*v*dx
 
 a.Assemble()
 f.Assemble()

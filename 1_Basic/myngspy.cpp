@@ -1,11 +1,13 @@
 #include <solve.hpp>
 using namespace ngsolve;
-#include <python_ngstd.hpp>
+using namespace ngfem;
+#include <python_comp.hpp>
 #include "1_myFEM/myElement.hpp"
 #include "1_myFEM/myFESpace.hpp"
-#include "1_myFEM/myIntegrator.hpp"
 #include "1_myFEM/myPreconditioner.hpp"
 #include "1_myFEM/myCoefficient.hpp"
+#include "1_myFEM/myIntegrator.hpp"
+#include "2_myHOFEM/myHOFESpace.hpp"
 #include "4_utility_functions/utility_functions.hpp"
 
 
@@ -67,7 +69,7 @@ public:
 
 PYBIND11_MODULE(myngspy,m) {
   // import ngsolve such that python base classes are defined
-  py::module::import("ngsolve");
+  auto ngs = py::module::import("ngsolve");
 
   /*
     In python, classes are objects as well. Therefore we need to create all the class-objects
@@ -79,7 +81,7 @@ PYBIND11_MODULE(myngspy,m) {
     The holder type is either unique_ptr (default) or shared_ptr. In most cases we need shared_ptr,
     since we pass our objects to c++ code which may outlive our python objects.
     After that you specify already exported base classes for your object. Note that you do not
-    specify not exported bases (since Python does not have know anything about them).
+    specify not exported bases (since Python does not know anything about them).
     The constructor for our class object takes the module, a string as the class name in Python
     and another string for the docstring of the object. This string is displayed if you
     call the function 'help' on the object.
@@ -92,11 +94,10 @@ PYBIND11_MODULE(myngspy,m) {
 
   py::class_<MyClass, shared_ptr<MyClass>, MyBase>
     (m, "MyClass", "My derived class")
-    .def("__init__", [] (MyClass* instance, string name)
+    .def(py::init([] (string name)
          {
-           new (instance) MyClass(name);
-         },
-         py::arg("name")="me")
+           return new MyClass(name);
+         }), py::arg("name")="me")
     .def("me", [] (shared_ptr<MyClass> self)
          {
            return self->me();
@@ -125,14 +126,19 @@ PYBIND11_MODULE(myngspy,m) {
   /*
     Finally we export all the other classes and functions we created in this tutorial
    */
-  ExportMyElement(m);
   ExportMyFESpace(m);
-  ExportMyIntegrator(m);
   ExportMyPreconditioner(m);
   ExportMyCoefficient(m);
+  ExportMyIntegrator(m);
+
+  ExportFESpace<MyHighOrderFESpace>(m, "MyHOFESpace");
 
   m.def("MyAssemble", &myassemble::MyAssemble);
   m.def("MyCoupling", &mycoupling::MyCoupling);
+
+  // This adds documented flags to the docstring of objects (for example
+  // FESpaces).
+  ngs.attr("_add_flags_doc")(m);
 }
 
 static RegisterNumProc<NumProcPyDemo> npinit1("demopy");

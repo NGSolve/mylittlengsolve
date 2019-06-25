@@ -4,7 +4,7 @@ Cmake & Python Export
 Cmake
 -------
 
-We use `cmake <https://cmake.org/>` to build NGSolve, therefore we recommend, that you set up your
+We use `cmake <https://cmake.org/>`_ to build NGSolve, therefore we recommend, that you set up your
 extension using cmake as well.
 First we add NGSolve as a dependency and give the default install dirs as hints:
 

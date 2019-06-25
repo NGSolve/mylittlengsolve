@@ -5,27 +5,23 @@ namespace ngfem
 {
   class MyCoefficientFunction : public CoefficientFunction
   {
-    string filename;
   public:
-    MyCoefficientFunction(string afilename)
-      : CoefficientFunction(/*dimension = */ 1),filename(afilename) { ; }
+    MyCoefficientFunction()
+      : CoefficientFunction(/*dimension = */ 1) { ; }
 
+    // ********************* Necessary **********************************
     virtual double Evaluate(const BaseMappedIntegrationPoint& mip) const override
     {
-      ifstream is(filename);
-      double val;
-      is >> val;
-      return val;
+      // maybe do something with mip and trafo?
+      auto pnt = mip.GetPoint();
+      return pnt[0] * pnt[1];
     }
+
+    // ******************* Performance improvements **********************
   };
+
+  void ExportMyCoefficient(py::module m);
 }
 
-void ExportMyCoefficient(py::module m)
-{
-  py::class_<MyCoefficientFunction, shared_ptr<MyCoefficientFunction>, CoefficientFunction>
-    (m, "MyCoefficient", "CoefficientFunction that reads value from file")
-    .def(py::init<string>())
-    ;
-}
 
 #endif //  __FILE_MYCOEFFICIENT_HPP

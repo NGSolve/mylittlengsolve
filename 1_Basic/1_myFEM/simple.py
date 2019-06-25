@@ -4,27 +4,30 @@ from myngspy import *
 
 mesh = Mesh(unit_square.GenerateMesh(maxh=0.2))
 
-fes = MyFESpace(mesh, dirichlet="top|bottom|right|left")
-# fes = FESpace("myfespace", mesh, dirichlet="top|bottom|right|left", flags={"secondorder":True})
-print ("freedofs: ", fes.FreeDofs())
+# for i in range(5):
+#     mesh.Refine()
 
-u = fes.TrialFunction()
-v = fes.TestFunction()
+fes = MyFESpace(mesh, dirichlet="top|bottom|right|left", secondorder=True)
+u,v = fes.TnT()
+# print ("freedofs: ", fes.FreeDofs())
+
 
 a = BilinearForm(fes)
-a += MyLaplace(CoefficientFunction(1))
-# a += SymbolicBFI(grad(u)*grad(v))
+a += grad(u) * grad(v) * dx
 
 f = LinearForm(fes)
-f += MySource(x*y)
-# f += SymbolicLFI(x*y*v)
-
-a.Assemble()
-f.Assemble()
+f += MyCoefficient()*v * dx
 
 u = GridFunction(fes)
 
-print ("solve")
-u.vec.data = a.mat.Inverse(fes.FreeDofs()) * f.vec
+# Exercise: Implement functionality for inhomogeneous boundary conditions
+# This needs our finite element space to have a differential operator
+# on the boundary.
+
+with TaskManager(int(1e8)):
+    a.Assemble()
+    f.Assemble()
+    print ("solve")
+    u.vec.data = a.mat.Inverse(fes.FreeDofs()) * f.vec
 
 Draw(u)

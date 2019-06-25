@@ -2,7 +2,14 @@ My Element
 ============
 
 We want to start with a simple linear triangular finite element for the space :math:`H^1`.
-Therefore we can use the ``ScalarFiniteElement`` as a base class:
+First we create a base class, so that we can later create higher order elements as well. This base class requires elements to be able to compute values and gradients:
+
+.. literalinclude:: myElement.hpp
+   :language: cpp
+   :start-at: class MyBaseElement
+   :end-at: };
+
+The linear trig implements this functionality:
 
 .. literalinclude:: myElement.hpp
    :language: cpp
@@ -14,18 +21,19 @@ the shape functions and their derivatives.
 
 .. literalinclude:: myElement.cpp
    :language: cpp
-   :start-at: MyLinearTrig :: MyLinearTrig
-   :end-before: MyQuadraticTrig :: MyQuad
+   :start-at: void MyLinearTrig :: CalcShape
+   :end-before: void MyQuadraticTrig :: CalcShape
 
-Finally we can export it to Python, as we have done it with the CoefficientFunction. Note that this is
-not necessary if we just want to build a finite element space with it.
+Automatic Differentiation
+-------------------------
+
+Next we will create second order elements for our space. When creating higher order spaces the derivatives of the polynomials will get quite ugly, so we don't want to implement them by hand. NGSolve provides automatic exact differentiation by the `AutoDiff` class.
+
+We implement nodal quadratic elements, note `CalcShape` and `CalcDShape` look quite similar, in `CalcDShape` we only use the diff value of the `Autodiff` variable:
 
 .. literalinclude:: myElement.cpp
    :language: cpp
-   :start-at: void Export
+   :start-at: void MyQuadraticTrig :: CalcShape
 
-.. todo::
-
-   Explain AutoDiff with second order elements
-
-Next we want to build this finite element into a space, so we can use it.
+The creation of boundary elements will be left as an exercise.
+Next we will create (differential) operators working with these finite elements.
