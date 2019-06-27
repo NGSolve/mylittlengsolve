@@ -2,6 +2,7 @@
 #include <comp.hpp>
 #include <python_ngstd.hpp>
 #include "myCoefficient.hpp"
+#include "myIntegrate.hpp"
 
 namespace ngcomp
 {
@@ -14,6 +15,16 @@ namespace ngcomp
       ;
 
     m.def("MyIntegrate", &MyIntegrate, 
+	py::arg("cf"),
+        py::arg("mesh"),
+        py::arg("order")=5
+        );
+    m.def("MyIntegrateSIMD", &MyIntegrateSIMD, 
+	py::arg("cf"),
+        py::arg("mesh"),
+        py::arg("order")=5
+        );
+    m.def("MyIntegrateParallel", &MyIntegrateParallel, 
 	py::arg("cf"),
         py::arg("mesh"),
         py::arg("order")=5
