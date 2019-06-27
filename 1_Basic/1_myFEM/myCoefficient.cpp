@@ -1,9 +1,9 @@
 
-#include <fem.hpp>
+#include <comp.hpp>
 #include <python_ngstd.hpp>
 #include "myCoefficient.hpp"
 
-namespace ngfem
+namespace ngcomp
 {
   // Export cf to Python
   void ExportMyCoefficient(py::module m)
@@ -12,6 +12,12 @@ namespace ngfem
       (m, "MyCoefficient", "CoefficientFunction that returns x*y.")
       .def(py::init<>())
       ;
+
+    m.def("MyIntegrate", &MyIntegrate, 
+	py::arg("cf"),
+        py::arg("mesh"),
+        py::arg("order")=5
+        );
   }
 
   // Register cf for pickling/archiving
