@@ -12,7 +12,8 @@ My own simple integrators for the Poisson Equation
 
 
 
-#include <fem.hpp>   
+#include <fem.hpp>
+#include "myElement.hpp"
 #include "myIntegrator.hpp"
 
 namespace ngfem
@@ -37,11 +38,10 @@ namespace ngfem
 		     LocalHeap & lh) const
   {
     /*
-      tell the compiler that we are expecting to get an scalar fe in 2D.
+      tell the compiler that we are expecting one of our elements.
       if not, an exception will be raised
     */
-    const ScalarFiniteElement<2> & fel =
-      dynamic_cast<const ScalarFiniteElement<2> &> (base_fel);
+    auto & fel = dynamic_cast<const MyBaseElement &> (base_fel);
 
     // number of element basis functions:
     int ndof = fel.GetNDof();
@@ -101,8 +101,7 @@ namespace ngfem
 		     FlatVector<double> elvec,
 		     LocalHeap & lh) const
   {
-    const ScalarFiniteElement<2> & fel =
-      dynamic_cast<const ScalarFiniteElement<2> &> (base_fel);
+    auto & fel = dynamic_cast<const MyBaseElement&> (base_fel);
 
     int ndof = fel.GetNDof();
 

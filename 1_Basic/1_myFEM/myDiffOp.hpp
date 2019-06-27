@@ -24,11 +24,11 @@ namespace ngfem
   public:
     // ******************** Necessary stuff *************************
     
-    enum { DIM = 1 }; // dimension of the input (GridFunction,...)
-    enum { DIM_SPACE = 2 }; // dimension of the space
-    enum { DIM_ELEMENT = 2 }; // dimension of the element
-    enum { DIM_DMAT = 1 }; // dimension of the output
-    enum { DIFFORDER = 0 }; // order of differentiation
+    static constexpr int DIM = 1; // dimension of the input
+    static constexpr int DIM_SPACE = 2; // dimension of the space
+    static constexpr int DIM_ELEMENT = 2; // dimension of the element
+    static constexpr int DIM_DMAT = 1; // dimension of the output
+    static constexpr int DIFFORDER = 0; // order of differentiation
 
     template<typename MIP, typename MAT>
     static void GenerateMatrix(const FiniteElement& fel, const MIP& mip,
@@ -53,12 +53,12 @@ namespace ngfem
   public:
     // ******************** Necessary stuff *************************
     
-    enum { DIM = 1 }; // dimension of the input (GridFunction,...)
-    enum { DIM_SPACE = 2 }; // dimension of the space
-    enum { DIM_ELEMENT = 2 }; // dimension of the element
-    enum { DIM_DMAT = 2 }; // dimension of the output
-    enum { DIFFORDER = 1 }; // order of differentiation
-
+    static constexpr int DIM = 1; // dimension of the input
+    static constexpr int DIM_SPACE = 2; // dimension of the space
+    static constexpr int DIM_ELEMENT = 2; // dimension of the element
+    static constexpr int DIM_DMAT = 2; // dimension of the output
+    static constexpr int DIFFORDER = 1; // order of differentiation
+    
     // so that you can call grad(u)
     static string Name() { return "grad"; }
 

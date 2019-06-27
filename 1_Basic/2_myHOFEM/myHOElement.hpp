@@ -37,7 +37,7 @@ namespace ngfem
 
   private:
     template <class T>
-    void T_CalcShape (T x, BareSliceVector<T> shape) const;
+    void T_CalcShape (const T& x, BareSliceVector<T> shape) const;
   };
 
 

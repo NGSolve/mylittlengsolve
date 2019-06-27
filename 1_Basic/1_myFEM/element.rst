@@ -27,7 +27,7 @@ the shape functions and their derivatives.
 Automatic Differentiation
 -------------------------
 
-Next we will create second order elements for our space. When creating higher order spaces the derivatives of the polynomials will get quite ugly, so we don't want to implement them by hand. NGSolve provides automatic exact differentiation by the `AutoDiff` class.
+Next we will create second order elements for our space. When creating higher order spaces the derivatives of the polynomials will get quite ugly, so we don't want to implement them by hand. NGSolve provides automatic exact differentiation by the `AutoDiff` class. A `AutoDiff` object knows its value and the value of its derivative. Combining `AutoDiff` objects automatically uses differentiation rules.
 
 We implement nodal quadratic elements, note `CalcShape` and `CalcDShape` look quite similar, in `CalcDShape` we only use the diff value of the `Autodiff` variable:
 

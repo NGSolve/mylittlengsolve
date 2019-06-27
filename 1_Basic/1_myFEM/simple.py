@@ -7,16 +7,18 @@ mesh = Mesh(unit_square.GenerateMesh(maxh=0.2))
 # for i in range(5):
 #     mesh.Refine()
 
-fes = MyFESpace(mesh, dirichlet="top|bottom|right|left", secondorder=True)
+fes = MyFESpace(mesh, dirichlet="top|bottom|right|left") #, secondorder=True)
 u,v = fes.TnT()
 # print ("freedofs: ", fes.FreeDofs())
 
 
 a = BilinearForm(fes)
-a += grad(u) * grad(v) * dx
+# a += grad(u) * grad(v) * dx
+a += MyLaplace(1)
 
 f = LinearForm(fes)
-f += MyCoefficient()*v * dx
+# f += MyCoefficient()*v * dx
+f += MySource(x*y)
 
 u = GridFunction(fes)
 
