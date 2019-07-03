@@ -58,3 +58,5 @@ In this chapter we will look into how to implement new CoefficientFunctions and 
 
    1_myFEM/integrators.rst
 
+   1_myFEM/optimization.rst
+

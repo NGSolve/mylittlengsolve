@@ -7,11 +7,12 @@ namespace ngcomp
 {
 
   /*
+
   inline double MyIntegrate( shared_ptr<CoefficientFunction> cf, shared_ptr<MeshAccess> ma, int order )
   {
-    LocalHeap lh(100000000, "localheap");
+    LocalHeap lh(1000000, "localheap");
 
-    double hsum = 0.0;
+    double sum = 0.0;
     for (auto elnum : Range(ma->GetNE(VOL)))
     {
       HeapReset hr(lh);
@@ -24,9 +25,9 @@ namespace ngcomp
       cf -> Evaluate (mir, values);
 
       for (int i = 0; i < values.Height(); i++)
-        hsum += mir[i].GetWeight() * values(i,0);
+        sum += mir[i].GetWeight() * values(i,0);
     }
-    return hsum;
+    return sum;
   }
   */
 
@@ -40,9 +41,9 @@ namespace ngcomp
 
     RegionTimer r_all(t_all);
 
-    LocalHeap lh(100000000, "localheap");
+    LocalHeap lh(1000000, "localheap");
 
-    double hsum = 0.0;
+    double sum = 0.0;
     for (auto elnum : Range(ma->GetNE(VOL)))
     {
       HeapReset hr(lh);
@@ -62,10 +63,10 @@ namespace ngcomp
       {
         RegionTimer r_sum( t_sum);
         for (int i = 0; i < values.Height(); i++)
-          hsum += mir[i].GetWeight() * values(i,0);
+          sum += mir[i].GetWeight() * values(i,0);
       }
     }
-    return hsum;
+    return sum;
   }
 
   // SIMD Version
@@ -116,7 +117,7 @@ namespace ngcomp
 
     RegionTimer r_all(t_all);
 
-    LocalHeap glh(100000000, "localheap");
+    LocalHeap glh(1000000, "localheap");
 
     atomic<double> sum = 0.0;
 
@@ -131,7 +132,7 @@ namespace ngcomp
         auto element = ma->GetElement(ElementId(VOL, elnum));
         auto & trafo = ma->GetTrafo (element, lh);
         SIMD_IntegrationRule ir(trafo.GetElementType(), order);
-        Matrix<SIMD<double>> values(1, ir.Size());
+        FlatMatrix<SIMD<double>> values(1, ir.Size(), lh);
 
         RegionTracer r_after_init(TaskManager::GetThreadId(),  t_after_init);
         SIMD_BaseMappedIntegrationRule & mir = trafo(ir, lh);
