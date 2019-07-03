@@ -12,12 +12,14 @@ namespace ngcomp
     auto y = point[1];
     auto z = point[2];
 
-    auto res = x*x+y*y+z*z;
+    return x*y;
 
-    for (auto i : Range(100))
-      res = (res+1.0)/res;
-
-    return res*x*y*z;
+//     auto res = x*x+y*y+z*z;
+// 
+//     for (auto i : Range(100))
+//       res = (res+1.0)/res;
+// 
+//     return res*x*y*z;
   }
 
   class MyCoefficientFunction : public CoefficientFunction
@@ -49,7 +51,6 @@ namespace ngcomp
       for (int i = 0; i < mir.Size(); i++)
         values(i,0) = myFunction(points.Row(i));
     }
-    */
 
     // Use SIMD evaluation (multiple multiplications in one CPU instruction)
     virtual void Evaluate (const SIMD_BaseMappedIntegrationRule & mir, BareSliceMatrix<SIMD<double>> hvalues) const override
@@ -61,6 +62,7 @@ namespace ngcomp
       for (int i = 0; i < mir.Size(); i++)
         values(0,i) = myFunction(points.Row(i));
     }
+    */
   };
 
   void ExportMyCoefficient(py::module m);

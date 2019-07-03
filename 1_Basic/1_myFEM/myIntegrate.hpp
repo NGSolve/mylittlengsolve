@@ -35,9 +35,8 @@ namespace ngcomp
   inline double MyIntegrate( shared_ptr<CoefficientFunction> cf, shared_ptr<MeshAccess> ma, int order )
   {
     static Timer t_all("MyIntegrate");
-    static Timer t_evaluate("Evaluate");
-    static Timer t_sum("Sum");
-    static Timer t_after_init("After init");
+    static Timer t_evaluate("MyIntegrate - Evaluate");
+    static Timer t_sum("MyIntegrate - Sum");
 
     RegionTimer r_all(t_all);
 
@@ -47,13 +46,11 @@ namespace ngcomp
     for (auto elnum : Range(ma->GetNE(VOL)))
     {
       HeapReset hr(lh);
-      RegionTimer r_int_el(t_all);
       auto element = ma->GetElement(ElementId(VOL, elnum));
       auto & trafo = ma->GetTrafo (element, lh);
       IntegrationRule ir(trafo.GetElementType(), order);
       Matrix<> values(ir.Size(), 1);
 
-      RegionTimer r_after_init( t_after_init);
       BaseMappedIntegrationRule & mir = trafo(ir, lh);
       {
         RegionTimer r_evaluate( t_evaluate);

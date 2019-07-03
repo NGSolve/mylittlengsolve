@@ -3,7 +3,7 @@ from ngsolve import *
 from myngspy import *
 import time
 
-SetNumThreads(4)
+SetNumThreads(1)
 ngsglobals.msg_level=0
 
 geometry = CSGeometry()
@@ -15,15 +15,20 @@ geometry.Add(inner_box)
 
 mesh = Mesh(geometry.GenerateMesh(maxh=0.2))
 
-# for i in range(3):
-#     mesh.Refine()
+for i in range(1):
+    mesh.Refine()
 
-order = 10
+order = 5
 
 cf = MyCoefficient()
 Draw(cf, mesh, 'cf')
 val = MyIntegrate(cf, mesh, order=order)
-print('value', val)
+val2 = Integrate(cf, mesh, order=order)
+print('values', val, val2)
 
 # cflist = [cf if mat=='inner' else 0.0 for mat in mesh.GetMaterials()]
 # cf = CoefficientFunction(cflist)
+
+for t in Timers():
+    if 'Integrate' in t['name']:
+        print(t['name'],t['counts'],t['time'])
