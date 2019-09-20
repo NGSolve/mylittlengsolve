@@ -57,7 +57,7 @@ namespace ngcomp
     return docu;
   }
 
-  void MyFESpace :: Update(LocalHeap & lh)
+  void MyFESpace :: Update()
   {
     // some global update:
     cout << "Update MyFESpace, #vert = " << ma->GetNV()

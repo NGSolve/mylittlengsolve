@@ -36,7 +36,7 @@ namespace ngcomp
     // evaluator[BND] = make_shared<T_DifferentialOperator<MyDiffOpIdBoundary>>();
   }
     
-  void MyHighOrderFESpace :: Update(LocalHeap & lh)
+  void MyHighOrderFESpace :: Update()
   {
     // some global update:
 

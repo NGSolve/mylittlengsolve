@@ -32,16 +32,16 @@ namespace ngcomp
     MyHighOrderFESpace (shared_ptr<MeshAccess> ama, const Flags & flags);
 
     // a name for our new fe-space
-    virtual string GetClassName () const
+    string GetClassName () const override
     {
       return "MyHighOrderFESpace";
     }
 
-    virtual void Update(LocalHeap & lh);
-    virtual size_t GetNDof () const { return ndof; }
+    void Update() override;
+    size_t GetNDof () const override { return ndof; }
 
-    virtual void GetDofNrs (ElementId ei, Array<DofId> & dnums) const;
-    virtual FiniteElement & GetFE (ElementId ei, Allocator & alloc) const;
+    void GetDofNrs (ElementId ei, Array<DofId> & dnums) const override;
+    FiniteElement & GetFE (ElementId ei, Allocator & alloc) const override;
   };
 }    
 
