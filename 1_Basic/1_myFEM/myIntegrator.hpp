@@ -25,21 +25,18 @@ namespace ngfem
     MyLaplaceIntegrator (shared_ptr<CoefficientFunction> coef)
       : coef_lambda(coef) { ; }
 
-    virtual string Name () const { return "MyLaplace"; }
+    string Name () const override { return "MyLaplace"; }
 
-    virtual int DimElement () const { return 2; }
-    virtual int DimSpace () const { return 2; }
-    virtual xbool IsSymmetric () const { return true; }
-
-    // a volume integral (ngsolve 6.2)
-    virtual VorB VB() const { return VOL; }
+    int DimElement () const override { return 2; }
+    int DimSpace () const override { return 2; }
+    xbool IsSymmetric () const override { return true; }
+    VorB VB() const override { return VOL; }
 
     // Calculates the element matrix
-    virtual void
-    CalcElementMatrix (const FiniteElement & fel,
-                       const ElementTransformation & eltrans, 
-                       FlatMatrix<double> elmat,
-                       LocalHeap & lh) const;
+    void CalcElementMatrix (const FiniteElement & fel,
+                            const ElementTransformation & eltrans, 
+                            FlatMatrix<double> elmat,
+                            LocalHeap & lh) const override;
   };
 
   // integrator for \int f v dx
@@ -51,17 +48,16 @@ namespace ngfem
       : coef_f(coef)
     { ; }
 
-    virtual string Name () const { return "MySource"; }
+    string Name () const override { return "MySource"; }
 
-    virtual bool BoundaryForm () const { return false; }
-    virtual VorB VB() const { return VOL; }
+    bool BoundaryForm () const override { return false; }
+    VorB VB() const override { return VOL; }
     
     // Calculates the right hand side element vector
-    virtual void
-    CalcElementVector (const FiniteElement & fel,
-		       const ElementTransformation & eltrans, 
-		       FlatVector<double> elvec,
-		       LocalHeap & lh) const;
+    void CalcElementVector (const FiniteElement & fel,
+                            const ElementTransformation & eltrans, 
+                            FlatVector<double> elvec,
+                            LocalHeap & lh) const override;
   };
 }
 

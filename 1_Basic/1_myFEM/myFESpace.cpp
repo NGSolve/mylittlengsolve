@@ -16,8 +16,8 @@ element, and the global mesh.
 
 
 #include <comp.hpp>    // provides FESpace, ...
-#include <h1lofe.hpp>
-#include <regex>
+// #include <h1lofe.hpp>
+// #include <regex>
 #include <python_comp.hpp>
 #include "myElement.hpp"
 #include "myFESpace.hpp"

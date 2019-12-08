@@ -5,5 +5,5 @@ from ngsolve import *
 from myngspy import *
 
 mesh = Mesh(unit_square.GenerateMesh(maxh=0.2))
-cf = MyCoefficient("coefficientvalue.txt")
+cf = MyCoefficient() 
 Draw(cf,mesh,"myCoefficient")
