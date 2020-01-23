@@ -1,7 +1,7 @@
 .cpp.o:
-	gcc -O2 -c -fpic -DUSE_TIMEOFDAY -I. -DLAPACK -I/opt/netgen/include  $? -o $@
+	ngscxx -O2 -c -I.  $? -o $@
 
 
 largestrain.so: nonlinelast.o  nonlinmech_integrator.o
-	gcc -shared -fpic nonlinelast.o nonlinmech_integrator.o -o libngsmech.so -L/opt/netgen/lib -lngsolve
+	ngsld -shared -fpic nonlinelast.o nonlinmech_integrator.o -o libngsmech.so -L/opt/netgen/lib -lngsolve
 

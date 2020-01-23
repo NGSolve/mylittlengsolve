@@ -14,10 +14,10 @@ using namespace ngsolve;
 template <int D>
 class NonlinMechIntegrator : public BilinearFormIntegrator
 {
-  CoefficientFunction * coeff_e;
-  CoefficientFunction * coeff_nu;
+  shared_ptr<CoefficientFunction> coeff_e;
+  shared_ptr<CoefficientFunction> coeff_nu;
 public:
-  NonlinMechIntegrator (Array<CoefficientFunction*> & coefs)
+  NonlinMechIntegrator (const Array<shared_ptr<CoefficientFunction>> & coefs)
     : coeff_e(coefs[0]), coeff_nu(coefs[1])
   { ; }
 

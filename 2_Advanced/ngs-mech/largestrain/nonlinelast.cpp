@@ -13,18 +13,19 @@ using namespace ngsolve;
 class NumProcNonlinElast : public NumProc
 {
 protected:
-  BilinearForm * bfa;
-  LinearForm * lff;
-  GridFunction * gfu;
-  Preconditioner * pre;
+  shared_ptr<BilinearForm> bfa;
+  shared_ptr<LinearForm> lff;
+  shared_ptr<GridFunction> gfu;
+  shared_ptr<Preconditioner> pre;
 
   int maxsteps;
   double prec;
 
 public:
-  NumProcNonlinElast (PDE & apde, const Flags & flags)
-    : NumProc (apde)
+  NumProcNonlinElast (weak_ptr<PDE> apde, const Flags & flags)
+    : NumProc (apde, flags)
   {
+    auto & pde = *GetPDE();
     bfa = pde.GetBilinearForm (flags.GetStringFlag ("bilinearform", ""));
     lff = pde.GetLinearForm (flags.GetStringFlag ("linearform", ""));
     gfu = pde.GetGridFunction (flags.GetStringFlag ("gridfunction", ""));
@@ -82,7 +83,7 @@ void NumProcNonlinElast :: Do(LocalHeap & lh)
 {
   cout << "Solve nonlinear elasticity" << endl;
 
-  const FESpace & fes = bfa->GetFESpace();
+  auto fes = bfa->GetFESpace();
 
   const BaseVector & vecf = lff->GetVector();
   BaseVector & vecu = gfu->GetVector();
@@ -91,7 +92,7 @@ void NumProcNonlinElast :: Do(LocalHeap & lh)
   BaseVector & d = *vecu.CreateVector();
   BaseVector & w = *vecu.CreateVector();
 
-  BilinearFormApplication applya(bfa);
+  BilinearFormApplication applya(bfa, lh);
 
   double err0;
     
@@ -99,7 +100,7 @@ void NumProcNonlinElast :: Do(LocalHeap & lh)
     {
       bfa->AssembleLinearization (vecu, lh);
       bfa->GetMatrix().SetInverseType(SPARSECHOLESKY);
-      BaseMatrix & inva = *bfa->GetMatrix().InverseMatrix(fes.GetFreeDofs());
+      BaseMatrix & inva = *bfa->GetMatrix().InverseMatrix(fes->GetFreeDofs());
 
       d = vecf - applya * vecu;
       w = inva * d;
@@ -108,7 +109,7 @@ void NumProcNonlinElast :: Do(LocalHeap & lh)
       double err = L2Norm(w);
       if (i == 1) err0 = err;
 
-      double energyold = bfa->Energy(vecu) - InnerProduct (vecf, vecu);
+      double energyold = bfa->Energy(vecu, lh) - InnerProduct (vecf, vecu);
 
       cout << "newton it " << i;
       cout << " err = " << err/err0;
@@ -122,7 +123,7 @@ void NumProcNonlinElast :: Do(LocalHeap & lh)
       do
 	{
 	  vecu = uold + tau * w;
-	  double energy = bfa->Energy(vecu) - InnerProduct (vecf, vecu);
+	  double energy = bfa->Energy(vecu, lh) - InnerProduct (vecf, vecu);
 
 	  cout << "tau = " << tau;
 	  cout << " energy = " << energy << endl;

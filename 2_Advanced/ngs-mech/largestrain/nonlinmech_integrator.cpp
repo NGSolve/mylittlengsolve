@@ -3,16 +3,15 @@
 #include <solve.hpp>
 using namespace ngsolve;
 
-
 template <int D>
 class LinearMaterialLaw
 {
-  const CoefficientFunction * coef_E;
-  const CoefficientFunction * coef_nu;
+  shared_ptr<CoefficientFunction> coef_E;
+  shared_ptr<CoefficientFunction> coef_nu;
 
 public:
-  LinearMaterialLaw (const CoefficientFunction * acoef_E,
-		     const CoefficientFunction * acoef_nu)
+  LinearMaterialLaw (shared_ptr<CoefficientFunction> acoef_E,
+		     shared_ptr<CoefficientFunction> acoef_nu)
     : coef_E (acoef_E), coef_nu(acoef_nu) { ; }
 
   
@@ -67,7 +66,7 @@ class NonlinMechIntegrator : public BilinearFormIntegrator
 {
   LinearMaterialLaw<D> matlaw;
 public:
-  NonlinMechIntegrator (Array<CoefficientFunction*> & coefs)
+  NonlinMechIntegrator (const Array<shared_ptr<CoefficientFunction>> & coefs)
     : matlaw(coefs[0], coefs[1]) { ; }
 
   virtual ~NonlinMechIntegrator () { ; }
@@ -77,13 +76,21 @@ public:
   virtual int DimElement () const { return D; }
   virtual int DimSpace () const { return D; }
 
+  xbool IsSymmetric () const override
+  {
+    return true;
+  }
 
+  VorB VB () const override
+  {
+    return VOL;
+  }
 
-  virtual void
+  void
   CalcElementMatrix (const FiniteElement & fel,
 		     const ElementTransformation & eltrans,
-		     FlatMatrix<double> & elmat,
-		     LocalHeap & lh) const
+		     FlatMatrix<double> elmat,
+		     LocalHeap & lh) const override
   {
     Vector<double> vec0 (D*fel.GetNDof());
     vec0 = 0;
@@ -162,7 +169,7 @@ CalcLinearizedElementMatrix (const FiniteElement & bfel,
   
   for (int i = 0; i < ir.GetNIP(); i++)
     {
-      MappedIntegrationPoint<D,D> mip(ir[i], eltrans, lh);
+      MappedIntegrationPoint<D,D> mip(ir[i], eltrans);
       
       fel.CalcDShape (mip.IP(), gradr);
       grad = gradr * mip.GetJacobianInverse();
@@ -238,7 +245,7 @@ ApplyElementMatrix (const FiniteElement & bfel,
 
   for (int i = 0; i < ir.GetNIP(); i++)
     {
-      MappedIntegrationPoint<D,D> mip (ir[i], eltrans, lh);
+      MappedIntegrationPoint<D,D> mip (ir[i], eltrans);
 
       fel.CalcDShape (ir[i], dshape);
       Mat<D> gradref = Trans (melx) * dshape;
@@ -280,7 +287,7 @@ Energy (const FiniteElement & bfel,
 
   for (int i = 0; i < ir.GetNIP(); i++)
     {
-      MappedIntegrationPoint<D,D> mip (ir[i], eltrans, lh);
+      MappedIntegrationPoint<D,D> mip (ir[i], eltrans);
       fel.CalcDShape (ir[i], dshape);
       Mat<D> gradref = Trans (melx) * dshape;
       Mat<D> grad = gradref * mip.GetJacobianInverse();
