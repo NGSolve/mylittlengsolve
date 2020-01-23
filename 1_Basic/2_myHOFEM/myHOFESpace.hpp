@@ -19,7 +19,6 @@ namespace ngcomp
   class MyHighOrderFESpace : public FESpace
   {
     int order;
-    int ndof;
     
     Array<int> first_edge_dof;
     Array<int> first_cell_dof;
@@ -38,7 +37,6 @@ namespace ngcomp
     }
 
     void Update() override;
-    size_t GetNDof () const override { return ndof; }
 
     void GetDofNrs (ElementId ei, Array<DofId> & dnums) const override;
     FiniteElement & GetFE (ElementId ei, Allocator & alloc) const override;

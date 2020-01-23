@@ -30,6 +30,6 @@ with TaskManager(int(1e8)):
     a.Assemble()
     f.Assemble()
     print ("solve")
-    u.vec.data = a.mat.Inverse(fes.FreeDofs()) * f.vec
+    u.vec.data = a.mat.Inverse(fes.FreeDofs(), inverse="sparsecholesky") * f.vec
 
 Draw(u)

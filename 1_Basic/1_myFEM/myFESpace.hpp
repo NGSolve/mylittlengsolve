@@ -22,7 +22,7 @@ namespace ngcomp
   class MyFESpace : public FESpace
   {
     bool secondorder;
-    int ndof, nvert;
+    size_t nvert;
     
   public:
     /*
@@ -39,13 +39,12 @@ namespace ngcomp
     static DocInfo GetDocu();
 
     void Update() override;
-    size_t GetNDof () const override { return ndof; }
     
     void GetDofNrs (ElementId ei, Array<DofId> & dnums) const override;
     FiniteElement & GetFE (ElementId ei, Allocator & alloc) const override;
 
     // some new functionality our space should have in Python
-    int GetNVert() { return nvert; }
+    size_t GetNVert() { return nvert; }
   };
 
 }    

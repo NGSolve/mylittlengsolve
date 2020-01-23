@@ -58,7 +58,7 @@ namespace ngcomp
     // cout << "first_edge_dof = " << endl << first_edge_dof << endl;
     // cout << "first_cell_dof = " << endl << first_cell_dof << endl;
 
-    ndof = ii;
+    SetNDof (ii);
   }
 
   void MyHighOrderFESpace :: GetDofNrs (ElementId ei, Array<DofId> & dnums) const

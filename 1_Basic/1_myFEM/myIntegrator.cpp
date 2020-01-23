@@ -37,6 +37,9 @@ namespace ngfem
 		     FlatMatrix<double> elmat,
 		     LocalHeap & lh) const
   {
+    static Timer t("MyCalcElementMatrix");
+    RegionTracer reg(TaskManager::GetThreadId(), t);
+    
     /*
       tell the compiler that we are expecting one of our elements.
       if not, an exception will be raised

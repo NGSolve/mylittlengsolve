@@ -67,9 +67,11 @@ namespace ngcomp
     nvert = ma->GetNV();
 
     // number of dofs:
-    ndof = nvert;
+    size_t ndof = nvert;
     if (secondorder)
       ndof += ma->GetNEdges();  // num vertics + num edges
+
+    SetNDof (ndof);
   }
 
   void MyFESpace :: GetDofNrs (ElementId ei, Array<DofId> & dnums) const
