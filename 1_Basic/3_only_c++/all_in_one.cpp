@@ -50,8 +50,8 @@ int main(int argc, char** argv)
   lff -> AddIntegrator (lfi);
 
   LocalHeap lh(100000);
-  fes -> Update(lh);
-  fes -> FinalizeUpdate(lh);
+  fes -> Update();
+  fes -> FinalizeUpdate();
 
   gfu -> Update();
   bfa -> Assemble(lh);

@@ -5,4 +5,4 @@ find_package(NGSolve CONFIG REQUIRED
 )
 
 add_executable(all_in_one all_in_one.cpp)
-target_link_libraries(all_in_one ngsolve)
+target_link_libraries(all_in_one ngcomp)
