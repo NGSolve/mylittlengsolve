@@ -26,6 +26,7 @@ namespace ngfem
   class MyHighOrderSegm : public MyBaseElement, public VertexOrientedFE<ET_SEGM>
   {
   public:
+    using VertexOrientedFE<ET_SEGM>::SetVertexNumbers;
     MyHighOrderSegm (int order);
     virtual ELEMENT_TYPE ElementType() const { return ET_SEGM; }
 
@@ -49,6 +50,7 @@ namespace ngfem
   {
   public:
     MyHighOrderTrig (int order);
+    using VertexOrientedFE<ET_TRIG>::SetVertexNumbers;
     virtual ELEMENT_TYPE ElementType() const { return ET_TRIG; }
 
     virtual void CalcShape (const IntegrationPoint & ip, 
