@@ -64,7 +64,7 @@ public:
   virtual int DimSpace () const { return 1; }
   virtual bool BoundaryForm () const { return false; }
   virtual VorB VB () const { return VOL; }
-  virtual bool IsSymmetric() const { return true; }
+  virtual xbool IsSymmetric() const { return true; }
 
   // Calculates the element matrix
   virtual void

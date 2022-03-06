@@ -24,7 +24,7 @@ source coef_source -comp=2
 define bilinearform a -fespace=v -symmetric -eliminate_internal -keep_internal  -linearform=f
 hybridmixeddiffusion coefa
 
-define preconditioner c -type=direct -bilinearform=a -inverse=pardiso
+define preconditioner c -type=direct -bilinearform=a -inverse=umfpack
 
 numproc bvp np1 -bilinearform=a -linearform=f -gridfunction=u  -preconditioner=c -print
 

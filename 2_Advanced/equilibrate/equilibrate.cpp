@@ -2,6 +2,7 @@
 
 #include <comp.hpp>
 #include <python_ngstd.hpp>
+#include <h1lofe.hpp>
 using namespace ngcomp;
 
 void EquilibratePatches (CoefficientFunction & flux,

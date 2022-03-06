@@ -16,5 +16,5 @@ namespace ngfem
 
   // Register cf for pickling/archiving
   // Create static object with template parameter function and base class.
-  static RegisterClassForArchive<MyCoefficientFunction, CoefficientFunction> regmycf;
+  // static RegisterClassForArchive<MyCoefficientFunction, CoefficientFunction> regmycf;
 }
