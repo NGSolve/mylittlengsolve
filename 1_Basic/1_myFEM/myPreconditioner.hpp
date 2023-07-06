@@ -11,9 +11,9 @@ namespace ngcomp
 
   public:
     MyPreconditioner (shared_ptr<BilinearForm> abfa, Flags& flags);
-    virtual void Update();
+    void Update() override;
     
-    virtual void Mult (const BaseVector & f, BaseVector & u) const
+    void Mult (const BaseVector & f, BaseVector & u) const override
     {
       jacobi -> Mult (f, u);
 
@@ -24,7 +24,12 @@ namespace ngcomp
       */
     }
 
-    virtual const BaseMatrix & GetAMatrix() const
+    const BaseMatrix& GetMatrix() const override
+    {
+      return *this;
+    }
+
+    const BaseMatrix & GetAMatrix() const override
     {
       return bfa -> GetMatrix();
     }
