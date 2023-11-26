@@ -36,37 +36,6 @@ void Hello(shared_ptr<MyClass> myclass)
 }
 
 
-// Just a demo numproc
-class NumProcPyDemo : public NumProc
-{
-
-public:
-    
-  NumProcPyDemo (shared_ptr<PDE> apde, const Flags & flags)
-    : NumProc (apde) { ; }
-
-  virtual void Do(LocalHeap & lh)
-  {
-    cout << "solving NumProcPyDemo" << endl;
-  }
-  
-  virtual void PrintReport (ostream & ost)
-  {
-    ost << "I am NumProcPyDemo" << endl;
-  }
-
-  virtual void Hello (string name)
-  {
-    cout << "Hi " << name << endl;
-  }
-
-  virtual double Sum (double a, double b)
-  {
-    return a+b;
-  }
-};
-
-
 PYBIND11_MODULE(myngspy,m) {
   // import ngsolve such that python base classes are defined
   auto ngs = py::module::import("ngsolve");
@@ -110,19 +79,6 @@ PYBIND11_MODULE(myngspy,m) {
   */
   m.def("Hello", &Hello);
 
-
-  /*
-    If you have old Numproces lying around you can use them from Python by exporting them.
-    Note that a NumProc is not needed any more - you can either do all this in Python, or
-    if you have some computationally expensive part, write a C++ function or class and export
-    it to Python.
-  */
-  py::class_<NumProcPyDemo,shared_ptr<NumProcPyDemo>>
-    (m, "NumProcPyDemo")
-    .def ("Hello", &NumProcPyDemo::Hello)
-    .def ("Sum", &NumProcPyDemo::Sum)
-    ;
-
   /*
     Finally we export all the other classes and functions we created in this tutorial
    */
@@ -141,4 +97,3 @@ PYBIND11_MODULE(myngspy,m) {
   ngs.attr("_add_flags_doc")(m);
 }
 
-static RegisterNumProc<NumProcPyDemo> npinit1("demopy");
