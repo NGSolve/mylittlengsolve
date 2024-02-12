@@ -55,7 +55,7 @@ namespace ngfem
 
     if (order >= 2)  
       {
-        INT<2> edge = GetVertexOrientedEdge(0);
+        auto edge = GetVertexOrientedEdge(0);
         IntegratedLegendrePolynomial (order, 
                                       lami[edge[1]]-lami[edge[0]],
                                       polx);
